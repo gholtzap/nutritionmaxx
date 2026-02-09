@@ -7,9 +7,10 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
-import type { NutrientFruit, NutrientKey } from '../../types';
-import { MACRO_KEYS, NUTRIENT_MAP } from '../../utils/nutrition-meta';
-import { formatNutrient } from '../../utils/format';
+import type { NutrientFruit } from '../../types';
+import { useStore } from '../../store';
+import { MACRO_KEYS, NUTRIENT_MAP, hasDailyValue } from '../../utils/nutrition-meta';
+import { formatNutrientDisplay, toDailyValuePercent } from '../../utils/format';
 import styles from './FruitDetail.module.css';
 
 interface MacroChartProps {
@@ -17,15 +18,20 @@ interface MacroChartProps {
 }
 
 export default function MacroChart({ fruit }: MacroChartProps) {
+  const showDV = useStore((s) => s.showDailyValue);
+
   const data = MACRO_KEYS.filter((k) => k !== 'water_g').map((key) => {
     const meta = NUTRIENT_MAP.get(key)!;
-    const value = fruit[key] as number | null;
+    const rawValue = fruit[key] as number | null;
+    const dvPct = toDailyValuePercent(rawValue, key);
+    const chartValue = showDV && hasDailyValue(key) && dvPct !== null ? dvPct : (rawValue ?? 0);
     return {
       name: meta.label,
-      value: value ?? 0,
+      value: chartValue,
       key,
-      display: formatNutrient(value, key),
-      isNull: value === null,
+      display: formatNutrientDisplay(rawValue, key, showDV),
+      unit: showDV && hasDailyValue(key) ? '% DV' : meta.unit,
+      isNull: rawValue === null,
     };
   });
 
@@ -52,10 +58,9 @@ export default function MacroChart({ fruit }: MacroChartProps) {
               fontSize: 12,
               color: '#e2e8f0',
             }}
-            formatter={(_: unknown, __: unknown, props: { payload?: { display: string; key: NutrientKey } }) => {
+            formatter={(_: unknown, __: unknown, props: { payload?: { display: string; unit: string } }) => {
               if (!props.payload) return ['', ''];
-              const meta = NUTRIENT_MAP.get(props.payload.key);
-              return [`${props.payload.display} ${meta?.unit || ''}`, ''];
+              return [`${props.payload.display} ${props.payload.unit}`, ''];
             }}
           />
           <Bar dataKey="value" radius={[0, 3, 3, 0]} maxBarSize={16}>

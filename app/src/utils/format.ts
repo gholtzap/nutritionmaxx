@@ -1,5 +1,5 @@
 import type { NutrientKey } from '../types';
-import { NUTRIENT_MAP } from './nutrition-meta';
+import { NUTRIENT_MAP, hasDailyValue } from './nutrition-meta';
 
 const formatters = new Map<number, Intl.NumberFormat>();
 
@@ -33,4 +33,43 @@ export function formatNutrientWithUnit(
   const meta = NUTRIENT_MAP.get(key);
   if (!meta) return String(value);
   return `${getFormatter(meta.decimals).format(value)} ${meta.unit}`;
+}
+
+const dvFormatter = getFormatter(0);
+
+export function toDailyValuePercent(
+  value: number | null | undefined,
+  key: NutrientKey
+): number | null {
+  if (value === null || value === undefined) return null;
+  const meta = NUTRIENT_MAP.get(key);
+  if (!meta || meta.dailyValue === null) return null;
+  return (value / meta.dailyValue) * 100;
+}
+
+export function formatDailyValue(
+  value: number | null | undefined,
+  key: NutrientKey
+): string {
+  const pct = toDailyValuePercent(value, key);
+  if (pct === null) return '--';
+  return `${dvFormatter.format(pct)}%`;
+}
+
+export function formatNutrientDisplay(
+  value: number | null | undefined,
+  key: NutrientKey,
+  asDailyValue: boolean
+): string {
+  if (!asDailyValue || !hasDailyValue(key)) return formatNutrient(value, key);
+  return formatDailyValue(value, key);
+}
+
+export function formatNutrientWithUnitDisplay(
+  value: number | null | undefined,
+  key: NutrientKey,
+  asDailyValue: boolean
+): string {
+  if (!asDailyValue || !hasDailyValue(key)) return formatNutrientWithUnit(value, key);
+  return formatDailyValue(value, key);
 }

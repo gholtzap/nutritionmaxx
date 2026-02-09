@@ -13,6 +13,8 @@ const NAV_ITEMS: { id: ViewId; label: string; icon: React.ReactNode }[] = [
 export default function Sidebar() {
   const activeView = useStore((s) => s.activeView);
   const setActiveView = useStore((s) => s.setActiveView);
+  const showDailyValue = useStore((s) => s.showDailyValue);
+  const toggleDailyValue = useStore((s) => s.toggleDailyValue);
 
   return (
     <aside className={styles.sidebar}>
@@ -30,6 +32,15 @@ export default function Sidebar() {
           />
         ))}
       </nav>
+      <label className={styles.dvToggle}>
+        <input
+          type="checkbox"
+          checked={showDailyValue}
+          onChange={toggleDailyValue}
+          className={styles.dvCheckbox}
+        />
+        <span className={styles.dvLabel}>Show % Daily Value</span>
+      </label>
       <div className={styles.footer}>
         <span className={styles.footerText}>82 fruits / 29 nutrients</span>
       </div>

@@ -1,7 +1,7 @@
 import { CaretUp, CaretDown } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { NutrientKey, SortConfig } from '../../types';
-import { NUTRIENT_MAP } from '../../utils/nutrition-meta';
+import { NUTRIENT_MAP, hasDailyValue } from '../../utils/nutrition-meta';
 import styles from './DataTable.module.css';
 
 interface TableHeaderProps {
@@ -12,6 +12,7 @@ interface TableHeaderProps {
 export default function TableHeader({ visibleKeys, showCheckbox }: TableHeaderProps) {
   const sort = useStore((s) => s.sort);
   const setSort = useStore((s) => s.setSort);
+  const showDV = useStore((s) => s.showDailyValue);
 
   function handleSort(key: string) {
     const next: SortConfig =
@@ -60,7 +61,9 @@ export default function TableHeader({ visibleKeys, showCheckbox }: TableHeaderPr
             >
               <span className={styles.thContent}>
                 {meta?.label || key}
-                <span className={styles.thUnit}>{meta?.unit}</span>
+                <span className={styles.thUnit}>
+                  {showDV && meta && hasDailyValue(key) ? '% DV' : meta?.unit}
+                </span>
                 {renderSortIcon(key)}
               </span>
             </th>

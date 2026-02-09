@@ -15,6 +15,7 @@ interface AppState {
   visibleColumns: Set<NutrientKey>;
   selectedFruit: NutrientFruit | null;
   comparisonFruits: NutrientFruit[];
+  showDailyValue: boolean;
 
   fetchFruits: () => Promise<void>;
   setActiveView: (view: ViewId) => void;
@@ -27,6 +28,7 @@ interface AppState {
   toggleComparisonFruit: (fruit: NutrientFruit) => void;
   removeComparisonFruit: (name: string) => void;
   clearComparison: () => void;
+  toggleDailyValue: () => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -41,6 +43,7 @@ export const useStore = create<AppState>((set, get) => ({
   visibleColumns: new Set(DEFAULT_VISIBLE_COLUMNS),
   selectedFruit: null,
   comparisonFruits: [],
+  showDailyValue: true,
 
   fetchFruits: async () => {
     if (get().fruits.length > 0 || get().loading) return;
@@ -119,4 +122,7 @@ export const useStore = create<AppState>((set, get) => ({
     })),
 
   clearComparison: () => set({ comparisonFruits: [] }),
+
+  toggleDailyValue: () =>
+    set((state) => ({ showDailyValue: !state.showDailyValue })),
 }));

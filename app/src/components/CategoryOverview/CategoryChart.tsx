@@ -10,8 +10,9 @@ import {
 } from 'recharts';
 import type { NutrientKey } from '../../types';
 import type { CategoryAverage } from '../../utils/aggregations';
-import { NUTRIENT_META, NUTRIENT_MAP, CATEGORY_COLORS } from '../../utils/nutrition-meta';
-import { formatNutrient } from '../../utils/format';
+import { useStore } from '../../store';
+import { NUTRIENT_META, NUTRIENT_MAP, CATEGORY_COLORS, hasDailyValue } from '../../utils/nutrition-meta';
+import { formatNutrientDisplay, toDailyValuePercent } from '../../utils/format';
 import styles from './CategoryOverview.module.css';
 
 interface CategoryChartProps {
@@ -21,15 +22,24 @@ interface CategoryChartProps {
 export default function CategoryChart({ data }: CategoryChartProps) {
   const [selectedKey, setSelectedKey] = useState<NutrientKey>('calories_kcal');
   const meta = NUTRIENT_MAP.get(selectedKey)!;
+  const showDV = useStore((s) => s.showDailyValue);
+  const useDV = showDV && hasDailyValue(selectedKey);
 
   const chartData = data
-    .map((d) => ({
-      category: d.category,
-      value: d.averages[selectedKey] ?? 0,
-      isNull: d.averages[selectedKey] === null,
-      color: CATEGORY_COLORS[d.category],
-    }))
+    .map((d) => {
+      const rawValue = d.averages[selectedKey];
+      const dvPct = toDailyValuePercent(rawValue, selectedKey);
+      return {
+        category: d.category,
+        value: useDV && dvPct !== null ? dvPct : (rawValue ?? 0),
+        rawValue,
+        isNull: rawValue === null,
+        color: CATEGORY_COLORS[d.category],
+      };
+    })
     .sort((a, b) => b.value - a.value);
+
+  const unitLabel = useDV ? '% DV' : meta.unit;
 
   return (
     <div className={styles.chartSection}>
@@ -70,10 +80,13 @@ export default function CategoryChart({ data }: CategoryChartProps) {
               fontSize: 12,
               color: '#e2e8f0',
             }}
-            formatter={(value: number | undefined) => [
-              `${formatNutrient(value ?? 0, selectedKey)} ${meta.unit}`,
-              `Avg ${meta.label}`,
-            ]}
+            formatter={(_: unknown, __: unknown, props: { payload?: { rawValue: number | null } }) => {
+              if (!props.payload) return ['', ''];
+              return [
+                `${formatNutrientDisplay(props.payload.rawValue, selectedKey, showDV)} ${unitLabel}`,
+                `Avg ${meta.label}`,
+              ];
+            }}
           />
           <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={40}>
             {chartData.map((entry) => (
