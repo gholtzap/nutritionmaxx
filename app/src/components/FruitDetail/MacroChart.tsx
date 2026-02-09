@@ -52,7 +52,8 @@ export default function MacroChart({ fruit }: MacroChartProps) {
               fontSize: 12,
               color: '#e2e8f0',
             }}
-            formatter={(_: unknown, __: unknown, props: { payload: { display: string; key: NutrientKey } }) => {
+            formatter={(_: unknown, __: unknown, props: { payload?: { display: string; key: NutrientKey } }) => {
+              if (!props.payload) return ['', ''];
               const meta = NUTRIENT_MAP.get(props.payload.key);
               return [`${props.payload.display} ${meta?.unit || ''}`, ''];
             }}

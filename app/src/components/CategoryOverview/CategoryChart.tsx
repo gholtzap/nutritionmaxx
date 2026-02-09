@@ -70,8 +70,8 @@ export default function CategoryChart({ data }: CategoryChartProps) {
               fontSize: 12,
               color: '#e2e8f0',
             }}
-            formatter={(value: number) => [
-              `${formatNutrient(value, selectedKey)} ${meta.unit}`,
+            formatter={(value: number | undefined) => [
+              `${formatNutrient(value ?? 0, selectedKey)} ${meta.unit}`,
               `Avg ${meta.label}`,
             ]}
           />
