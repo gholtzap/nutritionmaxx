@@ -1,0 +1,62 @@
+export type FruitCategory =
+  | 'Pome'
+  | 'Citrus'
+  | 'Berry'
+  | 'Stone'
+  | 'Tropical'
+  | 'Melon'
+  | 'Grape'
+  | 'Other';
+
+export type NutrientKey =
+  | 'calories_kcal'
+  | 'protein_g'
+  | 'fat_g'
+  | 'carbs_g'
+  | 'fiber_g'
+  | 'sugars_g'
+  | 'water_g'
+  | 'vitamin_a_mcg'
+  | 'vitamin_b1_mg'
+  | 'vitamin_b2_mg'
+  | 'vitamin_b3_mg'
+  | 'vitamin_b5_mg'
+  | 'vitamin_b6_mg'
+  | 'vitamin_b9_mcg'
+  | 'vitamin_b12_mcg'
+  | 'vitamin_c_mg'
+  | 'vitamin_d_mcg'
+  | 'vitamin_e_mg'
+  | 'vitamin_k_mcg'
+  | 'calcium_mg'
+  | 'iron_mg'
+  | 'magnesium_mg'
+  | 'phosphorus_mg'
+  | 'potassium_mg'
+  | 'sodium_mg'
+  | 'zinc_mg'
+  | 'copper_mg'
+  | 'manganese_mg'
+  | 'selenium_mcg';
+
+export interface Fruit {
+  name: string;
+  category: FruitCategory;
+  fdc_id: string;
+  [key: string]: string | FruitCategory | number | null;
+}
+
+export type NutrientFruit = Fruit & {
+  [K in NutrientKey]: number | null;
+};
+
+export type SortDirection = 'asc' | 'desc';
+
+export interface SortConfig {
+  key: string;
+  direction: SortDirection;
+}
+
+export type ViewId = 'table' | 'comparison' | 'categories';
+
+export type NutrientGroup = 'macro' | 'vitamin' | 'mineral';

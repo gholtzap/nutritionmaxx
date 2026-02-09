@@ -1,0 +1,78 @@
+import Papa from 'papaparse';
+import type { NutrientFruit, FruitCategory } from '../types';
+
+const VALID_CATEGORIES = new Set([
+  'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape', 'Other',
+]);
+
+function parseNumeric(value: string | undefined): number | null {
+  if (value === undefined || value === null || value === '') return null;
+  const trimmed = String(value).trim();
+  if (trimmed === '') return null;
+  const num = Number(trimmed);
+  if (Number.isNaN(num)) return null;
+  return num;
+}
+
+const NUMERIC_FIELDS = [
+  'calories_kcal', 'protein_g', 'fat_g', 'carbs_g', 'fiber_g', 'sugars_g', 'water_g',
+  'vitamin_a_mcg', 'vitamin_b1_mg', 'vitamin_b2_mg', 'vitamin_b3_mg', 'vitamin_b5_mg',
+  'vitamin_b6_mg', 'vitamin_b9_mcg', 'vitamin_b12_mcg', 'vitamin_c_mg', 'vitamin_d_mcg',
+  'vitamin_e_mg', 'vitamin_k_mcg', 'calcium_mg', 'iron_mg', 'magnesium_mg',
+  'phosphorus_mg', 'potassium_mg', 'sodium_mg', 'zinc_mg', 'copper_mg',
+  'manganese_mg', 'selenium_mcg',
+];
+
+export async function loadFruits(): Promise<NutrientFruit[]> {
+  const response = await fetch('/fruits_nutrition.csv');
+  if (!response.ok) {
+    throw new Error(`Failed to fetch CSV: ${response.status}`);
+  }
+
+  const csvText = await response.text();
+
+  return new Promise((resolve, reject) => {
+    Papa.parse<Record<string, string>>(csvText, {
+      header: true,
+      skipEmptyLines: true,
+      complete(results) {
+        if (results.errors.length > 0) {
+          const critical = results.errors.filter(
+            (e) => e.type !== 'FieldMismatch'
+          );
+          if (critical.length > 0) {
+            reject(new Error(`CSV parse errors: ${JSON.stringify(critical)}`));
+            return;
+          }
+        }
+
+        const fruits: NutrientFruit[] = [];
+
+        for (const row of results.data) {
+          const name = row.name?.trim();
+          const category = row.category?.trim();
+
+          if (!name || !category) continue;
+          if (!VALID_CATEGORIES.has(category)) continue;
+
+          const fruit: Record<string, unknown> = {
+            name,
+            category: category as FruitCategory,
+            fdc_id: row.fdc_id?.trim() || '',
+          };
+
+          for (const field of NUMERIC_FIELDS) {
+            fruit[field] = parseNumeric(row[field]);
+          }
+
+          fruits.push(fruit as NutrientFruit);
+        }
+
+        resolve(fruits);
+      },
+      error(err: Error) {
+        reject(err);
+      },
+    });
+  });
+}

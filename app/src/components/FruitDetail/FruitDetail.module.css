@@ -1,0 +1,124 @@
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: var(--detail-width);
+  height: 100vh;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border-primary);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  z-index: 20;
+  overflow: hidden;
+}
+
+.panelOpen {
+  transform: translateX(0);
+}
+
+.panelInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fruitName {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 24px;
+}
+
+.chartSection {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+}
+
+.nutrientGroup {
+  margin-bottom: 20px;
+}
+
+.nutrientRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.nutrientRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.nutrientRow:last-child {
+  border-bottom: none;
+}
+
+.nutrientLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.nutrientValue {
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  font-size: 13px;
+  color: var(--text-data);
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.nutrientNull {
+  color: var(--text-tertiary);
+}
+
+.nutrientUnit {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}

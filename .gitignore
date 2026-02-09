@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+app/node_modules/
+app/dist/
+*.py
+*.txt
+
+CLAUDE.md
+.claude/

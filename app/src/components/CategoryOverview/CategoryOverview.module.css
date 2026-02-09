@@ -1,0 +1,126 @@
+.container {
+  padding: 20px 24px;
+  max-width: 900px;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.chartSection {
+  margin-bottom: 28px;
+  padding: 16px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+}
+
+.chartHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.chartTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.chartSelect {
+  font-size: 12px;
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.chartSelect:focus {
+  outline: none;
+  border-color: var(--border-accent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.card {
+  padding: 14px;
+  border: 1px solid var(--border-primary);
+  border-top-width: 3px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.cardCategory {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cardCount {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+}
+
+.cardStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.cardStat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cardStatLabel {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.cardStatValue {
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  font-size: 13px;
+  color: var(--text-data);
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.cardStatNull {
+  color: var(--text-tertiary);
+}
+
+.cardStatUnit {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
