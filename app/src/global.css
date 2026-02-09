@@ -33,3 +33,11 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.15);
 }
+
+@media (max-width: 767px) {
+  html,
+  body {
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+  }
+}

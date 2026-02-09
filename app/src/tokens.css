@@ -34,6 +34,7 @@
 
   --sidebar-width: 240px;
   --detail-width: 400px;
+  --bottom-bar-height: 56px;
 
   --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-data: 'Geist Mono', 'SF Mono', 'Fira Code', monospace;

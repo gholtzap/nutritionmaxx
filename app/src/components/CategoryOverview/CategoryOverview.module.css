@@ -124,3 +124,14 @@
   font-size: 10px;
   color: var(--text-tertiary);
 }
+
+@media (max-width: 767px) {
+  .container {
+    padding: 12px;
+    max-width: none;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

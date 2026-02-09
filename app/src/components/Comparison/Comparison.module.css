@@ -235,3 +235,23 @@
   color: var(--text-tertiary);
   font-size: 14px;
 }
+
+@media (max-width: 767px) {
+  .container {
+    padding: 12px;
+    max-width: none;
+  }
+
+  .selectorInput {
+    font-size: 16px;
+  }
+
+  .suggestionItem {
+    padding: 10px;
+    min-height: 44px;
+  }
+
+  .barValue {
+    min-width: 50px;
+  }
+}

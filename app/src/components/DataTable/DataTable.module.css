@@ -302,3 +302,57 @@
   color: var(--text-tertiary);
   font-size: 14px;
 }
+
+@media (max-width: 767px) {
+  .container {
+    padding: 12px;
+    height: auto;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .searchBar {
+    max-width: none;
+    flex: 1 1 100%;
+  }
+
+  .searchInput {
+    font-size: 16px;
+  }
+
+  .thName {
+    min-width: 120px;
+  }
+
+  .th {
+    padding: 6px 8px;
+  }
+
+  .td {
+    padding: 6px 8px;
+  }
+
+  .columnDropdown {
+    position: fixed;
+    top: auto;
+    bottom: calc(var(--bottom-bar-height) + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 50vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    z-index: 50;
+  }
+
+  .columnToggleButton {
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .categoryPill {
+    min-height: 36px;
+  }
+}

@@ -95,3 +95,60 @@
   font-family: var(--font-data);
   font-feature-settings: 'tnum';
 }
+
+@media (max-width: 767px) {
+  .sidebar {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: var(--bottom-bar-height);
+    flex-direction: row;
+    border-right: none;
+    border-top: 1px solid var(--border-primary);
+    z-index: 30;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .logo {
+    display: none;
+  }
+
+  .nav {
+    flex: 1;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    gap: 0;
+  }
+
+  .navItem {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 0;
+    min-width: 44px;
+    min-height: 44px;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    font-size: 10px;
+  }
+
+  .navItemActive {
+    border-left-color: transparent;
+    border-bottom-color: var(--accent);
+    background: transparent;
+  }
+
+  .dvToggle {
+    display: none;
+  }
+
+  .footer {
+    display: none;
+  }
+}
