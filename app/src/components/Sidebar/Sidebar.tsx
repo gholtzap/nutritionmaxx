@@ -1,4 +1,4 @@
-import { Table, GitDiff, SquaresFour } from '@phosphor-icons/react';
+import { Table, GitDiff, SquaresFour, SidebarSimple } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
 import NavItem from './NavItem';
@@ -15,11 +15,21 @@ export default function Sidebar() {
   const setActiveView = useStore((s) => s.setActiveView);
   const showDailyValue = useStore((s) => s.showDailyValue);
   const toggleDailyValue = useStore((s) => s.toggleDailyValue);
+  const sidebarCollapsed = useStore((s) => s.sidebarCollapsed);
+  const toggleSidebar = useStore((s) => s.toggleSidebar);
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
       <div className={styles.logo}>
         <span className={styles.logoText}>Fruit Nutrition</span>
+        <button
+          type="button"
+          className={styles.collapseButton}
+          onClick={toggleSidebar}
+          aria-label="Collapse sidebar"
+        >
+          <SidebarSimple size={16} weight="regular" />
+        </button>
       </div>
       <nav className={styles.nav}>
         {NAV_ITEMS.map((item) => (

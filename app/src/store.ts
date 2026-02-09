@@ -16,6 +16,7 @@ interface AppState {
   selectedFruit: NutrientFruit | null;
   comparisonFruits: NutrientFruit[];
   showDailyValue: boolean;
+  sidebarCollapsed: boolean;
 
   fetchFruits: () => Promise<void>;
   setActiveView: (view: ViewId) => void;
@@ -29,6 +30,7 @@ interface AppState {
   removeComparisonFruit: (name: string) => void;
   clearComparison: () => void;
   toggleDailyValue: () => void;
+  toggleSidebar: () => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -44,6 +46,7 @@ export const useStore = create<AppState>((set, get) => ({
   selectedFruit: null,
   comparisonFruits: [],
   showDailyValue: true,
+  sidebarCollapsed: false,
 
   fetchFruits: async () => {
     if (get().fruits.length > 0 || get().loading) return;
@@ -125,4 +128,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   toggleDailyValue: () =>
     set((state) => ({ showDailyValue: !state.showDailyValue })),
+
+  toggleSidebar: () =>
+    set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
 }));
