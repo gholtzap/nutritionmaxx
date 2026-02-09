@@ -1,3 +1,5 @@
+export type ItemType = 'fruit' | 'vegetable';
+
 export type FruitCategory =
   | 'Pome'
   | 'Citrus'
@@ -7,6 +9,18 @@ export type FruitCategory =
   | 'Melon'
   | 'Grape'
   | 'Other';
+
+export type VegetableCategory =
+  | 'Root'
+  | 'Leafy Green'
+  | 'Cruciferous'
+  | 'Legume'
+  | 'Allium'
+  | 'Nightshade'
+  | 'Squash'
+  | 'Other';
+
+export type ItemCategory = FruitCategory | VegetableCategory;
 
 export type NutrientKey =
   | 'calories_kcal'
@@ -41,9 +55,10 @@ export type NutrientKey =
 
 export interface Fruit {
   name: string;
-  category: FruitCategory;
+  type: ItemType;
+  category: ItemCategory;
   fdc_id: string;
-  [key: string]: string | FruitCategory | number | null;
+  [key: string]: string | ItemType | ItemCategory | number | null;
 }
 
 export type NutrientFruit = Fruit & {

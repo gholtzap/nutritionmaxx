@@ -73,7 +73,7 @@ export default function FruitSelector() {
             <input
               type="text"
               className={styles.selectorInput}
-              placeholder="Add a fruit to compare..."
+              placeholder="Add an item to compare..."
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);

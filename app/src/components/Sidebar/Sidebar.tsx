@@ -17,11 +17,12 @@ export default function Sidebar() {
   const toggleDailyValue = useStore((s) => s.toggleDailyValue);
   const sidebarCollapsed = useStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useStore((s) => s.toggleSidebar);
+  const fruits = useStore((s) => s.fruits);
 
   return (
     <aside className={`${styles.sidebar} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
       <div className={styles.logo}>
-        <span className={styles.logoText}>Fruit Nutrition</span>
+        <span className={styles.logoText}>Nutrition</span>
         <button
           type="button"
           className={styles.collapseButton}
@@ -52,7 +53,7 @@ export default function Sidebar() {
         <span className={styles.dvLabel}>Show % Daily Value</span>
       </label>
       <div className={styles.footer}>
-        <span className={styles.footerText}>82 fruits / 29 nutrients</span>
+        <span className={styles.footerText}>{fruits.length} items / 29 nutrients</span>
       </div>
     </aside>
   );

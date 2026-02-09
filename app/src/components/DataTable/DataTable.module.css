@@ -59,6 +59,33 @@
   background: var(--bg-tertiary);
 }
 
+.typeFilter {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.typePill {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 100px;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.typePill:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.typePillActive {
+  background: var(--bg-elevated);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .categoryFilter {
   display: flex;
   flex-wrap: wrap;
@@ -353,6 +380,10 @@
   }
 
   .categoryPill {
+    min-height: 36px;
+  }
+
+  .typePill {
     min-height: 36px;
   }
 }

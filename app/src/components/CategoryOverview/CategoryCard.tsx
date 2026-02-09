@@ -28,7 +28,7 @@ export default function CategoryCard({ data }: CategoryCardProps) {
         <span className={styles.cardCategory} style={{ color }}>
           {data.category}
         </span>
-        <span className={styles.cardCount}>{data.count} fruits</span>
+        <span className={styles.cardCount}>{data.count} items</span>
       </div>
       <div className={styles.cardStats}>
         {HIGHLIGHT_KEYS.map((key) => {

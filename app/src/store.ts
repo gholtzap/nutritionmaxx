@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { NutrientFruit, NutrientKey, FruitCategory, SortConfig, ViewId } from './types';
+import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType } from './types';
 import { DEFAULT_VISIBLE_COLUMNS } from './utils/nutrition-meta';
 import { loadFruits } from './utils/parse-csv';
 
@@ -10,7 +10,8 @@ interface AppState {
 
   activeView: ViewId;
   searchQuery: string;
-  selectedCategories: Set<FruitCategory>;
+  selectedType: ItemType | null;
+  selectedCategories: Set<ItemCategory>;
   sort: SortConfig;
   visibleColumns: Set<NutrientKey>;
   selectedFruit: NutrientFruit | null;
@@ -21,7 +22,8 @@ interface AppState {
   fetchFruits: () => Promise<void>;
   setActiveView: (view: ViewId) => void;
   setSearchQuery: (query: string) => void;
-  toggleCategory: (category: FruitCategory) => void;
+  setSelectedType: (type: ItemType | null) => void;
+  toggleCategory: (category: ItemCategory) => void;
   setSort: (sort: SortConfig) => void;
   toggleColumn: (key: NutrientKey) => void;
   setColumnGroup: (keys: NutrientKey[], visible: boolean) => void;
@@ -40,6 +42,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   activeView: 'table',
   searchQuery: '',
+  selectedType: null,
   selectedCategories: new Set(),
   sort: { key: 'name', direction: 'asc' },
   visibleColumns: new Set(DEFAULT_VISIBLE_COLUMNS),
@@ -65,6 +68,8 @@ export const useStore = create<AppState>((set, get) => ({
   setActiveView: (view) => set({ activeView: view, selectedFruit: null }),
 
   setSearchQuery: (query) => set({ searchQuery: query }),
+
+  setSelectedType: (type) => set({ selectedType: type, selectedCategories: new Set() }),
 
   toggleCategory: (category) =>
     set((state) => {

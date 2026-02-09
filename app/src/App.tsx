@@ -49,7 +49,7 @@ function App() {
       )}
       {isMobile && (
         <header className={styles.mobileHeader}>
-          <span className={styles.mobileTitle}>Fruit Nutrition</span>
+          <span className={styles.mobileTitle}>Nutrition</span>
           <label className={styles.mobileDvToggle}>
             <input
               type="checkbox"

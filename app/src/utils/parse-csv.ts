@@ -1,9 +1,13 @@
 import Papa from 'papaparse';
-import type { NutrientFruit, FruitCategory } from '../types';
+import type { NutrientFruit, ItemCategory, ItemType } from '../types';
 
 const VALID_CATEGORIES = new Set([
-  'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape', 'Other',
+  'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape',
+  'Root', 'Leafy Green', 'Cruciferous', 'Legume', 'Allium', 'Nightshade', 'Squash',
+  'Other',
 ]);
+
+const VALID_TYPES = new Set(['fruit', 'vegetable']);
 
 function parseNumeric(value: string | undefined): number | null {
   if (value === undefined || value === null || value === '') return null;
@@ -24,7 +28,7 @@ const NUMERIC_FIELDS = [
 ];
 
 export async function loadFruits(): Promise<NutrientFruit[]> {
-  const response = await fetch('/fruits_nutrition.csv');
+  const response = await fetch('/nutrition.csv');
   if (!response.ok) {
     throw new Error(`Failed to fetch CSV: ${response.status}`);
   }
@@ -51,13 +55,16 @@ export async function loadFruits(): Promise<NutrientFruit[]> {
         for (const row of results.data) {
           const name = row.name?.trim();
           const category = row.category?.trim();
+          const type = row.type?.trim();
 
           if (!name || !category) continue;
           if (!VALID_CATEGORIES.has(category)) continue;
+          if (type && !VALID_TYPES.has(type)) continue;
 
           const fruit: Record<string, unknown> = {
             name,
-            category: category as FruitCategory,
+            type: (type || 'fruit') as ItemType,
+            category: category as ItemCategory,
             fdc_id: row.fdc_id?.trim() || '',
           };
 

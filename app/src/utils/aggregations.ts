@@ -1,8 +1,8 @@
-import type { NutrientFruit, NutrientKey, FruitCategory } from '../types';
+import type { NutrientFruit, NutrientKey, ItemCategory } from '../types';
 import { ALL_CATEGORIES } from './nutrition-meta';
 
 export interface CategoryAverage {
-  category: FruitCategory;
+  category: ItemCategory;
   count: number;
   averages: Record<NutrientKey, number | null>;
 }
@@ -15,12 +15,14 @@ function avg(values: (number | null)[]): number | null {
 
 export function computeCategoryAverages(
   fruits: NutrientFruit[],
-  nutrientKeys: NutrientKey[]
+  nutrientKeys: NutrientKey[],
+  categories?: ItemCategory[]
 ): CategoryAverage[] {
-  const grouped = new Map<FruitCategory, NutrientFruit[]>();
+  const cats = categories ?? ALL_CATEGORIES;
+  const grouped = new Map<ItemCategory, NutrientFruit[]>();
 
-  for (const cat of ALL_CATEGORIES) {
-    grouped.set(cat as FruitCategory, []);
+  for (const cat of cats) {
+    grouped.set(cat, []);
   }
 
   for (const fruit of fruits) {

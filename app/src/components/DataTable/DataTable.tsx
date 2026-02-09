@@ -3,6 +3,7 @@ import { useStore } from '../../store';
 import type { NutrientFruit, NutrientKey } from '../../types';
 import { NUTRIENT_META } from '../../utils/nutrition-meta';
 import SearchBar from './SearchBar';
+import TypeFilter from './TypeFilter';
 import CategoryFilter from './CategoryFilter';
 import ColumnToggle from './ColumnToggle';
 import TableHeader from './TableHeader';
@@ -12,6 +13,7 @@ import styles from './DataTable.module.css';
 export default function DataTable() {
   const fruits = useStore((s) => s.fruits);
   const searchQuery = useStore((s) => s.searchQuery);
+  const selectedType = useStore((s) => s.selectedType);
   const selectedCategories = useStore((s) => s.selectedCategories);
   const sort = useStore((s) => s.sort);
   const visibleColumns = useStore((s) => s.visibleColumns);
@@ -30,6 +32,10 @@ export default function DataTable() {
   const filtered = useMemo(() => {
     let result = fruits;
 
+    if (selectedType) {
+      result = result.filter((f) => f.type === selectedType);
+    }
+
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       result = result.filter((f) => f.name.toLowerCase().includes(q));
@@ -40,7 +46,7 @@ export default function DataTable() {
     }
 
     return result;
-  }, [fruits, searchQuery, selectedCategories]);
+  }, [fruits, searchQuery, selectedType, selectedCategories]);
 
   const sorted = useMemo(() => {
     const { key, direction } = sort;
@@ -71,16 +77,23 @@ export default function DataTable() {
     [comparisonFruits]
   );
 
+  const countLabel = selectedType === 'fruit'
+    ? sorted.length === 1 ? 'fruit' : 'fruits'
+    : selectedType === 'vegetable'
+      ? sorted.length === 1 ? 'vegetable' : 'vegetables'
+      : sorted.length === 1 ? 'item' : 'items';
+
   return (
     <div className={styles.container}>
       <div className={styles.toolbar}>
         <SearchBar />
         <ColumnToggle />
       </div>
+      <TypeFilter />
       <CategoryFilter />
       <div className={styles.tableInfo}>
         <span className={styles.count}>
-          {sorted.length} {sorted.length === 1 ? 'fruit' : 'fruits'}
+          {sorted.length} {countLabel}
         </span>
         {comparisonFruits.length > 0 && (
           <span className={styles.compareCount}>
@@ -107,7 +120,7 @@ export default function DataTable() {
         </table>
         {sorted.length === 0 && (
           <div className={styles.empty}>
-            No fruits match your filters.
+            No items match your filters.
           </div>
         )}
       </div>

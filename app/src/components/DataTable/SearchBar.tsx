@@ -32,7 +32,7 @@ export default function SearchBar() {
       <input
         type="text"
         className={styles.searchInput}
-        placeholder="Search fruits..."
+        placeholder="Search..."
         value={localValue}
         onChange={(e) => handleChange(e.target.value)}
       />

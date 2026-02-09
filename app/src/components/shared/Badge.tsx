@@ -1,9 +1,9 @@
-import type { FruitCategory } from '../../types';
+import type { ItemCategory } from '../../types';
 import { CATEGORY_COLORS } from '../../utils/nutrition-meta';
 import styles from './Badge.module.css';
 
 interface BadgeProps {
-  category: FruitCategory;
+  category: ItemCategory;
 }
 
 export default function Badge({ category }: BadgeProps) {

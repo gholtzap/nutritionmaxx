@@ -11,8 +11,8 @@ export default function Comparison() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Compare Fruits</h2>
-        <p className={styles.subtitle}>Select up to 3 fruits to compare their nutritional values</p>
+        <h2 className={styles.title}>Compare</h2>
+        <p className={styles.subtitle}>Select up to 3 items to compare their nutritional values</p>
       </div>
       <FruitSelector />
       {comparisonFruits.length >= 2 && (
@@ -33,7 +33,7 @@ export default function Comparison() {
       )}
       {comparisonFruits.length < 2 && (
         <div className={styles.empty}>
-          Select at least 2 fruits to see a comparison.
+          Select at least 2 items to see a comparison.
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-import type { NutrientKey, NutrientGroup } from '../types';
+import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, ItemCategory } from '../types';
 
 export interface NutrientMeta {
   key: NutrientKey;
@@ -69,12 +69,29 @@ export const CATEGORY_COLORS: Record<string, string> = {
   Tropical: 'var(--cat-tropical)',
   Melon: 'var(--cat-melon)',
   Grape: 'var(--cat-grape)',
+  Root: 'var(--cat-root)',
+  'Leafy Green': 'var(--cat-leafy-green)',
+  Cruciferous: 'var(--cat-cruciferous)',
+  Legume: 'var(--cat-legume)',
+  Allium: 'var(--cat-allium)',
+  Nightshade: 'var(--cat-nightshade)',
+  Squash: 'var(--cat-squash)',
   Other: 'var(--cat-other)',
 };
 
-export const ALL_CATEGORIES = [
+export const FRUIT_CATEGORIES: FruitCategory[] = [
   'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape', 'Other',
-] as const;
+];
+
+export const VEGETABLE_CATEGORIES: VegetableCategory[] = [
+  'Root', 'Leafy Green', 'Cruciferous', 'Legume', 'Allium', 'Nightshade', 'Squash', 'Other',
+];
+
+export const ALL_CATEGORIES: ItemCategory[] = [
+  'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape',
+  'Root', 'Leafy Green', 'Cruciferous', 'Legume', 'Allium', 'Nightshade', 'Squash',
+  'Other',
+];
 
 export function hasDailyValue(key: NutrientKey): boolean {
   const meta = NUTRIENT_MAP.get(key);
