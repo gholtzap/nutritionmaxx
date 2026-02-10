@@ -1,9 +1,7 @@
 import { useStore } from '../../store';
 import FruitSelector from './FruitSelector';
-import ComparisonBar from './ComparisonBar';
+import ComparisonGrid from './ComparisonGrid';
 import styles from './Comparison.module.css';
-
-const SLOT_COLORS = ['var(--compare-a)', 'var(--compare-b)', 'var(--compare-c)'];
 
 export default function Comparison() {
   const comparisonFruits = useStore((s) => s.comparisonFruits);
@@ -16,20 +14,7 @@ export default function Comparison() {
       </div>
       <FruitSelector />
       {comparisonFruits.length >= 2 && (
-        <>
-          <div className={styles.legend}>
-            {comparisonFruits.map((fruit, i) => (
-              <div key={fruit.name} className={styles.legendItem}>
-                <span
-                  className={styles.legendDot}
-                  style={{ background: SLOT_COLORS[i] }}
-                />
-                <span>{fruit.name}</span>
-              </div>
-            ))}
-          </div>
-          <ComparisonBar fruits={comparisonFruits} />
-        </>
+        <ComparisonGrid fruits={comparisonFruits} />
       )}
       {comparisonFruits.length < 2 && (
         <div className={styles.empty}>
