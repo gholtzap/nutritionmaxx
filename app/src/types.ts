@@ -72,6 +72,6 @@ export interface SortConfig {
   direction: SortDirection;
 }
 
-export type ViewId = 'table' | 'comparison' | 'categories';
+export type ViewId = 'table' | 'comparison' | 'categories' | 'nutrients';
 
 export type NutrientGroup = 'macro' | 'vitamin' | 'mineral';

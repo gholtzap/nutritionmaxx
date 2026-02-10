@@ -1,4 +1,4 @@
-import { Table, GitDiff, SquaresFour, SidebarSimple } from '@phosphor-icons/react';
+import { Table, GitDiff, SquaresFour, Pill, SidebarSimple } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
 import NavItem from './NavItem';
@@ -8,6 +8,7 @@ const NAV_ITEMS: { id: ViewId; label: string; icon: React.ReactNode }[] = [
   { id: 'table', label: 'Explorer', icon: <Table size={18} weight="regular" /> },
   { id: 'comparison', label: 'Compare', icon: <GitDiff size={18} weight="regular" /> },
   { id: 'categories', label: 'Categories', icon: <SquaresFour size={18} weight="regular" /> },
+  { id: 'nutrients', label: 'Nutrients', icon: <Pill size={18} weight="regular" /> },
 ];
 
 export default function Sidebar() {

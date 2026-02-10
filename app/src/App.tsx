@@ -7,6 +7,7 @@ import DataTable from './components/DataTable/DataTable';
 import FruitDetail from './components/FruitDetail/FruitDetail';
 import Comparison from './components/Comparison/Comparison';
 import CategoryOverview from './components/CategoryOverview/CategoryOverview';
+import NutrientGuide from './components/NutrientGuide/NutrientGuide';
 import Spinner from './components/shared/Spinner';
 import styles from './App.module.css';
 
@@ -69,6 +70,7 @@ function App() {
             {activeView === 'table' && <DataTable />}
             {activeView === 'comparison' && <Comparison />}
             {activeView === 'categories' && <CategoryOverview />}
+            {activeView === 'nutrients' && <NutrientGuide />}
           </>
         )}
       </main>
