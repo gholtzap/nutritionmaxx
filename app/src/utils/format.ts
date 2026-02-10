@@ -53,6 +53,7 @@ export function formatDailyValue(
 ): string {
   const pct = toDailyValuePercent(value, key);
   if (pct === null) return '--';
+  if (pct > 0 && pct < 0.5) return '<1%';
   return `${dvFormatter.format(pct)}%`;
 }
 
