@@ -221,6 +221,29 @@
   color: var(--text-tertiary);
 }
 
+.referenceList {
+  list-style: decimal;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.referenceItem {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.referenceLink {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.referenceLink:hover {
+  color: var(--accent);
+}
+
 @media (max-width: 767px) {
   .container {
     padding: 12px;

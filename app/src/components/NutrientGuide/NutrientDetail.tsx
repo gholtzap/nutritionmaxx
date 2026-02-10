@@ -49,6 +49,11 @@ export default function NutrientDetail({ profile, onBack }: NutrientDetailProps)
       </div>
 
       <section className={styles.detailSection}>
+        <h3 className={styles.sectionTitle}>Overview</h3>
+        <p className={styles.detailDescription}>{profile.description}</p>
+      </section>
+
+      <section className={styles.detailSection}>
         <h3 className={styles.sectionTitle}>Body Systems</h3>
         <div className={styles.detailStats}>
           {sortedStats.map(([system, value]) => (
@@ -59,11 +64,6 @@ export default function NutrientDetail({ profile, onBack }: NutrientDetailProps)
             </div>
           ))}
         </div>
-      </section>
-
-      <section className={styles.detailSection}>
-        <h3 className={styles.sectionTitle}>Overview</h3>
-        <p className={styles.detailDescription}>{profile.description}</p>
       </section>
 
       <section className={styles.detailSection}>
@@ -83,6 +83,21 @@ export default function NutrientDetail({ profile, onBack }: NutrientDetailProps)
           )}
         </div>
       </section>
+
+      {profile.sources.length > 0 && (
+        <section className={styles.detailSection}>
+          <h3 className={styles.sectionTitle}>Sources</h3>
+          <ol className={styles.referenceList}>
+            {profile.sources.map((src, i) => (
+              <li key={i} className={styles.referenceItem}>
+                <a href={src.url} target="_blank" rel="noopener noreferrer" className={styles.referenceLink}>
+                  {src.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
     </div>
   );
 }
