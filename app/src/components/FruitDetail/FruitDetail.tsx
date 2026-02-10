@@ -9,6 +9,7 @@ import styles from './FruitDetail.module.css';
 export default function FruitDetail() {
   const selectedFruit = useStore((s) => s.selectedFruit);
   const setSelectedFruit = useStore((s) => s.setSelectedFruit);
+  const showPerServing = useStore((s) => s.showPerServing);
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
@@ -24,6 +25,10 @@ export default function FruitDetail() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [handleEscape]);
 
+  const basisLabel = showPerServing && selectedFruit?.serving_label
+    ? selectedFruit.serving_label
+    : 'per 100g';
+
   return (
     <div className={`${styles.panel} ${selectedFruit ? styles.panelOpen : ''}`}>
       {selectedFruit && (
@@ -31,7 +36,10 @@ export default function FruitDetail() {
           <div className={styles.header}>
             <div className={styles.headerInfo}>
               <h2 className={styles.fruitName}>{selectedFruit.name}</h2>
-              <Badge category={selectedFruit.category} />
+              <div className={styles.headerMeta}>
+                <Badge category={selectedFruit.category} />
+                <span className={styles.basisLabel}>{basisLabel}</span>
+              </div>
             </div>
             <button
               type="button"

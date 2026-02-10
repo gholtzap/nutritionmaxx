@@ -16,6 +16,8 @@ export default function Sidebar() {
   const setActiveView = useStore((s) => s.setActiveView);
   const showDailyValue = useStore((s) => s.showDailyValue);
   const toggleDailyValue = useStore((s) => s.toggleDailyValue);
+  const showPerServing = useStore((s) => s.showPerServing);
+  const togglePerServing = useStore((s) => s.togglePerServing);
   const sidebarCollapsed = useStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useStore((s) => s.toggleSidebar);
   const fruits = useStore((s) => s.fruits);
@@ -52,6 +54,15 @@ export default function Sidebar() {
           className={styles.dvCheckbox}
         />
         <span className={styles.dvLabel}>Show % Daily Value</span>
+      </label>
+      <label className={styles.dvToggle}>
+        <input
+          type="checkbox"
+          checked={showPerServing}
+          onChange={togglePerServing}
+          className={styles.dvCheckbox}
+        />
+        <span className={styles.dvLabel}>Per Serving</span>
       </label>
       <div className={styles.footer}>
         <span className={styles.footerText}>{fruits.length} items / 29 nutrients</span>

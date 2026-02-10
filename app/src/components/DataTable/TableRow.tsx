@@ -1,6 +1,6 @@
 import type { NutrientFruit, NutrientKey } from '../../types';
 import { useStore } from '../../store';
-import { formatNutrientDisplay } from '../../utils/format';
+import { formatNutrientDisplay, getItemDisplayValue } from '../../utils/format';
 import Badge from '../shared/Badge';
 import styles from './DataTable.module.css';
 
@@ -22,6 +22,7 @@ export default function TableRow({
   showCheckbox,
 }: TableRowProps) {
   const showDV = useStore((s) => s.showDailyValue);
+  const showPerServing = useStore((s) => s.showPerServing);
 
   return (
     <tr className={styles.row} onClick={onSelect}>
@@ -44,7 +45,7 @@ export default function TableRow({
         <Badge category={fruit.category} />
       </td>
       {visibleKeys.map((key) => {
-        const value = fruit[key] as number | null;
+        const value = getItemDisplayValue(fruit, key, showPerServing);
         const formatted = formatNutrientDisplay(value, key, showDV);
         const isNull = value === null || value === undefined;
         return (

@@ -1,4 +1,4 @@
-export type ItemType = 'fruit' | 'vegetable';
+export type ItemType = 'fruit' | 'vegetable' | 'spice';
 
 export type FruitCategory =
   | 'Pome'
@@ -20,7 +20,14 @@ export type VegetableCategory =
   | 'Squash'
   | 'Other';
 
-export type ItemCategory = FruitCategory | VegetableCategory;
+export type SpiceCategory =
+  | 'Herb'
+  | 'Seed'
+  | 'Pepper'
+  | 'Root/Bark'
+  | 'Other';
+
+export type ItemCategory = FruitCategory | VegetableCategory | SpiceCategory;
 
 export type NutrientKey =
   | 'calories_kcal'
@@ -58,6 +65,8 @@ export interface Fruit {
   type: ItemType;
   category: ItemCategory;
   fdc_id: string;
+  serving_size_g: number | null;
+  serving_label: string | null;
   [key: string]: string | ItemType | ItemCategory | number | null;
 }
 

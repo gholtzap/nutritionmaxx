@@ -1,4 +1,4 @@
-import type { NutrientKey } from '../types';
+import type { NutrientKey, NutrientFruit } from '../types';
 import { NUTRIENT_MAP, hasDailyValue } from './nutrition-meta';
 
 const formatters = new Map<number, Intl.NumberFormat>();
@@ -73,4 +73,22 @@ export function formatNutrientWithUnitDisplay(
 ): string {
   if (!asDailyValue || !hasDailyValue(key)) return formatNutrientWithUnit(value, key);
   return formatDailyValue(value, key);
+}
+
+export function getDisplayValue(
+  valuePer100g: number | null | undefined,
+  servingSizeG: number | null | undefined,
+  perServing: boolean
+): number | null {
+  if (valuePer100g === null || valuePer100g === undefined) return null;
+  if (!perServing || servingSizeG === null || servingSizeG === undefined) return valuePer100g;
+  return valuePer100g * (servingSizeG / 100);
+}
+
+export function getItemDisplayValue(
+  fruit: NutrientFruit,
+  key: NutrientKey,
+  perServing: boolean
+): number | null {
+  return getDisplayValue(fruit[key] as number | null, fruit.serving_size_g, perServing);
 }

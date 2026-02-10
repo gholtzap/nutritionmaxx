@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useStore } from '../../store';
 import type { NutrientFruit, NutrientKey } from '../../types';
 import { NUTRIENT_META } from '../../utils/nutrition-meta';
+import { getItemDisplayValue } from '../../utils/format';
 import SearchBar from './SearchBar';
 import TypeFilter from './TypeFilter';
 import CategoryFilter from './CategoryFilter';
@@ -20,6 +21,7 @@ export default function DataTable() {
   const comparisonFruits = useStore((s) => s.comparisonFruits);
   const setSelectedFruit = useStore((s) => s.setSelectedFruit);
   const toggleComparisonFruit = useStore((s) => s.toggleComparisonFruit);
+  const showPerServing = useStore((s) => s.showPerServing);
 
   const visibleKeys = useMemo(
     () =>
@@ -51,10 +53,19 @@ export default function DataTable() {
   const sorted = useMemo(() => {
     const { key, direction } = sort;
     const mult = direction === 'asc' ? 1 : -1;
+    const isNutrientKey = NUTRIENT_META.some((m) => m.key === key);
 
     return [...filtered].sort((a, b) => {
-      const aVal = a[key as keyof NutrientFruit];
-      const bVal = b[key as keyof NutrientFruit];
+      let aVal: string | number | null;
+      let bVal: string | number | null;
+
+      if (isNutrientKey && showPerServing) {
+        aVal = getItemDisplayValue(a, key as NutrientKey, true);
+        bVal = getItemDisplayValue(b, key as NutrientKey, true);
+      } else {
+        aVal = a[key as keyof NutrientFruit] as string | number | null;
+        bVal = b[key as keyof NutrientFruit] as string | number | null;
+      }
 
       if (aVal === null && bVal === null) return 0;
       if (aVal === null) return 1;
@@ -70,7 +81,7 @@ export default function DataTable() {
 
       return 0;
     });
-  }, [filtered, sort]);
+  }, [filtered, sort, showPerServing]);
 
   const comparisonNames = useMemo(
     () => new Set(comparisonFruits.map((f) => f.name)),
@@ -81,7 +92,9 @@ export default function DataTable() {
     ? sorted.length === 1 ? 'fruit' : 'fruits'
     : selectedType === 'vegetable'
       ? sorted.length === 1 ? 'vegetable' : 'vegetables'
-      : sorted.length === 1 ? 'item' : 'items';
+      : selectedType === 'spice'
+        ? sorted.length === 1 ? 'spice' : 'spices'
+        : sorted.length === 1 ? 'item' : 'items';
 
   return (
     <div className={styles.container}>

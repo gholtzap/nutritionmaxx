@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { NutrientFruit, NutrientKey } from '../../types';
 import { useStore } from '../../store';
 import { VITAMIN_KEYS, MINERAL_KEYS, NUTRIENT_MAP, hasDailyValue } from '../../utils/nutrition-meta';
-import { formatNutrientDisplay } from '../../utils/format';
+import { formatNutrientDisplay, getItemDisplayValue } from '../../utils/format';
 import styles from './FruitDetail.module.css';
 
 interface NutrientListProps {
@@ -15,9 +15,10 @@ interface GroupProps {
   fruit: NutrientFruit;
   showEmpty: boolean;
   showDV: boolean;
+  showPerServing: boolean;
 }
 
-function NutrientGroup({ title, keys, fruit, showEmpty, showDV }: GroupProps) {
+function NutrientGroup({ title, keys, fruit, showEmpty, showDV, showPerServing }: GroupProps) {
   const filtered = showEmpty ? keys : keys.filter((key) => fruit[key] !== null);
 
   if (filtered.length === 0) return null;
@@ -28,7 +29,7 @@ function NutrientGroup({ title, keys, fruit, showEmpty, showDV }: GroupProps) {
       <div className={styles.nutrientRows}>
         {filtered.map((key) => {
           const meta = NUTRIENT_MAP.get(key)!;
-          const value = fruit[key] as number | null;
+          const value = getItemDisplayValue(fruit, key, showPerServing);
           const formatted = formatNutrientDisplay(value, key, showDV);
           const isNull = value === null;
           const showUnit = !isNull && !(showDV && hasDailyValue(key));
@@ -50,6 +51,7 @@ function NutrientGroup({ title, keys, fruit, showEmpty, showDV }: GroupProps) {
 export default function NutrientList({ fruit }: NutrientListProps) {
   const [showEmpty, setShowEmpty] = useState(false);
   const showDV = useStore((s) => s.showDailyValue);
+  const showPerServing = useStore((s) => s.showPerServing);
 
   return (
     <div>
@@ -62,8 +64,8 @@ export default function NutrientList({ fruit }: NutrientListProps) {
         />
         <span className={styles.showEmptyLabel}>Show empty values</span>
       </label>
-      <NutrientGroup title="Vitamins" keys={VITAMIN_KEYS} fruit={fruit} showEmpty={showEmpty} showDV={showDV} />
-      <NutrientGroup title="Minerals" keys={MINERAL_KEYS} fruit={fruit} showEmpty={showEmpty} showDV={showDV} />
+      <NutrientGroup title="Vitamins" keys={VITAMIN_KEYS} fruit={fruit} showEmpty={showEmpty} showDV={showDV} showPerServing={showPerServing} />
+      <NutrientGroup title="Minerals" keys={MINERAL_KEYS} fruit={fruit} showEmpty={showEmpty} showDV={showDV} showPerServing={showPerServing} />
     </div>
   );
 }

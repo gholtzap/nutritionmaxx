@@ -4,10 +4,11 @@ import type { NutrientFruit, ItemCategory, ItemType } from '../types';
 const VALID_CATEGORIES = new Set([
   'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape',
   'Root', 'Leafy Green', 'Cruciferous', 'Legume', 'Allium', 'Nightshade', 'Squash',
+  'Herb', 'Seed', 'Pepper', 'Root/Bark',
   'Other',
 ]);
 
-const VALID_TYPES = new Set(['fruit', 'vegetable']);
+const VALID_TYPES = new Set(['fruit', 'vegetable', 'spice']);
 
 function parseNumeric(value: string | undefined): number | null {
   if (value === undefined || value === null || value === '') return null;
@@ -66,6 +67,8 @@ export async function loadFruits(): Promise<NutrientFruit[]> {
             type: (type || 'fruit') as ItemType,
             category: category as ItemCategory,
             fdc_id: row.fdc_id?.trim() || '',
+            serving_size_g: parseNumeric(row.serving_size_g),
+            serving_label: row.serving_label?.trim() || null,
           };
 
           for (const field of NUMERIC_FIELDS) {

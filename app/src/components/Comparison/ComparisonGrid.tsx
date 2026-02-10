@@ -1,7 +1,7 @@
 import type { NutrientFruit, NutrientKey, NutrientGroup } from '../../types';
 import { useStore } from '../../store';
 import { NUTRIENT_META, NUTRIENT_MAP, hasDailyValue } from '../../utils/nutrition-meta';
-import { formatNutrientDisplay, toDailyValuePercent } from '../../utils/format';
+import { formatNutrientDisplay, toDailyValuePercent, getItemDisplayValue } from '../../utils/format';
 import styles from './Comparison.module.css';
 
 const SLOT_COLORS = ['var(--compare-a)', 'var(--compare-b)', 'var(--compare-c)'];
@@ -42,6 +42,7 @@ interface ComparisonGridProps {
 
 export default function ComparisonGrid({ fruits }: ComparisonGridProps) {
   const showDV = useStore((s) => s.showDailyValue);
+  const showPerServing = useStore((s) => s.showPerServing);
 
   const grouped = GROUP_ORDER.map((group) => ({
     group,
@@ -74,6 +75,7 @@ export default function ComparisonGrid({ fruits }: ComparisonGridProps) {
               nutrients={nutrients}
               fruits={fruits}
               showDV={showDV}
+              showPerServing={showPerServing}
               colCount={fruits.length}
             />
           ))}
@@ -88,10 +90,11 @@ interface GroupSectionProps {
   nutrients: typeof NUTRIENT_META;
   fruits: NutrientFruit[];
   showDV: boolean;
+  showPerServing: boolean;
   colCount: number;
 }
 
-function GroupSection({ label, nutrients, fruits, showDV, colCount }: GroupSectionProps) {
+function GroupSection({ label, nutrients, fruits, showDV, showPerServing, colCount }: GroupSectionProps) {
   return (
     <>
       <tr>
@@ -103,17 +106,17 @@ function GroupSection({ label, nutrients, fruits, showDV, colCount }: GroupSecti
         const key = meta.key as NutrientKey;
         const useDV = showDV && hasDailyValue(key);
 
-        const rawValues = fruits.map((f) => f[key] as number | null);
-        const rawNonNull = rawValues.filter((v): v is number => v !== null);
-        const rawMax = rawNonNull.length > 0 ? Math.max(...rawNonNull) : null;
+        const displayValues = fruits.map((f) => getItemDisplayValue(f, key, showPerServing));
+        const displayNonNull = displayValues.filter((v): v is number => v !== null);
+        const displayMax = displayNonNull.length > 0 ? Math.max(...displayNonNull) : null;
 
-        const values = fruits.map((f) => {
-          const raw = f[key] as number | null;
+        const values = fruits.map((_, i) => {
+          const display = displayValues[i];
           return {
-            raw,
-            display: formatNutrientDisplay(raw, key, showDV),
-            numeric: useDV ? toDailyValuePercent(raw, key) : raw,
-            dvRatio: getDvRatio(raw, key, rawMax),
+            raw: display,
+            display: formatNutrientDisplay(display, key, showDV),
+            numeric: useDV ? toDailyValuePercent(display, key) : display,
+            dvRatio: getDvRatio(display, key, displayMax),
           };
         });
 
