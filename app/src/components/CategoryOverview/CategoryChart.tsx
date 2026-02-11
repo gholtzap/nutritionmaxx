@@ -80,6 +80,8 @@ export default function CategoryChart({ data }: CategoryChartProps) {
               fontSize: 12,
               color: '#e2e8f0',
             }}
+            labelStyle={{ color: '#94a3b8' }}
+            itemStyle={{ color: '#e2e8f0' }}
             formatter={(_: unknown, __: unknown, props: { payload?: { rawValue: number | null } }) => {
               if (!props.payload) return ['', ''];
               return [

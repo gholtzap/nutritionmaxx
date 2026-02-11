@@ -59,6 +59,8 @@ export default function MacroChart({ fruit }: MacroChartProps) {
               fontSize: 12,
               color: '#e2e8f0',
             }}
+            labelStyle={{ color: '#94a3b8' }}
+            itemStyle={{ color: '#e2e8f0' }}
             formatter={(_: unknown, __: unknown, props: { payload?: { display: string; unit: string } }) => {
               if (!props.payload) return ['', ''];
               return [`${props.payload.display} ${props.payload.unit}`, ''];
