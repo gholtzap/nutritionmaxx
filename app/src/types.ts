@@ -1,4 +1,4 @@
-export type ItemType = 'fruit' | 'vegetable' | 'spice' | 'nut_seed' | 'legume';
+export type ItemType = 'fruit' | 'vegetable' | 'spice' | 'nut_seed' | 'legume' | 'grain';
 
 export type FruitCategory =
   | 'Pome'
@@ -38,7 +38,13 @@ export type LegumeCategory =
   | 'Pea'
   | 'Soy';
 
-export type ItemCategory = FruitCategory | VegetableCategory | SpiceCategory | NutSeedCategory | LegumeCategory;
+export type GrainCategory =
+  | 'Rice'
+  | 'Wheat'
+  | 'Ancient Grain'
+  | 'Other';
+
+export type ItemCategory = FruitCategory | VegetableCategory | SpiceCategory | NutSeedCategory | LegumeCategory | GrainCategory;
 
 export type NutrientKey =
   | 'calories_kcal'

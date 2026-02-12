@@ -9,6 +9,7 @@ const TYPE_OPTIONS: { label: string; value: ItemType | null }[] = [
   { label: 'Spices', value: 'spice' },
   { label: 'Nuts & Seeds', value: 'nut_seed' },
   { label: 'Legumes', value: 'legume' },
+  { label: 'Grains', value: 'grain' },
 ];
 
 export default function TypeFilter() {
