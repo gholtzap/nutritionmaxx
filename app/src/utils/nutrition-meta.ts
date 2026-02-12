@@ -1,4 +1,4 @@
-import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, GrainCategory, FishSeafoodCategory, PoultryCategory, BeefCategory, ItemCategory } from '../types';
+import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, GrainCategory, FishSeafoodCategory, PoultryCategory, BeefCategory, PorkCategory, ItemCategory } from '../types';
 
 export interface NutrientMeta {
   key: NutrientKey;
@@ -98,6 +98,8 @@ export const CATEGORY_COLORS: Record<string, string> = {
   Ground: 'var(--cat-ground)',
   Steak: 'var(--cat-steak)',
   'Other Cut': 'var(--cat-other-cut)',
+  Loin: 'var(--cat-loin)',
+  Shoulder: 'var(--cat-shoulder)',
   Other: 'var(--cat-other)',
 };
 
@@ -137,6 +139,10 @@ export const BEEF_CATEGORIES: BeefCategory[] = [
   'Ground', 'Steak', 'Other Cut',
 ];
 
+export const PORK_CATEGORIES: PorkCategory[] = [
+  'Loin', 'Shoulder', 'Other Cut',
+];
+
 export const ALL_CATEGORIES: ItemCategory[] = [
   'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape',
   'Root', 'Leafy Green', 'Cruciferous', 'Legume', 'Allium', 'Nightshade', 'Squash',
@@ -147,6 +153,7 @@ export const ALL_CATEGORIES: ItemCategory[] = [
   'Fish', 'Crustacean', 'Mollusk',
   'Chicken', 'Turkey', 'Other Poultry',
   'Ground', 'Steak', 'Other Cut',
+  'Loin', 'Shoulder',
   'Other',
 ];
 

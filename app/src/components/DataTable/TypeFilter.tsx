@@ -13,6 +13,7 @@ const TYPE_OPTIONS: { label: string; value: ItemType | null }[] = [
   { label: 'Fish & Seafood', value: 'fish_seafood' },
   { label: 'Poultry', value: 'poultry' },
   { label: 'Beef', value: 'beef' },
+  { label: 'Pork', value: 'pork' },
 ];
 
 export default function TypeFilter() {

@@ -1,4 +1,4 @@
-export type ItemType = 'fruit' | 'vegetable' | 'spice' | 'nut_seed' | 'legume' | 'grain' | 'fish_seafood' | 'poultry' | 'beef';
+export type ItemType = 'fruit' | 'vegetable' | 'spice' | 'nut_seed' | 'legume' | 'grain' | 'fish_seafood' | 'poultry' | 'beef' | 'pork';
 
 export type FruitCategory =
   | 'Pome'
@@ -59,7 +59,12 @@ export type BeefCategory =
   | 'Steak'
   | 'Other Cut';
 
-export type ItemCategory = FruitCategory | VegetableCategory | SpiceCategory | NutSeedCategory | LegumeCategory | GrainCategory | FishSeafoodCategory | PoultryCategory | BeefCategory;
+export type PorkCategory =
+  | 'Loin'
+  | 'Shoulder'
+  | 'Other Cut';
+
+export type ItemCategory = FruitCategory | VegetableCategory | SpiceCategory | NutSeedCategory | LegumeCategory | GrainCategory | FishSeafoodCategory | PoultryCategory | BeefCategory | PorkCategory;
 
 export type NutrientKey =
   | 'calories_kcal'

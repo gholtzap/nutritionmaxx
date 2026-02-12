@@ -11,10 +11,11 @@ const VALID_CATEGORIES = new Set([
   'Fish', 'Crustacean', 'Mollusk',
   'Chicken', 'Turkey', 'Other Poultry',
   'Ground', 'Steak', 'Other Cut',
+  'Loin', 'Shoulder',
   'Other',
 ]);
 
-const VALID_TYPES = new Set(['fruit', 'vegetable', 'spice', 'nut_seed', 'legume', 'grain', 'fish_seafood', 'poultry', 'beef']);
+const VALID_TYPES = new Set(['fruit', 'vegetable', 'spice', 'nut_seed', 'legume', 'grain', 'fish_seafood', 'poultry', 'beef', 'pork']);
 
 function parseNumeric(value: string | undefined): number | null {
   if (value === undefined || value === null || value === '') return null;
