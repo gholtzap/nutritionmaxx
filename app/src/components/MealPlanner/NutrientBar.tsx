@@ -15,6 +15,24 @@ interface NutrientBarProps {
 }
 
 export default function NutrientBar({ row, entryCount }: NutrientBarProps) {
+  if (row.insufficientData) {
+    return (
+      <div
+        className={`${styles.barRow} ${styles.barRowInsufficient}`}
+        title="Insufficient data in dataset"
+      >
+        <div className={styles.barLabel}>
+          <span className={styles.barName}>{row.label}</span>
+          <span className={styles.barValue}>Insufficient data</span>
+        </div>
+        <div className={styles.barTrack}>
+          <div className={styles.barFill} style={{ width: 0 }} />
+        </div>
+        <span className={styles.barPct}>--</span>
+      </div>
+    );
+  }
+
   const pct = row.dailyValue > 0 ? (row.total / row.dailyValue) * 100 : 0;
   const clampedWidth = Math.min(pct, 100);
   const color = barColor(pct);

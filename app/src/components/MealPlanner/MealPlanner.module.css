@@ -321,6 +321,11 @@
   margin-bottom: 6px;
 }
 
+.barRowInsufficient {
+  opacity: 0.4;
+  cursor: help;
+}
+
 .barLabel {
   width: 180px;
   flex-shrink: 0;

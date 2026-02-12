@@ -16,12 +16,13 @@ const GROUP_LABELS: Record<string, string> = {
 const GROUP_ORDER = ['macro', 'vitamin', 'mineral'] as const;
 
 export default function NutrientCoverage({ rows, entryCount }: NutrientCoverageProps) {
-  const metCount = rows.filter((r) => r.dailyValue > 0 && r.total >= r.dailyValue).length;
+  const tracked = rows.filter((r) => !r.insufficientData);
+  const metCount = tracked.filter((r) => r.dailyValue > 0 && r.total >= r.dailyValue).length;
 
   return (
     <div className={styles.coverage}>
       <div className={styles.coverageSummary}>
-        {metCount} of {rows.length} nutrients at or above 100% DV
+        {metCount} of {tracked.length} nutrients at or above 100% DV
       </div>
       {GROUP_ORDER.map((group) => {
         const groupRows = rows.filter((r) => r.group === group);
