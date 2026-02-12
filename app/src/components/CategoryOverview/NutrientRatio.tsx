@@ -8,6 +8,8 @@ const TYPE_OPTIONS: { label: string; value: ItemType }[] = [
   { label: 'Fruits', value: 'fruit' },
   { label: 'Vegetables', value: 'vegetable' },
   { label: 'Spices', value: 'spice' },
+  { label: 'Nuts & Seeds', value: 'nut_seed' },
+  { label: 'Legumes', value: 'legume' },
 ];
 
 interface RatioEntry {
