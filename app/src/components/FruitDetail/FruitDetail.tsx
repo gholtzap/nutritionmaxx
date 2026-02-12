@@ -1,5 +1,5 @@
-import { useEffect, useCallback } from 'react';
-import { X } from '@phosphor-icons/react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { X, ShareNetwork, Check } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import Badge from '../shared/Badge';
 import MacroChart from './MacroChart';
@@ -10,6 +10,8 @@ export default function FruitDetail() {
   const selectedFruit = useStore((s) => s.selectedFruit);
   const setSelectedFruit = useStore((s) => s.setSelectedFruit);
   const showPerServing = useStore((s) => s.showPerServing);
+  const [copied, setCopied] = useState(false);
+  const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
@@ -24,6 +26,22 @@ export default function FruitDetail() {
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [handleEscape]);
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimer.current) clearTimeout(copiedTimer.current);
+    };
+  }, []);
+
+  const handleShare = useCallback(() => {
+    if (!selectedFruit) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('food', selectedFruit.name);
+    navigator.clipboard.writeText(url.toString());
+    setCopied(true);
+    if (copiedTimer.current) clearTimeout(copiedTimer.current);
+    copiedTimer.current = setTimeout(() => setCopied(false), 1500);
+  }, [selectedFruit]);
 
   const basisLabel = showPerServing && selectedFruit?.serving_label
     ? selectedFruit.serving_label
@@ -41,14 +59,24 @@ export default function FruitDetail() {
                 <span className={styles.basisLabel}>{basisLabel}</span>
               </div>
             </div>
-            <button
-              type="button"
-              className={styles.closeButton}
-              onClick={() => setSelectedFruit(null)}
-              aria-label="Close detail panel"
-            >
-              <X size={16} />
-            </button>
+            <div className={styles.headerActions}>
+              <button
+                type="button"
+                className={`${styles.closeButton} ${copied ? styles.shareButtonCopied : ''}`}
+                onClick={handleShare}
+                aria-label="Copy link to clipboard"
+              >
+                {copied ? <Check size={16} /> : <ShareNetwork size={16} />}
+              </button>
+              <button
+                type="button"
+                className={styles.closeButton}
+                onClick={() => setSelectedFruit(null)}
+                aria-label="Close detail panel"
+              >
+                <X size={16} />
+              </button>
+            </div>
           </div>
           <div className={styles.body}>
             <MacroChart fruit={selectedFruit} />

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { List } from '@phosphor-icons/react';
 import { useStore } from './store';
 import { useIsMobile } from './utils/use-is-mobile';
@@ -23,9 +23,38 @@ function App() {
   const toggleSidebar = useStore((s) => s.toggleSidebar);
   const isMobile = useIsMobile();
 
+  const fruits = useStore((s) => s.fruits);
+  const setSelectedFruit = useStore((s) => s.setSelectedFruit);
+
   useEffect(() => {
     fetchFruits();
   }, [fetchFruits]);
+
+  const urlInitialized = useRef(false);
+
+  useEffect(() => {
+    if (fruits.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const foodParam = params.get('food');
+    if (foodParam) {
+      const match = fruits.find(
+        (f) => f.name.toLowerCase() === foodParam.toLowerCase()
+      );
+      if (match) setSelectedFruit(match);
+    }
+    urlInitialized.current = true;
+  }, [fruits, setSelectedFruit]);
+
+  useEffect(() => {
+    if (!urlInitialized.current) return;
+    const url = new URL(window.location.href);
+    if (selectedFruit) {
+      url.searchParams.set('food', selectedFruit.name);
+    } else {
+      url.searchParams.delete('food');
+    }
+    window.history.replaceState(null, '', url.toString());
+  }, [selectedFruit]);
 
   const contentClass = [
     styles.content,

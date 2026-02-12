@@ -88,11 +88,13 @@
   display: flex;
   gap: 3px;
   flex: 1;
+  min-width: 60px;
 }
 
 .statSegment {
   height: 6px;
   flex: 1;
+  min-width: 8px;
   border-radius: 2px;
   background: var(--bg-tertiary);
 }

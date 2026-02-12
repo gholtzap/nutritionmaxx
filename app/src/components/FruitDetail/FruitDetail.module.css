@@ -54,6 +54,13 @@
   font-family: var(--font-data);
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
 .closeButton {
   display: flex;
   align-items: center;
@@ -69,6 +76,10 @@
 .closeButton:hover {
   background: var(--bg-tertiary);
   color: var(--text-primary);
+}
+
+.shareButtonCopied {
+  color: var(--green, #48bb78);
 }
 
 .body {
@@ -164,6 +175,10 @@
 
   .header {
     padding: 16px;
+  }
+
+  .headerActions {
+    gap: 4px;
   }
 
   .closeButton {
