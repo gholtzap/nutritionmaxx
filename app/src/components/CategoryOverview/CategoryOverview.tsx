@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useStore } from '../../store';
 import type { ItemCategory } from '../../types';
-import { NUTRIENT_META, FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, ALL_CATEGORIES } from '../../utils/nutrition-meta';
+import { NUTRIENT_META, FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, ALL_CATEGORIES } from '../../utils/nutrition-meta';
 import { computeCategoryAverages } from '../../utils/aggregations';
 import TypeFilter from '../DataTable/TypeFilter';
 import CategoryCard from './CategoryCard';
@@ -27,6 +27,7 @@ export default function CategoryOverview() {
     if (selectedType === 'legume') return [...LEGUME_CATEGORIES];
     if (selectedType === 'grain') return [...GRAIN_CATEGORIES];
     if (selectedType === 'fish_seafood') return [...FISH_SEAFOOD_CATEGORIES];
+    if (selectedType === 'poultry') return [...POULTRY_CATEGORIES];
     return [...ALL_CATEGORIES];
   }, [selectedType]);
 
@@ -54,7 +55,9 @@ export default function CategoryOverview() {
               ? 'grain'
               : selectedType === 'fish_seafood'
                 ? 'fish/seafood'
-                : 'item';
+                : selectedType === 'poultry'
+                  ? 'poultry'
+                  : 'item';
 
   const basisLabel = showPerServing ? 'per serving' : 'per 100g';
 

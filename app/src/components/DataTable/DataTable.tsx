@@ -102,7 +102,9 @@ export default function DataTable() {
               ? sorted.length === 1 ? 'grain' : 'grains'
               : selectedType === 'fish_seafood'
                 ? sorted.length === 1 ? 'fish/seafood' : 'fish & seafood'
-                : sorted.length === 1 ? 'item' : 'items';
+                : selectedType === 'poultry'
+                  ? sorted.length === 1 ? 'poultry' : 'poultry'
+                  : sorted.length === 1 ? 'item' : 'items';
 
   return (
     <div className={styles.container}>

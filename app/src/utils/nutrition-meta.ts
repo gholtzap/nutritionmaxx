@@ -1,4 +1,4 @@
-import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, GrainCategory, FishSeafoodCategory, ItemCategory } from '../types';
+import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, GrainCategory, FishSeafoodCategory, PoultryCategory, ItemCategory } from '../types';
 
 export interface NutrientMeta {
   key: NutrientKey;
@@ -92,6 +92,9 @@ export const CATEGORY_COLORS: Record<string, string> = {
   Fish: 'var(--cat-fish)',
   Crustacean: 'var(--cat-crustacean)',
   Mollusk: 'var(--cat-mollusk)',
+  Chicken: 'var(--cat-chicken)',
+  Turkey: 'var(--cat-turkey)',
+  'Other Poultry': 'var(--cat-other-poultry)',
   Other: 'var(--cat-other)',
 };
 
@@ -123,6 +126,10 @@ export const FISH_SEAFOOD_CATEGORIES: FishSeafoodCategory[] = [
   'Fish', 'Crustacean', 'Mollusk',
 ];
 
+export const POULTRY_CATEGORIES: PoultryCategory[] = [
+  'Chicken', 'Turkey', 'Other Poultry',
+];
+
 export const ALL_CATEGORIES: ItemCategory[] = [
   'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape',
   'Root', 'Leafy Green', 'Cruciferous', 'Legume', 'Allium', 'Nightshade', 'Squash',
@@ -131,6 +138,7 @@ export const ALL_CATEGORIES: ItemCategory[] = [
   'Bean', 'Lentil', 'Pea', 'Soy',
   'Rice', 'Wheat', 'Ancient Grain',
   'Fish', 'Crustacean', 'Mollusk',
+  'Chicken', 'Turkey', 'Other Poultry',
   'Other',
 ];
 

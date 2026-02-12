@@ -9,10 +9,11 @@ const VALID_CATEGORIES = new Set([
   'Bean', 'Lentil', 'Pea', 'Soy',
   'Rice', 'Wheat', 'Ancient Grain',
   'Fish', 'Crustacean', 'Mollusk',
+  'Chicken', 'Turkey', 'Other Poultry',
   'Other',
 ]);
 
-const VALID_TYPES = new Set(['fruit', 'vegetable', 'spice', 'nut_seed', 'legume', 'grain', 'fish_seafood']);
+const VALID_TYPES = new Set(['fruit', 'vegetable', 'spice', 'nut_seed', 'legume', 'grain', 'fish_seafood', 'poultry']);
 
 function parseNumeric(value: string | undefined): number | null {
   if (value === undefined || value === null || value === '') return null;
