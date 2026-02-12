@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useStore } from '../../store';
+import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import type { ItemCategory } from '../../types';
 import { NUTRIENT_META, FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, BEEF_CATEGORIES, PORK_CATEGORIES, FAT_OIL_CATEGORIES, ALL_CATEGORIES } from '../../utils/nutrition-meta';
 import { computeCategoryAverages } from '../../utils/aggregations';
@@ -10,7 +11,7 @@ import NutrientRatio from './NutrientRatio';
 import styles from './CategoryOverview.module.css';
 
 export default function CategoryOverview() {
-  const fruits = useStore((s) => s.fruits);
+  const fruits = useDietaryFruits();
   const selectedType = useStore((s) => s.selectedType);
   const showPerServing = useStore((s) => s.showPerServing);
 

@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType, PlanEntry } from './types';
 import { DEFAULT_VISIBLE_COLUMNS } from './utils/nutrition-meta';
 import { loadFruits } from './utils/parse-csv';
+import type { DietaryPreference, DietaryPreferences } from './utils/dietary';
+import { DEFAULT_PREFERENCES } from './utils/dietary';
 
 interface AppState {
   fruits: NutrientFruit[];
@@ -21,6 +23,10 @@ interface AppState {
   sidebarCollapsed: boolean;
 
   planEntries: PlanEntry[];
+
+  dietaryPreferences: DietaryPreferences;
+  toggleDietaryPreference: (key: DietaryPreference) => void;
+  clearDietaryPreferences: () => void;
 
   fetchFruits: () => Promise<void>;
   setActiveView: (view: ViewId) => void;
@@ -64,6 +70,26 @@ export const useStore = create<AppState>((set, get) => ({
   sidebarCollapsed: false,
 
   planEntries: [],
+
+  dietaryPreferences: (() => {
+    try {
+      const stored = localStorage.getItem('dietaryPreferences');
+      if (stored) return { ...DEFAULT_PREFERENCES, ...JSON.parse(stored) };
+    } catch {}
+    return { ...DEFAULT_PREFERENCES };
+  })(),
+
+  toggleDietaryPreference: (key) =>
+    set((state) => {
+      const next = { ...state.dietaryPreferences, [key]: !state.dietaryPreferences[key] };
+      localStorage.setItem('dietaryPreferences', JSON.stringify(next));
+      return { dietaryPreferences: next };
+    }),
+
+  clearDietaryPreferences: () => {
+    localStorage.removeItem('dietaryPreferences');
+    set({ dietaryPreferences: { ...DEFAULT_PREFERENCES } });
+  },
 
   fetchFruits: async () => {
     if (get().fruits.length > 0 || get().loading) return;

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useStore } from '../../store';
+import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import type { NutrientFruit, NutrientKey } from '../../types';
 import { NUTRIENT_META } from '../../utils/nutrition-meta';
 import { getItemDisplayValue } from '../../utils/format';
@@ -12,7 +13,7 @@ import TableRow from './TableRow';
 import styles from './DataTable.module.css';
 
 export default function DataTable() {
-  const fruits = useStore((s) => s.fruits);
+  const fruits = useDietaryFruits();
   const searchQuery = useStore((s) => s.searchQuery);
   const selectedType = useStore((s) => s.selectedType);
   const selectedCategories = useStore((s) => s.selectedCategories);

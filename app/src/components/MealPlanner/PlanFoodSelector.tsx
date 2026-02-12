@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { MagnifyingGlass } from '@phosphor-icons/react';
 import { useStore } from '../../store';
+import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import type { NutrientFruit } from '../../types';
 import styles from './MealPlanner.module.css';
 
 export default function PlanFoodSelector() {
-  const fruits = useStore((s) => s.fruits);
+  const fruits = useDietaryFruits();
   const planEntries = useStore((s) => s.planEntries);
   const addPlanEntry = useStore((s) => s.addPlanEntry);
 

@@ -5,6 +5,7 @@ import { NUTRIENT_MAP } from '../../utils/nutrition-meta';
 import { formatNutrientWithUnit, getItemDisplayValue } from '../../utils/format';
 import type { NutrientKey } from '../../types';
 import { useStore } from '../../store';
+import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import Badge from '../shared/Badge';
 import StatBar from './StatBar';
 import styles from './NutrientGuide.module.css';
@@ -17,7 +18,7 @@ interface NutrientDetailProps {
 export default function NutrientDetail({ profile, onBack }: NutrientDetailProps) {
   const meta = NUTRIENT_MAP.get(profile.key);
   const label = meta?.label ?? profile.key;
-  const fruits = useStore((s) => s.fruits);
+  const fruits = useDietaryFruits();
   const showPerServing = useStore((s) => s.showPerServing);
 
   const sortedStats = (Object.entries(profile.stats) as [BodySystem, number][])

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { NutrientKey, ItemType, ItemCategory } from '../../types';
-import { useStore } from '../../store';
+import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import { NUTRIENT_META, NUTRIENT_MAP, CATEGORY_COLORS } from '../../utils/nutrition-meta';
 import styles from './CategoryOverview.module.css';
 
@@ -24,7 +24,7 @@ interface RatioEntry {
 }
 
 export default function NutrientRatio() {
-  const fruits = useStore((s) => s.fruits);
+  const fruits = useDietaryFruits();
   const [numerator, setNumerator] = useState<NutrientKey>('protein_g');
   const [denominator, setDenominator] = useState<NutrientKey>('calories_kcal');
   const [excludedTypes, setExcludedTypes] = useState<Set<ItemType>>(new Set());

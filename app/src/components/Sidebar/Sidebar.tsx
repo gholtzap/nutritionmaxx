@@ -1,6 +1,7 @@
-import { Table, GitDiff, SquaresFour, Pill, Scales, SidebarSimple } from '@phosphor-icons/react';
+import { Table, GitDiff, SquaresFour, Pill, Scales, SlidersHorizontal, SidebarSimple } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
+import { countExcluded } from '../../utils/dietary';
 import NavItem from './NavItem';
 import styles from './Sidebar.module.css';
 
@@ -10,6 +11,7 @@ const NAV_ITEMS: { id: ViewId; label: string; icon: React.ReactNode }[] = [
   { id: 'categories', label: 'Categories', icon: <SquaresFour size={18} weight="regular" /> },
   { id: 'nutrients', label: 'Nutrients', icon: <Pill size={18} weight="regular" /> },
   { id: 'planner', label: 'Planner', icon: <Scales size={18} weight="regular" /> },
+  { id: 'dietary', label: 'Diet', icon: <SlidersHorizontal size={18} weight="regular" /> },
 ];
 
 export default function Sidebar() {
@@ -22,6 +24,8 @@ export default function Sidebar() {
   const sidebarCollapsed = useStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useStore((s) => s.toggleSidebar);
   const fruits = useStore((s) => s.fruits);
+  const dietaryPreferences = useStore((s) => s.dietaryPreferences);
+  const excluded = countExcluded(fruits, dietaryPreferences);
 
   return (
     <aside className={`${styles.sidebar} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
@@ -66,7 +70,11 @@ export default function Sidebar() {
         <span className={styles.dvLabel}>Per Serving</span>
       </label>
       <div className={styles.footer}>
-        <span className={styles.footerText}>{fruits.length} items / 29 nutrients</span>
+        <span className={styles.footerText}>
+          {excluded > 0
+            ? `${fruits.length - excluded} / ${fruits.length} items`
+            : `${fruits.length} items / 29 nutrients`}
+        </span>
       </div>
     </aside>
   );

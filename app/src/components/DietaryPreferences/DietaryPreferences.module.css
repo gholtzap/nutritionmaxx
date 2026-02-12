@@ -1,0 +1,133 @@
+.container {
+  padding: 20px 24px;
+  max-width: 600px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.subtitleCount {
+  color: var(--accent);
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  transition: background 0.15s;
+}
+
+.row:hover {
+  background: var(--bg-tertiary);
+}
+
+.rowInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.rowLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.rowDescription {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 1px;
+}
+
+.rowCount {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.toggle {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  transition: transform 0.2s, background 0.2s;
+}
+
+.toggleActive {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.toggleActive::after {
+  transform: translateX(14px);
+  background: #fff;
+}
+
+.clearButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  transition: background 0.15s, color 0.15s;
+  margin-top: 8px;
+}
+
+.clearButton:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}

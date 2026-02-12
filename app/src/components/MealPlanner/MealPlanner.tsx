@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { ShareNetwork, Check, Trash, Lightning } from '@phosphor-icons/react';
 import { useStore } from '../../store';
+import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import { computePlanDailyTotals, generateAutoFillPlan } from '../../utils/plan-calculator';
 import PlanFoodSelector from './PlanFoodSelector';
 import PlanEntryRow from './PlanEntryRow';
@@ -8,7 +9,7 @@ import NutrientCoverage from './NutrientCoverage';
 import styles from './MealPlanner.module.css';
 
 export default function MealPlanner() {
-  const fruits = useStore((s) => s.fruits);
+  const fruits = useDietaryFruits();
   const planEntries = useStore((s) => s.planEntries);
   const clearPlan = useStore((s) => s.clearPlan);
   const setPlanEntries = useStore((s) => s.setPlanEntries);

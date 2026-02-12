@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useStore } from '../../store';
+import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import type { NutrientFruit } from '../../types';
 import styles from './Comparison.module.css';
 
 const SLOT_COLORS = ['var(--compare-a)', 'var(--compare-b)', 'var(--compare-c)'];
 
 export default function FruitSelector() {
-  const fruits = useStore((s) => s.fruits);
+  const fruits = useDietaryFruits();
   const comparisonFruits = useStore((s) => s.comparisonFruits);
   const toggleComparisonFruit = useStore((s) => s.toggleComparisonFruit);
   const removeComparisonFruit = useStore((s) => s.removeComparisonFruit);
