@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useStore } from '../../store';
 import type { ItemCategory } from '../../types';
-import { FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, ALL_CATEGORIES, CATEGORY_COLORS } from '../../utils/nutrition-meta';
+import { FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, BEEF_CATEGORIES, ALL_CATEGORIES, CATEGORY_COLORS } from '../../utils/nutrition-meta';
 import styles from './DataTable.module.css';
 
 export default function CategoryFilter() {
@@ -18,6 +18,7 @@ export default function CategoryFilter() {
     if (selectedType === 'grain') return GRAIN_CATEGORIES as readonly ItemCategory[];
     if (selectedType === 'fish_seafood') return FISH_SEAFOOD_CATEGORIES as readonly ItemCategory[];
     if (selectedType === 'poultry') return POULTRY_CATEGORIES as readonly ItemCategory[];
+    if (selectedType === 'beef') return BEEF_CATEGORIES as readonly ItemCategory[];
     return ALL_CATEGORIES;
   }, [selectedType]);
 
