@@ -1,4 +1,4 @@
-export type ItemType = 'fruit' | 'vegetable' | 'spice';
+export type ItemType = 'fruit' | 'vegetable' | 'spice' | 'nut_seed';
 
 export type FruitCategory =
   | 'Pome'
@@ -27,7 +27,12 @@ export type SpiceCategory =
   | 'Root/Bark'
   | 'Other';
 
-export type ItemCategory = FruitCategory | VegetableCategory | SpiceCategory;
+export type NutSeedCategory =
+  | 'Tree Nut'
+  | 'Seed'
+  | 'Legume Nut';
+
+export type ItemCategory = FruitCategory | VegetableCategory | SpiceCategory | NutSeedCategory;
 
 export type NutrientKey =
   | 'calories_kcal'

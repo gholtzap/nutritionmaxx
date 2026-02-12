@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useStore } from '../../store';
 import type { ItemCategory } from '../../types';
-import { FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, ALL_CATEGORIES, CATEGORY_COLORS } from '../../utils/nutrition-meta';
+import { FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, ALL_CATEGORIES, CATEGORY_COLORS } from '../../utils/nutrition-meta';
 import styles from './DataTable.module.css';
 
 export default function CategoryFilter() {
@@ -13,6 +13,7 @@ export default function CategoryFilter() {
     if (selectedType === 'fruit') return FRUIT_CATEGORIES as readonly ItemCategory[];
     if (selectedType === 'vegetable') return VEGETABLE_CATEGORIES as readonly ItemCategory[];
     if (selectedType === 'spice') return SPICE_CATEGORIES as readonly ItemCategory[];
+    if (selectedType === 'nut_seed') return NUT_SEED_CATEGORIES as readonly ItemCategory[];
     return ALL_CATEGORIES;
   }, [selectedType]);
 

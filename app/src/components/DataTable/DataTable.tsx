@@ -94,7 +94,9 @@ export default function DataTable() {
       ? sorted.length === 1 ? 'vegetable' : 'vegetables'
       : selectedType === 'spice'
         ? sorted.length === 1 ? 'spice' : 'spices'
-        : sorted.length === 1 ? 'item' : 'items';
+        : selectedType === 'nut_seed'
+          ? sorted.length === 1 ? 'nut/seed' : 'nuts & seeds'
+          : sorted.length === 1 ? 'item' : 'items';
 
   return (
     <div className={styles.container}>
