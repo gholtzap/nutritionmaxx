@@ -29,6 +29,7 @@ interface AppState {
   toggleColumn: (key: NutrientKey) => void;
   setColumnGroup: (keys: NutrientKey[], visible: boolean) => void;
   setSelectedFruit: (fruit: NutrientFruit | null) => void;
+  setComparisonFruits: (fruits: NutrientFruit[]) => void;
   toggleComparisonFruit: (fruit: NutrientFruit) => void;
   removeComparisonFruit: (name: string) => void;
   clearComparison: () => void;
@@ -112,6 +113,8 @@ export const useStore = create<AppState>((set, get) => ({
     }),
 
   setSelectedFruit: (fruit) => set({ selectedFruit: fruit }),
+
+  setComparisonFruits: (fruits) => set({ comparisonFruits: fruits }),
 
   toggleComparisonFruit: (fruit) =>
     set((state) => {

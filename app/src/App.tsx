@@ -25,6 +25,9 @@ function App() {
 
   const fruits = useStore((s) => s.fruits);
   const setSelectedFruit = useStore((s) => s.setSelectedFruit);
+  const comparisonFruits = useStore((s) => s.comparisonFruits);
+  const setComparisonFruits = useStore((s) => s.setComparisonFruits);
+  const setActiveView = useStore((s) => s.setActiveView);
 
   useEffect(() => {
     fetchFruits();
@@ -35,26 +38,46 @@ function App() {
   useEffect(() => {
     if (fruits.length === 0) return;
     const params = new URLSearchParams(window.location.search);
-    const foodParam = params.get('food');
-    if (foodParam) {
-      const match = fruits.find(
-        (f) => f.name.toLowerCase() === foodParam.toLowerCase()
-      );
-      if (match) setSelectedFruit(match);
+
+    const compareParam = params.get('compare');
+    if (compareParam) {
+      const names = compareParam.split(',').map((n) => n.trim()).filter(Boolean);
+      const matched = names
+        .map((n) => fruits.find((f) => f.name.toLowerCase() === n.toLowerCase()))
+        .filter((f): f is typeof fruits[number] => f != null)
+        .slice(0, 3);
+      if (matched.length > 0) {
+        setComparisonFruits(matched);
+        setActiveView('comparison');
+      }
+    } else {
+      const foodParam = params.get('food');
+      if (foodParam) {
+        const match = fruits.find(
+          (f) => f.name.toLowerCase() === foodParam.toLowerCase()
+        );
+        if (match) setSelectedFruit(match);
+      }
     }
+
     urlInitialized.current = true;
-  }, [fruits, setSelectedFruit]);
+  }, [fruits, setSelectedFruit, setComparisonFruits, setActiveView]);
 
   useEffect(() => {
     if (!urlInitialized.current) return;
     const url = new URL(window.location.href);
-    if (selectedFruit) {
+    if (activeView === 'comparison' && comparisonFruits.length > 0) {
+      url.searchParams.set('compare', comparisonFruits.map((f) => f.name).join(','));
+      url.searchParams.delete('food');
+    } else if (selectedFruit) {
       url.searchParams.set('food', selectedFruit.name);
+      url.searchParams.delete('compare');
     } else {
       url.searchParams.delete('food');
+      url.searchParams.delete('compare');
     }
     window.history.replaceState(null, '', url.toString());
-  }, [selectedFruit]);
+  }, [selectedFruit, comparisonFruits, activeView]);
 
   const contentClass = [
     styles.content,
