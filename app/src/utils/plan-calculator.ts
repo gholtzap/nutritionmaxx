@@ -147,6 +147,7 @@ function applySelection(
 }
 
 const TOP_N = 5;
+const DIVERSITY_DECAY = 0.7;
 
 export function generateAutoFillPlan(
   fruits: NutrientFruit[],
@@ -163,10 +164,12 @@ export function generateAutoFillPlan(
 
   const plan: PlanEntry[] = [...lockedEntries];
   const used = new Set<string>(lockedEntries.map((e) => e.name));
+  const typeCounts = new Map<string, number>();
 
   for (const entry of lockedEntries) {
     const fruit = fruitMap.get(entry.name);
     if (!fruit) continue;
+    typeCounts.set(fruit.type, (typeCounts.get(fruit.type) ?? 0) + 1);
     const servingG = fruit.serving_size_g ?? 100;
     const dailyFactor = (servingG / 100) * (entry.servingsPerWeek / 7);
     for (const meta of PLAN_NUTRIENTS) {
@@ -185,7 +188,10 @@ export function generateAutoFillPlan(
     for (const fruit of pool) {
       if (used.has(fruit.name)) continue;
       const result = scoreCandidate(fruit, remaining);
-      if (result) scored.push(result);
+      if (!result) continue;
+      const count = typeCounts.get(fruit.type) ?? 0;
+      result.score *= DIVERSITY_DECAY ** count;
+      scored.push(result);
     }
 
     if (scored.length === 0) break;
@@ -196,6 +202,7 @@ export function generateAutoFillPlan(
 
     plan.push({ name: picked.fruit.name, servingsPerWeek: picked.servings });
     used.add(picked.fruit.name);
+    typeCounts.set(picked.fruit.type, (typeCounts.get(picked.fruit.type) ?? 0) + 1);
     applySelection(picked, remaining);
   }
 
