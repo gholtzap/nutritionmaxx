@@ -54,7 +54,7 @@ export default function CategoryOverview() {
       </div>
       <TypeFilter />
       <CategoryChart data={categoryData} />
-      <NutrientRatio items={filteredItems} />
+      <NutrientRatio />
       <div className={styles.grid}>
         {categoryData.map((d) => (
           <CategoryCard key={d.category} data={d} />
