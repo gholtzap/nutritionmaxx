@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType } from './types';
+import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType, PlanEntry } from './types';
 import { DEFAULT_VISIBLE_COLUMNS } from './utils/nutrition-meta';
 import { loadFruits } from './utils/parse-csv';
 
@@ -20,6 +20,8 @@ interface AppState {
   showPerServing: boolean;
   sidebarCollapsed: boolean;
 
+  planEntries: PlanEntry[];
+
   fetchFruits: () => Promise<void>;
   setActiveView: (view: ViewId) => void;
   setSearchQuery: (query: string) => void;
@@ -36,6 +38,12 @@ interface AppState {
   toggleDailyValue: () => void;
   togglePerServing: () => void;
   toggleSidebar: () => void;
+
+  addPlanEntry: (name: string) => void;
+  removePlanEntry: (name: string) => void;
+  setPlanEntryServings: (name: string, servingsPerWeek: number) => void;
+  clearPlan: () => void;
+  setPlanEntries: (entries: PlanEntry[]) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -54,6 +62,8 @@ export const useStore = create<AppState>((set, get) => ({
   showDailyValue: true,
   showPerServing: true,
   sidebarCollapsed: false,
+
+  planEntries: [],
 
   fetchFruits: async () => {
     if (get().fruits.length > 0 || get().loading) return;
@@ -145,4 +155,26 @@ export const useStore = create<AppState>((set, get) => ({
 
   toggleSidebar: () =>
     set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
+
+  addPlanEntry: (name) =>
+    set((state) => {
+      if (state.planEntries.some((e) => e.name === name)) return state;
+      return { planEntries: [...state.planEntries, { name, servingsPerWeek: 7 }] };
+    }),
+
+  removePlanEntry: (name) =>
+    set((state) => ({
+      planEntries: state.planEntries.filter((e) => e.name !== name),
+    })),
+
+  setPlanEntryServings: (name, servingsPerWeek) =>
+    set((state) => ({
+      planEntries: state.planEntries.map((e) =>
+        e.name === name ? { ...e, servingsPerWeek } : e
+      ),
+    })),
+
+  clearPlan: () => set({ planEntries: [] }),
+
+  setPlanEntries: (entries) => set({ planEntries: entries }),
 }));

@@ -81,6 +81,11 @@ export interface SortConfig {
   direction: SortDirection;
 }
 
-export type ViewId = 'table' | 'comparison' | 'categories' | 'nutrients';
+export type ViewId = 'table' | 'comparison' | 'categories' | 'nutrients' | 'planner';
 
 export type NutrientGroup = 'macro' | 'vitamin' | 'mineral';
+
+export interface PlanEntry {
+  name: string;
+  servingsPerWeek: number;
+}

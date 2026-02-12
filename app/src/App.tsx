@@ -8,6 +8,7 @@ import FruitDetail from './components/FruitDetail/FruitDetail';
 import Comparison from './components/Comparison/Comparison';
 import CategoryOverview from './components/CategoryOverview/CategoryOverview';
 import NutrientGuide from './components/NutrientGuide/NutrientGuide';
+import MealPlanner from './components/MealPlanner/MealPlanner';
 import Spinner from './components/shared/Spinner';
 import styles from './App.module.css';
 
@@ -28,6 +29,8 @@ function App() {
   const comparisonFruits = useStore((s) => s.comparisonFruits);
   const setComparisonFruits = useStore((s) => s.setComparisonFruits);
   const setActiveView = useStore((s) => s.setActiveView);
+  const planEntries = useStore((s) => s.planEntries);
+  const setPlanEntries = useStore((s) => s.setPlanEntries);
 
   useEffect(() => {
     fetchFruits();
@@ -39,45 +42,76 @@ function App() {
     if (fruits.length === 0) return;
     const params = new URLSearchParams(window.location.search);
 
-    const compareParam = params.get('compare');
-    if (compareParam) {
-      const names = compareParam.split(',').map((n) => n.trim()).filter(Boolean);
-      const matched = names
-        .map((n) => fruits.find((f) => f.name.toLowerCase() === n.toLowerCase()))
-        .filter((f): f is typeof fruits[number] => f != null)
-        .slice(0, 3);
-      if (matched.length > 0) {
-        setComparisonFruits(matched);
-        setActiveView('comparison');
+    const planParam = params.get('plan');
+    if (planParam) {
+      const entries = planParam
+        .split(',')
+        .map((seg) => {
+          const idx = seg.lastIndexOf(':');
+          if (idx === -1) return null;
+          const name = seg.slice(0, idx).trim();
+          const spw = parseFloat(seg.slice(idx + 1));
+          if (!name || isNaN(spw) || spw <= 0) return null;
+          const match = fruits.find((f) => f.name.toLowerCase() === name.toLowerCase());
+          if (!match) return null;
+          return { name: match.name, servingsPerWeek: spw };
+        })
+        .filter((e): e is { name: string; servingsPerWeek: number } => e != null);
+      if (entries.length > 0) {
+        setPlanEntries(entries);
+        setActiveView('planner');
       }
     } else {
-      const foodParam = params.get('food');
-      if (foodParam) {
-        const match = fruits.find(
-          (f) => f.name.toLowerCase() === foodParam.toLowerCase()
-        );
-        if (match) setSelectedFruit(match);
+      const compareParam = params.get('compare');
+      if (compareParam) {
+        const names = compareParam.split(',').map((n) => n.trim()).filter(Boolean);
+        const matched = names
+          .map((n) => fruits.find((f) => f.name.toLowerCase() === n.toLowerCase()))
+          .filter((f): f is typeof fruits[number] => f != null)
+          .slice(0, 3);
+        if (matched.length > 0) {
+          setComparisonFruits(matched);
+          setActiveView('comparison');
+        }
+      } else {
+        const foodParam = params.get('food');
+        if (foodParam) {
+          const match = fruits.find(
+            (f) => f.name.toLowerCase() === foodParam.toLowerCase()
+          );
+          if (match) setSelectedFruit(match);
+        }
       }
     }
 
     urlInitialized.current = true;
-  }, [fruits, setSelectedFruit, setComparisonFruits, setActiveView]);
+  }, [fruits, setSelectedFruit, setComparisonFruits, setActiveView, setPlanEntries]);
 
   useEffect(() => {
     if (!urlInitialized.current) return;
     const url = new URL(window.location.href);
-    if (activeView === 'comparison' && comparisonFruits.length > 0) {
+    if (activeView === 'planner' && planEntries.length > 0) {
+      url.searchParams.set(
+        'plan',
+        planEntries.map((e) => `${e.name}:${e.servingsPerWeek}`).join(',')
+      );
+      url.searchParams.delete('food');
+      url.searchParams.delete('compare');
+    } else if (activeView === 'comparison' && comparisonFruits.length > 0) {
       url.searchParams.set('compare', comparisonFruits.map((f) => f.name).join(','));
       url.searchParams.delete('food');
+      url.searchParams.delete('plan');
     } else if (selectedFruit) {
       url.searchParams.set('food', selectedFruit.name);
       url.searchParams.delete('compare');
+      url.searchParams.delete('plan');
     } else {
       url.searchParams.delete('food');
       url.searchParams.delete('compare');
+      url.searchParams.delete('plan');
     }
     window.history.replaceState(null, '', url.toString());
-  }, [selectedFruit, comparisonFruits, activeView]);
+  }, [selectedFruit, comparisonFruits, activeView, planEntries]);
 
   const contentClass = [
     styles.content,
@@ -123,6 +157,7 @@ function App() {
             {activeView === 'comparison' && <Comparison />}
             {activeView === 'categories' && <CategoryOverview />}
             {activeView === 'nutrients' && <NutrientGuide />}
+            {activeView === 'planner' && <MealPlanner />}
           </>
         )}
       </main>
