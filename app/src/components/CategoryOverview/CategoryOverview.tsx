@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useStore } from '../../store';
 import type { ItemCategory } from '../../types';
-import { NUTRIENT_META, FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, ALL_CATEGORIES } from '../../utils/nutrition-meta';
+import { NUTRIENT_META, FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, ALL_CATEGORIES } from '../../utils/nutrition-meta';
 import { computeCategoryAverages } from '../../utils/aggregations';
 import TypeFilter from '../DataTable/TypeFilter';
 import CategoryCard from './CategoryCard';
@@ -24,6 +24,7 @@ export default function CategoryOverview() {
     if (selectedType === 'vegetable') return [...VEGETABLE_CATEGORIES];
     if (selectedType === 'spice') return [...SPICE_CATEGORIES];
     if (selectedType === 'nut_seed') return [...NUT_SEED_CATEGORIES];
+    if (selectedType === 'legume') return [...LEGUME_CATEGORIES];
     return [...ALL_CATEGORIES];
   }, [selectedType]);
 
@@ -45,7 +46,9 @@ export default function CategoryOverview() {
         ? 'spice'
         : selectedType === 'nut_seed'
           ? 'nut & seed'
-          : 'item';
+          : selectedType === 'legume'
+            ? 'legume'
+            : 'item';
 
   const basisLabel = showPerServing ? 'per serving' : 'per 100g';
 

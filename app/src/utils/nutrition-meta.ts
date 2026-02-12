@@ -1,4 +1,4 @@
-import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, ItemCategory } from '../types';
+import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, ItemCategory } from '../types';
 
 export interface NutrientMeta {
   key: NutrientKey;
@@ -82,6 +82,10 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'Root/Bark': 'var(--cat-root-bark)',
   'Tree Nut': 'var(--cat-tree-nut)',
   'Legume Nut': 'var(--cat-legume-nut)',
+  Bean: 'var(--cat-bean)',
+  Lentil: 'var(--cat-lentil)',
+  Pea: 'var(--cat-pea)',
+  Soy: 'var(--cat-soy)',
   Other: 'var(--cat-other)',
 };
 
@@ -101,11 +105,16 @@ export const NUT_SEED_CATEGORIES: NutSeedCategory[] = [
   'Tree Nut', 'Seed', 'Legume Nut',
 ];
 
+export const LEGUME_CATEGORIES: LegumeCategory[] = [
+  'Bean', 'Lentil', 'Pea', 'Soy',
+];
+
 export const ALL_CATEGORIES: ItemCategory[] = [
   'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape',
   'Root', 'Leafy Green', 'Cruciferous', 'Legume', 'Allium', 'Nightshade', 'Squash',
   'Herb', 'Seed', 'Pepper', 'Root/Bark',
   'Tree Nut', 'Legume Nut',
+  'Bean', 'Lentil', 'Pea', 'Soy',
   'Other',
 ];
 

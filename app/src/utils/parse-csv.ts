@@ -6,10 +6,11 @@ const VALID_CATEGORIES = new Set([
   'Root', 'Leafy Green', 'Cruciferous', 'Legume', 'Allium', 'Nightshade', 'Squash',
   'Herb', 'Seed', 'Pepper', 'Root/Bark',
   'Tree Nut', 'Legume Nut',
+  'Bean', 'Lentil', 'Pea', 'Soy',
   'Other',
 ]);
 
-const VALID_TYPES = new Set(['fruit', 'vegetable', 'spice', 'nut_seed']);
+const VALID_TYPES = new Set(['fruit', 'vegetable', 'spice', 'nut_seed', 'legume']);
 
 function parseNumeric(value: string | undefined): number | null {
   if (value === undefined || value === null || value === '') return null;
