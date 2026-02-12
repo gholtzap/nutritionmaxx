@@ -1,4 +1,4 @@
-import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, GrainCategory, FishSeafoodCategory, PoultryCategory, BeefCategory, PorkCategory, ItemCategory } from '../types';
+import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, GrainCategory, FishSeafoodCategory, PoultryCategory, BeefCategory, PorkCategory, FatOilCategory, ItemCategory } from '../types';
 
 export interface NutrientMeta {
   key: NutrientKey;
@@ -100,6 +100,10 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'Other Cut': 'var(--cat-other-cut)',
   Loin: 'var(--cat-loin)',
   Shoulder: 'var(--cat-shoulder)',
+  'Plant Oil': 'var(--cat-plant-oil)',
+  'Nut & Seed Oil': 'var(--cat-nut-seed-oil)',
+  'Animal Fat': 'var(--cat-animal-fat)',
+  Processed: 'var(--cat-processed)',
   Other: 'var(--cat-other)',
 };
 
@@ -143,6 +147,10 @@ export const PORK_CATEGORIES: PorkCategory[] = [
   'Loin', 'Shoulder', 'Other Cut',
 ];
 
+export const FAT_OIL_CATEGORIES: FatOilCategory[] = [
+  'Plant Oil', 'Nut & Seed Oil', 'Animal Fat', 'Processed',
+];
+
 export const ALL_CATEGORIES: ItemCategory[] = [
   'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape',
   'Root', 'Leafy Green', 'Cruciferous', 'Legume', 'Allium', 'Nightshade', 'Squash',
@@ -154,6 +162,7 @@ export const ALL_CATEGORIES: ItemCategory[] = [
   'Chicken', 'Turkey', 'Other Poultry',
   'Ground', 'Steak', 'Other Cut',
   'Loin', 'Shoulder',
+  'Plant Oil', 'Nut & Seed Oil', 'Animal Fat', 'Processed',
   'Other',
 ];
 

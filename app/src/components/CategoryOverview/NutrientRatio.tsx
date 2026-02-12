@@ -15,6 +15,7 @@ const TYPE_OPTIONS: { label: string; value: ItemType }[] = [
   { label: 'Poultry', value: 'poultry' },
   { label: 'Beef', value: 'beef' },
   { label: 'Pork', value: 'pork' },
+  { label: 'Fats & Oils', value: 'fat_oil' },
 ];
 
 interface RatioEntry {

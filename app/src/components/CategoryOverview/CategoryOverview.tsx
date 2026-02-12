@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useStore } from '../../store';
 import type { ItemCategory } from '../../types';
-import { NUTRIENT_META, FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, BEEF_CATEGORIES, PORK_CATEGORIES, ALL_CATEGORIES } from '../../utils/nutrition-meta';
+import { NUTRIENT_META, FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, BEEF_CATEGORIES, PORK_CATEGORIES, FAT_OIL_CATEGORIES, ALL_CATEGORIES } from '../../utils/nutrition-meta';
 import { computeCategoryAverages } from '../../utils/aggregations';
 import TypeFilter from '../DataTable/TypeFilter';
 import CategoryCard from './CategoryCard';
@@ -30,6 +30,7 @@ export default function CategoryOverview() {
     if (selectedType === 'poultry') return [...POULTRY_CATEGORIES];
     if (selectedType === 'beef') return [...BEEF_CATEGORIES];
     if (selectedType === 'pork') return [...PORK_CATEGORIES];
+    if (selectedType === 'fat_oil') return [...FAT_OIL_CATEGORIES];
     return [...ALL_CATEGORIES];
   }, [selectedType]);
 
@@ -63,7 +64,9 @@ export default function CategoryOverview() {
                     ? 'beef'
                     : selectedType === 'pork'
                       ? 'pork'
-                      : 'item';
+                      : selectedType === 'fat_oil'
+                        ? 'fat & oil'
+                        : 'item';
 
   const basisLabel = showPerServing ? 'per serving' : 'per 100g';
 
