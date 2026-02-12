@@ -23,6 +23,7 @@ interface AppState {
   sidebarCollapsed: boolean;
 
   planEntries: PlanEntry[];
+  lockedPlanEntries: Set<string>;
 
   dietaryPreferences: DietaryPreferences;
   toggleDietaryPreference: (key: DietaryPreference) => void;
@@ -48,6 +49,7 @@ interface AppState {
   addPlanEntry: (name: string) => void;
   removePlanEntry: (name: string) => void;
   setPlanEntryServings: (name: string, servingsPerWeek: number) => void;
+  togglePlanEntryLock: (name: string) => void;
   clearPlan: () => void;
   setPlanEntries: (entries: PlanEntry[]) => void;
 }
@@ -70,6 +72,7 @@ export const useStore = create<AppState>((set, get) => ({
   sidebarCollapsed: false,
 
   planEntries: [],
+  lockedPlanEntries: new Set(),
 
   dietaryPreferences: (() => {
     try {
@@ -189,9 +192,14 @@ export const useStore = create<AppState>((set, get) => ({
     }),
 
   removePlanEntry: (name) =>
-    set((state) => ({
-      planEntries: state.planEntries.filter((e) => e.name !== name),
-    })),
+    set((state) => {
+      const nextLocked = new Set(state.lockedPlanEntries);
+      nextLocked.delete(name);
+      return {
+        planEntries: state.planEntries.filter((e) => e.name !== name),
+        lockedPlanEntries: nextLocked,
+      };
+    }),
 
   setPlanEntryServings: (name, servingsPerWeek) =>
     set((state) => ({
@@ -200,7 +208,18 @@ export const useStore = create<AppState>((set, get) => ({
       ),
     })),
 
-  clearPlan: () => set({ planEntries: [] }),
+  togglePlanEntryLock: (name) =>
+    set((state) => {
+      const next = new Set(state.lockedPlanEntries);
+      if (next.has(name)) {
+        next.delete(name);
+      } else {
+        next.add(name);
+      }
+      return { lockedPlanEntries: next };
+    }),
+
+  clearPlan: () => set({ planEntries: [], lockedPlanEntries: new Set() }),
 
   setPlanEntries: (entries) => set({ planEntries: entries }),
 }));

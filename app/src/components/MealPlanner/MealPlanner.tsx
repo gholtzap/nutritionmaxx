@@ -11,6 +11,7 @@ import styles from './MealPlanner.module.css';
 export default function MealPlanner() {
   const fruits = useDietaryFruits();
   const planEntries = useStore((s) => s.planEntries);
+  const lockedPlanEntries = useStore((s) => s.lockedPlanEntries);
   const clearPlan = useStore((s) => s.clearPlan);
   const setPlanEntries = useStore((s) => s.setPlanEntries);
 
@@ -49,9 +50,10 @@ export default function MealPlanner() {
   }, [planEntries]);
 
   const handleAutoFill = useCallback(() => {
-    const plan = generateAutoFillPlan(fruits);
+    const locked = planEntries.filter((e) => lockedPlanEntries.has(e.name));
+    const plan = generateAutoFillPlan(fruits, locked);
     setPlanEntries(plan);
-  }, [fruits, setPlanEntries]);
+  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries]);
 
   return (
     <div className={styles.container}>
@@ -103,6 +105,7 @@ export default function MealPlanner() {
               key={entry.name}
               entry={entry}
               fruit={fruitMap.get(entry.name)}
+              locked={lockedPlanEntries.has(entry.name)}
             />
           ))}
         </div>

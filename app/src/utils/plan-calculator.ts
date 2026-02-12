@@ -150,19 +150,36 @@ const TOP_N = 5;
 
 export function generateAutoFillPlan(
   fruits: NutrientFruit[],
+  lockedEntries: PlanEntry[] = [],
   maxEntries = 10
 ): PlanEntry[] {
   const pool = fruits.filter((f) => f.type !== 'spice');
+  const fruitMap = new Map(fruits.map((f) => [f.name, f]));
 
   const remaining = new Map<NutrientKey, number>();
   for (const meta of PLAN_NUTRIENTS) {
     remaining.set(meta.key, meta.dailyValue!);
   }
 
-  const plan: PlanEntry[] = [];
-  const used = new Set<string>();
+  const plan: PlanEntry[] = [...lockedEntries];
+  const used = new Set<string>(lockedEntries.map((e) => e.name));
 
-  for (let round = 0; round < maxEntries; round++) {
+  for (const entry of lockedEntries) {
+    const fruit = fruitMap.get(entry.name);
+    if (!fruit) continue;
+    const servingG = fruit.serving_size_g ?? 100;
+    const dailyFactor = (servingG / 100) * (entry.servingsPerWeek / 7);
+    for (const meta of PLAN_NUTRIENTS) {
+      const raw = fruit[meta.key] as number | null;
+      if (raw === null) continue;
+      const contribution = raw * dailyFactor;
+      remaining.set(meta.key, Math.max(0, remaining.get(meta.key)! - contribution));
+    }
+  }
+
+  const slotsToFill = maxEntries - lockedEntries.length;
+
+  for (let round = 0; round < slotsToFill; round++) {
     const scored: ScoredCandidate[] = [];
 
     for (const fruit of pool) {

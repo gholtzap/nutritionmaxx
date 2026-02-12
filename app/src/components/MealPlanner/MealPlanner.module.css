@@ -160,6 +160,11 @@
   border: 1px solid var(--border-subtle);
 }
 
+.entryRowLocked {
+  border-color: var(--accent);
+  background: rgba(99, 179, 237, 0.04);
+}
+
 .entryInfo {
   display: flex;
   align-items: center;
@@ -233,6 +238,30 @@
   color: var(--text-tertiary);
   min-width: 80px;
   text-align: center;
+}
+
+.lockBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  transition: background 0.15s, color 0.15s;
+}
+
+.lockBtn:hover {
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+}
+
+.lockBtnActive {
+  color: var(--accent);
+}
+
+.lockBtnActive:hover {
+  color: var(--accent);
 }
 
 .removeBtn {

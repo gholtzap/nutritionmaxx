@@ -1,4 +1,4 @@
-import { Minus, Plus, X } from '@phosphor-icons/react';
+import { LockSimple, LockSimpleOpen, Minus, Plus, X } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { NutrientFruit, PlanEntry } from '../../types';
 import Badge from '../shared/Badge';
@@ -7,6 +7,7 @@ import styles from './MealPlanner.module.css';
 interface PlanEntryRowProps {
   entry: PlanEntry;
   fruit: NutrientFruit | undefined;
+  locked: boolean;
 }
 
 function servingsLabel(spw: number): string {
@@ -16,9 +17,10 @@ function servingsLabel(spw: number): string {
   return `${spw}x / week`;
 }
 
-export default function PlanEntryRow({ entry, fruit }: PlanEntryRowProps) {
+export default function PlanEntryRow({ entry, fruit, locked }: PlanEntryRowProps) {
   const setPlanEntryServings = useStore((s) => s.setPlanEntryServings);
   const removePlanEntry = useStore((s) => s.removePlanEntry);
+  const togglePlanEntryLock = useStore((s) => s.togglePlanEntryLock);
 
   const servingLabel = fruit?.serving_label ?? '100g';
 
@@ -37,7 +39,7 @@ export default function PlanEntryRow({ entry, fruit }: PlanEntryRowProps) {
   }
 
   return (
-    <div className={styles.entryRow}>
+    <div className={`${styles.entryRow} ${locked ? styles.entryRowLocked : ''}`}>
       <div className={styles.entryInfo}>
         <span className={styles.entryName}>{entry.name}</span>
         {fruit && <Badge category={fruit.category} />}
@@ -70,6 +72,14 @@ export default function PlanEntryRow({ entry, fruit }: PlanEntryRowProps) {
           <Plus size={12} />
         </button>
         <span className={styles.entryFreq}>{servingsLabel(entry.servingsPerWeek)}</span>
+        <button
+          type="button"
+          className={`${styles.lockBtn} ${locked ? styles.lockBtnActive : ''}`}
+          onClick={() => togglePlanEntryLock(entry.name)}
+          aria-label={locked ? `Unlock ${entry.name}` : `Lock ${entry.name}`}
+        >
+          {locked ? <LockSimple size={14} /> : <LockSimpleOpen size={14} />}
+        </button>
         <button
           type="button"
           className={styles.removeBtn}
