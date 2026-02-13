@@ -10,6 +10,7 @@ import CategoryOverview from './components/CategoryOverview/CategoryOverview';
 import NutrientGuide from './components/NutrientGuide/NutrientGuide';
 import MealPlanner from './components/MealPlanner/MealPlanner';
 import DietaryPreferences from './components/DietaryPreferences/DietaryPreferences';
+import DailyValueSettings from './components/DailyValueSettings/DailyValueSettings';
 import Spinner from './components/shared/Spinner';
 import styles from './App.module.css';
 
@@ -160,6 +161,7 @@ function App() {
             {activeView === 'nutrients' && <NutrientGuide />}
             {activeView === 'planner' && <MealPlanner />}
             {activeView === 'dietary' && <DietaryPreferences />}
+            {activeView === 'settings' && <DailyValueSettings />}
           </>
         )}
       </main>

@@ -13,6 +13,7 @@ import type { CategoryAverage } from '../../utils/aggregations';
 import { useStore } from '../../store';
 import { NUTRIENT_META, NUTRIENT_MAP, CATEGORY_COLORS, hasDailyValue } from '../../utils/nutrition-meta';
 import { formatNutrientDisplay, toDailyValuePercent } from '../../utils/format';
+import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import styles from './CategoryOverview.module.css';
 
 interface CategoryChartProps {
@@ -23,12 +24,13 @@ export default function CategoryChart({ data }: CategoryChartProps) {
   const [selectedKey, setSelectedKey] = useState<NutrientKey>('calories_kcal');
   const meta = NUTRIENT_MAP.get(selectedKey)!;
   const showDV = useStore((s) => s.showDailyValue);
+  const dvMap = useEffectiveDailyValues();
   const useDV = showDV && hasDailyValue(selectedKey);
 
   const chartData = data
     .map((d) => {
       const rawValue = d.averages[selectedKey];
-      const dvPct = toDailyValuePercent(rawValue, selectedKey);
+      const dvPct = toDailyValuePercent(rawValue, selectedKey, dvMap);
       return {
         category: d.category,
         value: useDV && dvPct !== null ? dvPct : (rawValue ?? 0),
@@ -85,7 +87,7 @@ export default function CategoryChart({ data }: CategoryChartProps) {
             formatter={(_: unknown, __: unknown, props: { payload?: { rawValue: number | null } }) => {
               if (!props.payload) return ['', ''];
               return [
-                `${formatNutrientDisplay(props.payload.rawValue, selectedKey, showDV)} ${unitLabel}`,
+                `${formatNutrientDisplay(props.payload.rawValue, selectedKey, showDV, dvMap)} ${unitLabel}`,
                 `Avg ${meta.label}`,
               ];
             }}

@@ -1,6 +1,7 @@
 import type { NutrientFruit, NutrientKey, PlanEntry } from '../types';
 import { NUTRIENT_META } from './nutrition-meta';
 import type { NutrientMeta } from './nutrition-meta';
+import type { EffectiveDailyValues } from './daily-values';
 
 export interface PlanNutrientRow {
   key: NutrientKey;
@@ -16,6 +17,13 @@ export interface PlanNutrientRow {
 const PLAN_NUTRIENTS: NutrientMeta[] = NUTRIENT_META.filter(
   (m) => m.dailyValue !== null
 );
+
+function resolveDV(meta: NutrientMeta, dvMap?: EffectiveDailyValues): number | null {
+  if (dvMap) {
+    return dvMap.get(meta.key) ?? null;
+  }
+  return meta.dailyValue;
+}
 
 const INSUFFICIENT_THRESHOLD = 0.5;
 const EXCESS_THRESHOLD = 2.0;
@@ -52,7 +60,8 @@ function getDailyContribution(
 
 export function computePlanDailyTotals(
   entries: PlanEntry[],
-  fruits: NutrientFruit[]
+  fruits: NutrientFruit[],
+  dvMap?: EffectiveDailyValues
 ): PlanNutrientRow[] {
   const fruitMap = new Map(fruits.map((f) => [f.name, f]));
   const insufficient = getInsufficientNutrients(fruits);
@@ -84,7 +93,7 @@ export function computePlanDailyTotals(
     label: meta.label,
     unit: meta.unit,
     group: meta.group,
-    dailyValue: meta.dailyValue!,
+    dailyValue: resolveDV(meta, dvMap) ?? meta.dailyValue!,
     total: totals.get(meta.key)!,
     nullCount: nullCounts.get(meta.key)!,
     insufficientData: insufficient.has(meta.key),
@@ -100,7 +109,8 @@ interface ScoredCandidate {
 function scoreCandidate(
   fruit: NutrientFruit,
   totals: Map<NutrientKey, number>,
-  insufficient: Set<NutrientKey>
+  insufficient: Set<NutrientKey>,
+  dvMap?: EffectiveDailyValues
 ): ScoredCandidate | null {
   const servingG = fruit.serving_size_g ?? 100;
   const perNutrientServings: number[] = [];
@@ -116,7 +126,8 @@ function scoreCandidate(
     }
     const perServing = raw * (servingG / 100);
     if (perServing <= 0) continue;
-    const rem = Math.max(0, meta.dailyValue! - totals.get(meta.key)!);
+    const dv = resolveDV(meta, dvMap) ?? meta.dailyValue!;
+    const rem = Math.max(0, dv - totals.get(meta.key)!);
     if (rem <= 0) continue;
     const needed = rem / perServing;
     perNutrientServings.push(needed);
@@ -136,7 +147,7 @@ function scoreCandidate(
     if (raw === null) continue;
     const contribution = raw * dailyFactor;
     const total = totals.get(meta.key)!;
-    const dv = meta.dailyValue!;
+    const dv = resolveDV(meta, dvMap) ?? meta.dailyValue!;
     const rem = Math.max(0, dv - total);
     if (rem > 0) {
       score += Math.min(contribution, rem) / dv;
@@ -188,7 +199,8 @@ const DIVERSITY_DECAY = 0.7;
 export function generateAutoFillPlan(
   fruits: NutrientFruit[],
   lockedEntries: PlanEntry[] = [],
-  maxEntries = 10
+  maxEntries = 10,
+  dvMap?: EffectiveDailyValues
 ): PlanEntry[] {
   const pool = fruits.filter((f) => f.type !== 'spice');
   const fruitMap = new Map(fruits.map((f) => [f.name, f]));
@@ -224,7 +236,7 @@ export function generateAutoFillPlan(
 
     for (const fruit of pool) {
       if (used.has(fruit.name)) continue;
-      const result = scoreCandidate(fruit, totals, insufficient);
+      const result = scoreCandidate(fruit, totals, insufficient, dvMap);
       if (!result) continue;
       const count = typeCounts.get(fruit.type) ?? 0;
       result.score *= DIVERSITY_DECAY ** count;

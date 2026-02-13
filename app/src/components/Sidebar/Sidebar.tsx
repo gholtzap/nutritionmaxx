@@ -1,4 +1,4 @@
-import { Table, GitDiff, SquaresFour, Pill, Scales, SlidersHorizontal, SidebarSimple } from '@phosphor-icons/react';
+import { Table, GitDiff, SquaresFour, Pill, Scales, SlidersHorizontal, GearSix, SidebarSimple } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
 import { countExcluded } from '../../utils/dietary';
@@ -12,6 +12,7 @@ const NAV_ITEMS: { id: ViewId; label: string; icon: React.ReactNode }[] = [
   { id: 'nutrients', label: 'Nutrients', icon: <Pill size={18} weight="regular" /> },
   { id: 'planner', label: 'Planner', icon: <Scales size={18} weight="regular" /> },
   { id: 'dietary', label: 'Diet', icon: <SlidersHorizontal size={18} weight="regular" /> },
+  { id: 'settings', label: 'Settings', icon: <GearSix size={18} weight="regular" /> },
 ];
 
 export default function Sidebar() {

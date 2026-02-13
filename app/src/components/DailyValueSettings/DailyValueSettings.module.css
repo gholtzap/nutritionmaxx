@@ -1,0 +1,226 @@
+.container {
+  padding: 20px 24px;
+  max-width: 640px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.section {
+  margin-bottom: 28px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.profileGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.fieldInput {
+  height: 32px;
+  padding: 0 10px;
+  font-size: 13px;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.fieldInput:focus {
+  border-color: var(--accent);
+}
+
+.fieldInput::placeholder {
+  color: var(--text-tertiary);
+}
+
+.fieldUnit {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.sexToggle {
+  display: flex;
+  gap: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-primary);
+  height: 32px;
+}
+
+.sexButton {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  padding: 0 12px;
+}
+
+.sexButton:not(:last-child) {
+  border-right: 1px solid var(--border-primary);
+}
+
+.sexButtonActive {
+  background: var(--accent);
+  color: #fff;
+}
+
+.clearButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  transition: background 0.15s, color 0.15s;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+.clearButton:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.dvRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  transition: background 0.15s;
+}
+
+.dvRow:hover {
+  background: var(--bg-tertiary);
+}
+
+.dvLabel {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  min-width: 0;
+}
+
+.dvEffective {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  white-space: nowrap;
+  min-width: 56px;
+  text-align: right;
+}
+
+.dvProfiled {
+  color: var(--accent);
+}
+
+.dvInput {
+  width: 72px;
+  height: 28px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  outline: none;
+  text-align: right;
+  transition: border-color 0.15s;
+}
+
+.dvInput:focus {
+  border-color: var(--accent);
+}
+
+.dvInput::placeholder {
+  color: var(--text-tertiary);
+}
+
+.dvUnit {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  min-width: 28px;
+}
+
+.dvResetButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.dvResetButton:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.dvResetPlaceholder {
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}

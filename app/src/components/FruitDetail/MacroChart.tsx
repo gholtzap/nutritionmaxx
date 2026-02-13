@@ -11,6 +11,7 @@ import type { NutrientFruit } from '../../types';
 import { useStore } from '../../store';
 import { MACRO_KEYS, NUTRIENT_MAP, hasDailyValue } from '../../utils/nutrition-meta';
 import { formatNutrientDisplay, toDailyValuePercent, getItemDisplayValue } from '../../utils/format';
+import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import styles from './FruitDetail.module.css';
 
 interface MacroChartProps {
@@ -20,17 +21,18 @@ interface MacroChartProps {
 export default function MacroChart({ fruit }: MacroChartProps) {
   const showDV = useStore((s) => s.showDailyValue);
   const showPerServing = useStore((s) => s.showPerServing);
+  const dvMap = useEffectiveDailyValues();
 
   const data = MACRO_KEYS.filter((k) => k !== 'water_g').map((key) => {
     const meta = NUTRIENT_MAP.get(key)!;
     const displayValue = getItemDisplayValue(fruit, key, showPerServing);
-    const dvPct = toDailyValuePercent(displayValue, key);
+    const dvPct = toDailyValuePercent(displayValue, key, dvMap);
     const chartValue = showDV && hasDailyValue(key) && dvPct !== null ? dvPct : (displayValue ?? 0);
     return {
       name: meta.label,
       value: chartValue,
       key,
-      display: formatNutrientDisplay(displayValue, key, showDV),
+      display: formatNutrientDisplay(displayValue, key, showDV, dvMap),
       unit: showDV && hasDailyValue(key) ? '% DV' : meta.unit,
       isNull: displayValue === null,
     };

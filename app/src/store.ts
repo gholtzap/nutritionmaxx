@@ -4,6 +4,7 @@ import { DEFAULT_VISIBLE_COLUMNS } from './utils/nutrition-meta';
 import { loadFruits } from './utils/parse-csv';
 import type { DietaryPreference, DietaryPreferences } from './utils/dietary';
 import { DEFAULT_PREFERENCES } from './utils/dietary';
+import type { UserProfile } from './utils/daily-values';
 
 interface AppState {
   fruits: NutrientFruit[];
@@ -28,6 +29,13 @@ interface AppState {
   dietaryPreferences: DietaryPreferences;
   toggleDietaryPreference: (key: DietaryPreference) => void;
   clearDietaryPreferences: () => void;
+
+  userProfile: UserProfile | null;
+  customDailyValues: Partial<Record<NutrientKey, number>>;
+  setUserProfile: (profile: UserProfile | null) => void;
+  setCustomDailyValue: (key: NutrientKey, value: number | null) => void;
+  clearCustomDailyValues: () => void;
+  clearUserProfile: () => void;
 
   fetchFruits: () => Promise<void>;
   setActiveView: (view: ViewId) => void;
@@ -92,6 +100,53 @@ export const useStore = create<AppState>((set, get) => ({
   clearDietaryPreferences: () => {
     localStorage.removeItem('dietaryPreferences');
     set({ dietaryPreferences: { ...DEFAULT_PREFERENCES } });
+  },
+
+  userProfile: (() => {
+    try {
+      const stored = localStorage.getItem('userProfile');
+      if (stored) return JSON.parse(stored) as UserProfile;
+    } catch {}
+    return null;
+  })(),
+
+  customDailyValues: (() => {
+    try {
+      const stored = localStorage.getItem('customDailyValues');
+      if (stored) return JSON.parse(stored) as Partial<Record<NutrientKey, number>>;
+    } catch {}
+    return {};
+  })(),
+
+  setUserProfile: (profile) => {
+    if (profile) {
+      localStorage.setItem('userProfile', JSON.stringify(profile));
+    } else {
+      localStorage.removeItem('userProfile');
+    }
+    set({ userProfile: profile });
+  },
+
+  setCustomDailyValue: (key, value) =>
+    set((state) => {
+      const next = { ...state.customDailyValues };
+      if (value === null) {
+        delete next[key];
+      } else {
+        next[key] = value;
+      }
+      localStorage.setItem('customDailyValues', JSON.stringify(next));
+      return { customDailyValues: next };
+    }),
+
+  clearCustomDailyValues: () => {
+    localStorage.removeItem('customDailyValues');
+    set({ customDailyValues: {} });
+  },
+
+  clearUserProfile: () => {
+    localStorage.removeItem('userProfile');
+    set({ userProfile: null });
   },
 
   fetchFruits: async () => {

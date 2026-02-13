@@ -3,6 +3,7 @@ import { ArrowLeft } from '@phosphor-icons/react';
 import type { NutrientProfile, BodySystem } from '../../utils/nutrient-profiles';
 import { NUTRIENT_MAP } from '../../utils/nutrition-meta';
 import { formatNutrientWithUnit, getItemDisplayValue } from '../../utils/format';
+import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import type { NutrientKey } from '../../types';
 import { useStore } from '../../store';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
@@ -20,6 +21,7 @@ export default function NutrientDetail({ profile, onBack }: NutrientDetailProps)
   const label = meta?.label ?? profile.key;
   const fruits = useDietaryFruits();
   const showPerServing = useStore((s) => s.showPerServing);
+  const dvMap = useEffectiveDailyValues();
 
   const sortedStats = (Object.entries(profile.stats) as [BodySystem, number][])
     .sort((a, b) => b[1] - a[1]);
@@ -36,8 +38,9 @@ export default function NutrientDetail({ profile, onBack }: NutrientDetailProps)
       .slice(0, 5);
   }, [fruits, profile.key, showPerServing]);
 
-  const dailyValueText = meta?.dailyValue != null
-    ? `${meta.dailyValue} ${meta.unit} / day`
+  const effectiveDV = dvMap.get(profile.key);
+  const dailyValueText = effectiveDV != null && meta
+    ? `${effectiveDV} ${meta.unit} / day`
     : null;
 
   return (

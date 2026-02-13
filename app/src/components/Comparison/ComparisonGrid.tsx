@@ -2,6 +2,8 @@ import type { NutrientFruit, NutrientKey, NutrientGroup } from '../../types';
 import { useStore } from '../../store';
 import { NUTRIENT_META, NUTRIENT_MAP, hasDailyValue } from '../../utils/nutrition-meta';
 import { formatNutrientDisplay, toDailyValuePercent, getItemDisplayValue } from '../../utils/format';
+import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
+import type { EffectiveDailyValues } from '../../utils/daily-values';
 import styles from './Comparison.module.css';
 
 const SLOT_COLORS = ['var(--compare-a)', 'var(--compare-b)', 'var(--compare-c)'];
@@ -14,11 +16,11 @@ const GROUP_LABELS: Record<NutrientGroup, string> = {
 
 const GROUP_ORDER: NutrientGroup[] = ['macro', 'vitamin', 'mineral'];
 
-function getDvRatio(raw: number | null, key: NutrientKey, maxInRow: number | null): number {
+function getDvRatio(raw: number | null, key: NutrientKey, maxInRow: number | null, dvMap?: EffectiveDailyValues): number {
   if (raw === null) return 0;
-  const meta = NUTRIENT_MAP.get(key);
-  if (meta?.dailyValue !== null && meta?.dailyValue !== undefined) {
-    return raw / meta.dailyValue;
+  const dv = dvMap ? dvMap.get(key) : NUTRIENT_MAP.get(key)?.dailyValue;
+  if (dv !== null && dv !== undefined) {
+    return raw / dv;
   }
   if (maxInRow !== null && maxInRow > 0) return raw / maxInRow;
   return 0;
@@ -43,6 +45,7 @@ interface ComparisonGridProps {
 export default function ComparisonGrid({ fruits }: ComparisonGridProps) {
   const showDV = useStore((s) => s.showDailyValue);
   const showPerServing = useStore((s) => s.showPerServing);
+  const dvMap = useEffectiveDailyValues();
 
   const grouped = GROUP_ORDER.map((group) => ({
     group,
@@ -77,6 +80,7 @@ export default function ComparisonGrid({ fruits }: ComparisonGridProps) {
               showDV={showDV}
               showPerServing={showPerServing}
               colCount={fruits.length}
+              dvMap={dvMap}
             />
           ))}
         </tbody>
@@ -92,9 +96,10 @@ interface GroupSectionProps {
   showDV: boolean;
   showPerServing: boolean;
   colCount: number;
+  dvMap: EffectiveDailyValues;
 }
 
-function GroupSection({ label, nutrients, fruits, showDV, showPerServing, colCount }: GroupSectionProps) {
+function GroupSection({ label, nutrients, fruits, showDV, showPerServing, colCount, dvMap }: GroupSectionProps) {
   return (
     <>
       <tr>
@@ -114,9 +119,9 @@ function GroupSection({ label, nutrients, fruits, showDV, showPerServing, colCou
           const display = displayValues[i];
           return {
             raw: display,
-            display: formatNutrientDisplay(display, key, showDV),
-            numeric: useDV ? toDailyValuePercent(display, key) : display,
-            dvRatio: getDvRatio(display, key, displayMax),
+            display: formatNutrientDisplay(display, key, showDV, dvMap),
+            numeric: useDV ? toDailyValuePercent(display, key, dvMap) : display,
+            dvRatio: getDvRatio(display, key, displayMax, dvMap),
           };
         });
 

@@ -1,6 +1,7 @@
 import type { NutrientFruit, NutrientKey } from '../../types';
 import { useStore } from '../../store';
 import { formatNutrientDisplay, getItemDisplayValue } from '../../utils/format';
+import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import Badge from '../shared/Badge';
 import styles from './DataTable.module.css';
 
@@ -23,6 +24,7 @@ export default function TableRow({
 }: TableRowProps) {
   const showDV = useStore((s) => s.showDailyValue);
   const showPerServing = useStore((s) => s.showPerServing);
+  const dvMap = useEffectiveDailyValues();
 
   return (
     <tr className={styles.row} onClick={onSelect}>
@@ -46,7 +48,7 @@ export default function TableRow({
       </td>
       {visibleKeys.map((key) => {
         const value = getItemDisplayValue(fruit, key, showPerServing);
-        const formatted = formatNutrientDisplay(value, key, showDV);
+        const formatted = formatNutrientDisplay(value, key, showDV, dvMap);
         const isNull = value === null || value === undefined;
         return (
           <td

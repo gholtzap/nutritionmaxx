@@ -3,6 +3,7 @@ import { ShareNetwork, Check, Trash, Lightning } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import { computePlanDailyTotals, generateAutoFillPlan } from '../../utils/plan-calculator';
+import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import PlanFoodSelector from './PlanFoodSelector';
 import PlanEntryRow from './PlanEntryRow';
 import NutrientCoverage from './NutrientCoverage';
@@ -14,6 +15,7 @@ export default function MealPlanner() {
   const lockedPlanEntries = useStore((s) => s.lockedPlanEntries);
   const clearPlan = useStore((s) => s.clearPlan);
   const setPlanEntries = useStore((s) => s.setPlanEntries);
+  const dvMap = useEffectiveDailyValues();
 
   const [copied, setCopied] = useState(false);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -30,8 +32,8 @@ export default function MealPlanner() {
   );
 
   const nutrientRows = useMemo(
-    () => computePlanDailyTotals(planEntries, fruits),
-    [planEntries, fruits]
+    () => computePlanDailyTotals(planEntries, fruits, dvMap),
+    [planEntries, fruits, dvMap]
   );
 
   const handleShare = useCallback(() => {
@@ -51,9 +53,9 @@ export default function MealPlanner() {
 
   const handleAutoFill = useCallback(() => {
     const locked = planEntries.filter((e) => lockedPlanEntries.has(e.name));
-    const plan = generateAutoFillPlan(fruits, locked);
+    const plan = generateAutoFillPlan(fruits, locked, 10, dvMap);
     setPlanEntries(plan);
-  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries]);
+  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap]);
 
   return (
     <div className={styles.container}>
