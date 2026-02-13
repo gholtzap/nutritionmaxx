@@ -1,4 +1,4 @@
-import type { NutrientFruit, NutrientKey, PlanEntry } from '../types';
+import type { NutrientFruit, NutrientKey, PlanEntry, ItemType } from '../types';
 import { NUTRIENT_META } from './nutrition-meta';
 import type { NutrientMeta } from './nutrition-meta';
 import type { EffectiveDailyValues } from './daily-values';
@@ -137,7 +137,8 @@ function scoreCandidate(
 
   perNutrientServings.sort((a, b) => a - b);
   const median = perNutrientServings[Math.floor(perNutrientServings.length / 2)];
-  const servings = Math.max(1, Math.min(MAX_SERVINGS, Math.round(median * 7)));
+  const cap = maxServingsFor(fruit);
+  const servings = Math.max(1, Math.min(cap, Math.round(median * 7)));
 
   const dailyFactor = (servingG / 100) * (servings / 7);
   let score = 0;
@@ -193,63 +194,112 @@ function applySelection(
   }
 }
 
-const MAX_SERVINGS = 14;
+
+const STAPLE_MAX: Record<ItemType, number> = {
+  grain: 14,
+  fat_oil: 14,
+  legume: 7,
+  poultry: 7,
+  beef: 7,
+  pork: 7,
+  fish_seafood: 7,
+  fruit: 7,
+  vegetable: 7,
+  nut_seed: 5,
+  spice: 3,
+};
+
+function maxServingsFor(fruit: NutrientFruit): number {
+  return STAPLE_MAX[fruit.type as ItemType] ?? 7;
+}
+
+const MAX_CALORIE_FILLERS = 3;
 const TOP_N = 5;
 const DIVERSITY_DECAY = 0.7;
 
-function getDailyCals(
-  entry: PlanEntry,
-  fruit: NutrientFruit
-): number {
+function calsPerServing(fruit: NutrientFruit): number {
   const cals = fruit.calories_kcal as number | null;
-  if (cals === null) return 0;
-  const servingG = fruit.serving_size_g ?? 100;
-  return cals * (servingG / 100) * (entry.servingsPerWeek / 7);
+  if (cals === null || cals <= 0) return 0;
+  return cals * ((fruit.serving_size_g ?? 100) / 100);
+}
+
+function planDailyCals(
+  plan: PlanEntry[],
+  fruitMap: Map<string, NutrientFruit>
+): number {
+  let total = 0;
+  for (const entry of plan) {
+    const fruit = fruitMap.get(entry.name);
+    if (!fruit) continue;
+    total += calsPerServing(fruit) * (entry.servingsPerWeek / 7);
+  }
+  return total;
 }
 
 function boostCalories(
   plan: PlanEntry[],
   lockedNames: Set<string>,
   fruitMap: Map<string, NutrientFruit>,
+  pool: NutrientFruit[],
+  used: Set<string>,
   calorieDV: number
 ): void {
-  let totalCals = 0;
-  for (const entry of plan) {
-    const fruit = fruitMap.get(entry.name);
-    if (!fruit) continue;
-    totalCals += getDailyCals(entry, fruit);
-  }
-
+  let totalCals = planDailyCals(plan, fruitMap);
   if (totalCals >= calorieDV || totalCals <= 0) return;
 
-  const boostable = plan.filter(
-    (e) => !lockedNames.has(e.name) && e.servingsPerWeek < MAX_SERVINGS
-  );
-  if (boostable.length === 0) return;
-
-  const deficit = calorieDV - totalCals;
-
-  let boostableCals = 0;
-  for (const entry of boostable) {
-    const fruit = fruitMap.get(entry.name);
-    if (!fruit) continue;
-    boostableCals += getDailyCals(entry, fruit);
+  const boostable = plan.filter((e) => {
+    if (lockedNames.has(e.name)) return false;
+    const f = fruitMap.get(e.name);
+    return f && e.servingsPerWeek < maxServingsFor(f);
+  });
+  if (boostable.length > 0) {
+    let boostableCals = 0;
+    for (const entry of boostable) {
+      const fruit = fruitMap.get(entry.name);
+      if (!fruit) continue;
+      boostableCals += calsPerServing(fruit) * (entry.servingsPerWeek / 7);
+    }
+    if (boostableCals > 0) {
+      const scale = (boostableCals + (calorieDV - totalCals)) / boostableCals;
+      for (const entry of boostable) {
+        const fruit = fruitMap.get(entry.name)!;
+        entry.servingsPerWeek = Math.min(
+          maxServingsFor(fruit),
+          Math.round(entry.servingsPerWeek * scale)
+        );
+      }
+    }
   }
 
-  if (boostableCals <= 0) return;
+  totalCals = planDailyCals(plan, fruitMap);
+  if (totalCals >= calorieDV) return;
 
-  const scale = (boostableCals + deficit) / boostableCals;
+  const fillers = pool
+    .filter((f) => !used.has(f.name) && calsPerServing(f) > 0)
+    .sort((a, b) => calsPerServing(b) - calsPerServing(a));
 
-  for (const entry of boostable) {
-    const scaled = Math.min(MAX_SERVINGS, Math.round(entry.servingsPerWeek * scale));
-    entry.servingsPerWeek = Math.max(entry.servingsPerWeek, scaled);
+  let added = 0;
+  for (const fruit of fillers) {
+    if (added >= MAX_CALORIE_FILLERS) break;
+    const deficit = calorieDV - totalCals;
+    if (deficit <= 0) break;
+
+    const cps = calsPerServing(fruit);
+    const dailyServings = deficit / cps;
+    const cap = maxServingsFor(fruit);
+    const spw = Math.min(cap, Math.max(1, Math.round(dailyServings * 7)));
+
+    plan.push({ name: fruit.name, servingsPerWeek: spw });
+    used.add(fruit.name);
+    totalCals += cps * (spw / 7);
+    added++;
   }
 }
 
 export function generateAutoFillPlan(
   fruits: NutrientFruit[],
   lockedEntries: PlanEntry[] = [],
-  maxEntries = 10,
+  maxEntries = 15,
   dvMap?: EffectiveDailyValues
 ): PlanEntry[] {
   const pool = fruits.filter((f) => f.type !== 'spice');
@@ -309,7 +359,7 @@ export function generateAutoFillPlan(
   if (calorieMeta) {
     const calorieDV = resolveDV(calorieMeta, dvMap) ?? calorieMeta.dailyValue!;
     const lockedNames = new Set(lockedEntries.map((e) => e.name));
-    boostCalories(plan, lockedNames, fruitMap, calorieDV);
+    boostCalories(plan, lockedNames, fruitMap, pool, used, calorieDV);
   }
 
   return plan;
