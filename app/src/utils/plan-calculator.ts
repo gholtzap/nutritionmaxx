@@ -1,4 +1,4 @@
-import type { NutrientFruit, NutrientKey, PlanEntry, ItemType } from '../types';
+import type { NutrientFruit, NutrientKey, PlanEntry, ItemType, ItemCategory } from '../types';
 import { NUTRIENT_META } from './nutrition-meta';
 import type { NutrientMeta } from './nutrition-meta';
 import type { EffectiveDailyValues } from './daily-values';
@@ -195,22 +195,32 @@ function applySelection(
 }
 
 
-const STAPLE_MAX: Record<ItemType, number> = {
+const TYPE_MAX: Record<ItemType, number> = {
   grain: 14,
   fat_oil: 14,
   legume: 7,
   poultry: 7,
   beef: 7,
   pork: 7,
-  fish_seafood: 7,
+  fish_seafood: 3,
   fruit: 7,
   vegetable: 7,
   nut_seed: 5,
   spice: 3,
 };
 
+const CATEGORY_MAX: Partial<Record<ItemCategory, number>> = {
+  'Ancient Grain': 3,
+  'Other': 5,
+  'Other Cut': 3,
+  'Mollusk': 2,
+  'Crustacean': 3,
+};
+
 function maxServingsFor(fruit: NutrientFruit): number {
-  return STAPLE_MAX[fruit.type as ItemType] ?? 7;
+  const catCap = CATEGORY_MAX[fruit.category as ItemCategory];
+  if (catCap !== undefined) return catCap;
+  return TYPE_MAX[fruit.type as ItemType] ?? 7;
 }
 
 const MAX_CALORIE_FILLERS = 3;
