@@ -45,6 +45,19 @@ interface DvGroupProps {
   onOverride: (key: NutrientKey, value: number | null) => void;
 }
 
+function getBaseDV(
+  key: NutrientKey,
+  profileValues: Partial<Record<NutrientKey, number>>
+): number | null {
+  const profileVal = profileValues[key];
+  if (profileVal !== undefined) return profileVal;
+  return NUTRIENT_MAP_LOCAL.get(key)?.dailyValue ?? null;
+}
+
+function toPercent(absolute: number, base: number): number {
+  return Math.round((absolute / base) * 100);
+}
+
 function DvGroup({ title, keys, profileValues, overrides, dvMap, onOverride }: DvGroupProps) {
   const filtered = keys.filter((k) => {
     const meta = NUTRIENT_MAP_LOCAL.get(k);
@@ -58,33 +71,42 @@ function DvGroup({ title, keys, profileValues, overrides, dvMap, onOverride }: D
       <h3 className={styles.sectionTitle}>{title}</h3>
       {filtered.map((key) => {
         const meta = NUTRIENT_MAP_LOCAL.get(key)!;
+        const baseDV = getBaseDV(key, profileValues);
         const effective = dvMap.get(key);
         const hasOverride = overrides[key] !== undefined;
         const isProfiled = !hasOverride && profileValues[key] !== undefined;
+        const pctDisplay = hasOverride && baseDV
+          ? toPercent(overrides[key]!, baseDV)
+          : '';
 
         return (
           <div key={key} className={styles.dvRow}>
             <span className={styles.dvLabel}>{meta.label}</span>
             <span className={`${styles.dvEffective} ${isProfiled ? styles.dvProfiled : ''}`}>
-              {effective != null ? effective : '--'}
+              {effective != null ? `${effective} ${meta.unit}` : '--'}
             </span>
             <input
               type="number"
               className={styles.dvInput}
-              placeholder={String(meta.dailyValue ?? '')}
-              value={hasOverride ? overrides[key] : ''}
+              placeholder="100"
+              value={pctDisplay}
               onChange={(e) => {
-                const val = parseFloat(e.target.value);
-                if (e.target.value === '' || !isFinite(val)) {
+                if (e.target.value === '' || baseDV === null) {
                   onOverride(key, null);
-                } else {
-                  onOverride(key, val);
+                  return;
                 }
+                const pct = parseFloat(e.target.value);
+                if (!isFinite(pct)) {
+                  onOverride(key, null);
+                  return;
+                }
+                const absolute = baseDV * (pct / 100);
+                onOverride(key, Math.round(absolute * 1000) / 1000);
               }}
               min={0}
-              step="any"
+              step={1}
             />
-            <span className={styles.dvUnit}>{meta.unit}</span>
+            <span className={styles.dvUnit}>%</span>
             {hasOverride ? (
               <button
                 type="button"
