@@ -36,6 +36,8 @@ function formToProfile(f: ProfileFormState): UserProfile | null {
   return { sex: f.sex, weight_kg: w, height_cm: h, age: a };
 }
 
+type InputMode = 'percent' | 'precise';
+
 interface DvGroupProps {
   title: string;
   keys: NutrientKey[];
@@ -43,6 +45,7 @@ interface DvGroupProps {
   overrides: Partial<Record<NutrientKey, number>>;
   dvMap: Map<NutrientKey, number | null>;
   onOverride: (key: NutrientKey, value: number | null) => void;
+  inputMode: InputMode;
 }
 
 function getBaseDV(
@@ -58,13 +61,15 @@ function toPercent(absolute: number, base: number): number {
   return Math.round((absolute / base) * 100);
 }
 
-function DvGroup({ title, keys, profileValues, overrides, dvMap, onOverride }: DvGroupProps) {
+function DvGroup({ title, keys, profileValues, overrides, dvMap, onOverride, inputMode }: DvGroupProps) {
   const filtered = keys.filter((k) => {
     const meta = NUTRIENT_MAP_LOCAL.get(k);
     return meta && meta.dailyValue !== null;
   });
 
   if (filtered.length === 0) return null;
+
+  const isPct = inputMode === 'percent';
 
   return (
     <div className={styles.section}>
@@ -75,9 +80,40 @@ function DvGroup({ title, keys, profileValues, overrides, dvMap, onOverride }: D
         const effective = dvMap.get(key);
         const hasOverride = overrides[key] !== undefined;
         const isProfiled = !hasOverride && profileValues[key] !== undefined;
-        const pctDisplay = hasOverride && baseDV
-          ? toPercent(overrides[key]!, baseDV)
-          : '';
+
+        let inputValue: string | number = '';
+        let placeholder = '';
+        let unit = meta.unit;
+        let step: string | number = 'any';
+
+        if (isPct) {
+          inputValue = hasOverride && baseDV ? toPercent(overrides[key]!, baseDV) : '';
+          placeholder = '100';
+          unit = '%';
+          step = 1;
+        } else {
+          inputValue = hasOverride ? overrides[key]! : '';
+          placeholder = String(baseDV ?? '');
+          step = 'any';
+        }
+
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+          if (e.target.value === '') {
+            onOverride(key, null);
+            return;
+          }
+          const val = parseFloat(e.target.value);
+          if (!isFinite(val)) {
+            onOverride(key, null);
+            return;
+          }
+          if (isPct) {
+            if (baseDV === null) return;
+            onOverride(key, Math.round(baseDV * (val / 100) * 1000) / 1000);
+          } else {
+            onOverride(key, val);
+          }
+        };
 
         return (
           <div key={key} className={styles.dvRow}>
@@ -88,25 +124,13 @@ function DvGroup({ title, keys, profileValues, overrides, dvMap, onOverride }: D
             <input
               type="number"
               className={styles.dvInput}
-              placeholder="100"
-              value={pctDisplay}
-              onChange={(e) => {
-                if (e.target.value === '' || baseDV === null) {
-                  onOverride(key, null);
-                  return;
-                }
-                const pct = parseFloat(e.target.value);
-                if (!isFinite(pct)) {
-                  onOverride(key, null);
-                  return;
-                }
-                const absolute = baseDV * (pct / 100);
-                onOverride(key, Math.round(absolute * 1000) / 1000);
-              }}
+              placeholder={placeholder}
+              value={inputValue}
+              onChange={handleChange}
               min={0}
-              step={1}
+              step={step}
             />
-            <span className={styles.dvUnit}>%</span>
+            <span className={styles.dvUnit}>{unit}</span>
             {hasOverride ? (
               <button
                 type="button"
@@ -136,6 +160,7 @@ export default function DailyValueSettings() {
   const dvMap = useEffectiveDailyValues();
 
   const [form, setForm] = useState<ProfileFormState>(() => profileToForm(userProfile));
+  const [inputMode, setInputMode] = useState<InputMode>('percent');
 
   const profileValues = userProfile ? computeProfileDailyValues(userProfile) : {};
 
@@ -266,6 +291,26 @@ export default function DailyValueSettings() {
         )}
       </div>
 
+      <div className={styles.modeRow}>
+        <span className={styles.modeLabel}>Override using</span>
+        <div className={styles.modeToggle}>
+          <button
+            type="button"
+            className={`${styles.modeButton} ${inputMode === 'percent' ? styles.modeButtonActive : ''}`}
+            onClick={() => setInputMode('percent')}
+          >
+            % DV
+          </button>
+          <button
+            type="button"
+            className={`${styles.modeButton} ${inputMode === 'precise' ? styles.modeButtonActive : ''}`}
+            onClick={() => setInputMode('precise')}
+          >
+            Precise
+          </button>
+        </div>
+      </div>
+
       <DvGroup
         title="Macronutrients"
         keys={MACRO_KEYS}
@@ -273,6 +318,7 @@ export default function DailyValueSettings() {
         overrides={customDailyValues}
         dvMap={dvMap}
         onOverride={setCustomDailyValue}
+        inputMode={inputMode}
       />
       <DvGroup
         title="Vitamins"
@@ -281,6 +327,7 @@ export default function DailyValueSettings() {
         overrides={customDailyValues}
         dvMap={dvMap}
         onOverride={setCustomDailyValue}
+        inputMode={inputMode}
       />
       <DvGroup
         title="Minerals"
@@ -289,6 +336,7 @@ export default function DailyValueSettings() {
         overrides={customDailyValues}
         dvMap={dvMap}
         onOverride={setCustomDailyValue}
+        inputMode={inputMode}
       />
 
       {hasAnything && (
