@@ -137,7 +137,7 @@ function scoreCandidate(
 
   perNutrientServings.sort((a, b) => a - b);
   const median = perNutrientServings[Math.floor(perNutrientServings.length / 2)];
-  const servings = Math.max(1, Math.min(14, Math.round(median * 7)));
+  const servings = Math.max(1, Math.min(MAX_SERVINGS, Math.round(median * 7)));
 
   const dailyFactor = (servingG / 100) * (servings / 7);
   let score = 0;
@@ -193,8 +193,58 @@ function applySelection(
   }
 }
 
+const MAX_SERVINGS = 14;
 const TOP_N = 5;
 const DIVERSITY_DECAY = 0.7;
+
+function getDailyCals(
+  entry: PlanEntry,
+  fruit: NutrientFruit
+): number {
+  const cals = fruit.calories_kcal as number | null;
+  if (cals === null) return 0;
+  const servingG = fruit.serving_size_g ?? 100;
+  return cals * (servingG / 100) * (entry.servingsPerWeek / 7);
+}
+
+function boostCalories(
+  plan: PlanEntry[],
+  lockedNames: Set<string>,
+  fruitMap: Map<string, NutrientFruit>,
+  calorieDV: number
+): void {
+  let totalCals = 0;
+  for (const entry of plan) {
+    const fruit = fruitMap.get(entry.name);
+    if (!fruit) continue;
+    totalCals += getDailyCals(entry, fruit);
+  }
+
+  if (totalCals >= calorieDV || totalCals <= 0) return;
+
+  const boostable = plan.filter(
+    (e) => !lockedNames.has(e.name) && e.servingsPerWeek < MAX_SERVINGS
+  );
+  if (boostable.length === 0) return;
+
+  const deficit = calorieDV - totalCals;
+
+  let boostableCals = 0;
+  for (const entry of boostable) {
+    const fruit = fruitMap.get(entry.name);
+    if (!fruit) continue;
+    boostableCals += getDailyCals(entry, fruit);
+  }
+
+  if (boostableCals <= 0) return;
+
+  const scale = (boostableCals + deficit) / boostableCals;
+
+  for (const entry of boostable) {
+    const scaled = Math.min(MAX_SERVINGS, Math.round(entry.servingsPerWeek * scale));
+    entry.servingsPerWeek = Math.max(entry.servingsPerWeek, scaled);
+  }
+}
 
 export function generateAutoFillPlan(
   fruits: NutrientFruit[],
@@ -253,6 +303,13 @@ export function generateAutoFillPlan(
     used.add(picked.fruit.name);
     typeCounts.set(picked.fruit.type, (typeCounts.get(picked.fruit.type) ?? 0) + 1);
     applySelection(picked, totals);
+  }
+
+  const calorieMeta = PLAN_NUTRIENTS.find((m) => m.key === 'calories_kcal');
+  if (calorieMeta) {
+    const calorieDV = resolveDV(calorieMeta, dvMap) ?? calorieMeta.dailyValue!;
+    const lockedNames = new Set(lockedEntries.map((e) => e.name));
+    boostCalories(plan, lockedNames, fruitMap, calorieDV);
   }
 
   return plan;
