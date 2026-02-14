@@ -6,8 +6,9 @@ import type { NutrientFruit } from '../types';
 export function useDietaryFruits(): NutrientFruit[] {
   const fruits = useStore((s) => s.fruits);
   const dietaryPreferences = useStore((s) => s.dietaryPreferences);
+  const blockedFoods = useStore((s) => s.blockedFoods);
   return useMemo(
-    () => fruits.filter((f) => !isItemExcluded(f, dietaryPreferences)),
-    [fruits, dietaryPreferences]
+    () => fruits.filter((f) => !isItemExcluded(f, dietaryPreferences) && !blockedFoods.has(f.name)),
+    [fruits, dietaryPreferences, blockedFoods]
   );
 }

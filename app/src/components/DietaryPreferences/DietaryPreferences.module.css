@@ -112,6 +112,114 @@
   background: #fff;
 }
 
+.blockSearchContainer {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.blockSearch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s;
+}
+
+.blockSearch:focus-within {
+  border-color: var(--border-accent);
+}
+
+.blockSearchIcon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.blockInput {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.blockInput::placeholder {
+  color: var(--text-tertiary);
+}
+
+.blockSuggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.blockSuggestionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.blockSuggestionItem:hover {
+  background: var(--bg-tertiary);
+}
+
+.blockSuggestionCategory {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.blockedList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.blockedItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px 4px 10px;
+  font-size: 12px;
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+}
+
+.blockedName {
+  white-space: nowrap;
+}
+
+.blockedRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-xs);
+  color: var(--text-tertiary);
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.blockedRemove:hover {
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+}
+
 .clearButton {
   display: inline-flex;
   align-items: center;

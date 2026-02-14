@@ -30,6 +30,11 @@ interface AppState {
   toggleDietaryPreference: (key: DietaryPreference) => void;
   clearDietaryPreferences: () => void;
 
+  blockedFoods: Set<string>;
+  blockFood: (name: string) => void;
+  unblockFood: (name: string) => void;
+  clearBlockedFoods: () => void;
+
   userProfile: UserProfile | null;
   customDailyValues: Partial<Record<NutrientKey, number>>;
   setUserProfile: (profile: UserProfile | null) => void;
@@ -100,6 +105,35 @@ export const useStore = create<AppState>((set, get) => ({
   clearDietaryPreferences: () => {
     localStorage.removeItem('dietaryPreferences');
     set({ dietaryPreferences: { ...DEFAULT_PREFERENCES } });
+  },
+
+  blockedFoods: (() => {
+    try {
+      const stored = localStorage.getItem('blockedFoods');
+      if (stored) return new Set<string>(JSON.parse(stored));
+    } catch {}
+    return new Set<string>();
+  })(),
+
+  blockFood: (name) =>
+    set((state) => {
+      const next = new Set(state.blockedFoods);
+      next.add(name);
+      localStorage.setItem('blockedFoods', JSON.stringify([...next]));
+      return { blockedFoods: next };
+    }),
+
+  unblockFood: (name) =>
+    set((state) => {
+      const next = new Set(state.blockedFoods);
+      next.delete(name);
+      localStorage.setItem('blockedFoods', JSON.stringify([...next]));
+      return { blockedFoods: next };
+    }),
+
+  clearBlockedFoods: () => {
+    localStorage.removeItem('blockedFoods');
+    set({ blockedFoods: new Set<string>() });
   },
 
   userProfile: (() => {
