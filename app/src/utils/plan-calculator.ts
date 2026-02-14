@@ -12,6 +12,7 @@ export interface PlanNutrientRow {
   total: number;
   nullCount: number;
   insufficientData: boolean;
+  note?: string;
 }
 
 const PLAN_NUTRIENTS: NutrientMeta[] = NUTRIENT_META.filter(
@@ -29,7 +30,13 @@ const INSUFFICIENT_THRESHOLD = 0.5;
 const EXCESS_THRESHOLD = 2.0;
 const EXCESS_PENALTY = 0.3;
 
-const FORCE_INSUFFICIENT: Set<NutrientKey> = new Set(['vitamin_d_mcg']);
+const FORCE_INSUFFICIENT: Set<NutrientKey> = new Set(['vitamin_d_mcg', 'sodium_mg']);
+
+const INSUFFICIENT_NOTES: Partial<Record<NutrientKey, string>> = {
+  sodium_mg: 'Nearly every modern diet includes enough sodium; add salt to your cooking if you are deficient',
+  vitamin_k_mcg: 'USDA does not supply this data',
+  vitamin_d_mcg: 'Very few foods contain vitamin D, if you are deficient, get 20 minutes of sun on your arms and legs per day, eat salmon, or take supplements',
+};
 
 function getInsufficientNutrients(fruits: NutrientFruit[]): Set<NutrientKey> {
   const result = new Set<NutrientKey>(FORCE_INSUFFICIENT);
@@ -99,6 +106,7 @@ export function computePlanDailyTotals(
     total: totals.get(meta.key)!,
     nullCount: nullCounts.get(meta.key)!,
     insufficientData: insufficient.has(meta.key),
+    note: INSUFFICIENT_NOTES[meta.key],
   }));
 }
 

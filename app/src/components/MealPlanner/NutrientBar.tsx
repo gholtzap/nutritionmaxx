@@ -17,10 +17,7 @@ interface NutrientBarProps {
 export default function NutrientBar({ row, entryCount }: NutrientBarProps) {
   if (row.insufficientData) {
     return (
-      <div
-        className={`${styles.barRow} ${styles.barRowInsufficient}`}
-        title="Insufficient data in dataset"
-      >
+      <div className={`${styles.barRow} ${styles.barRowInsufficient}`}>
         <div className={styles.barLabel}>
           <span className={styles.barName}>{row.label}</span>
           <span className={styles.barValue}>Insufficient data</span>
@@ -29,6 +26,7 @@ export default function NutrientBar({ row, entryCount }: NutrientBarProps) {
           <div className={styles.barFill} style={{ width: 0 }} />
         </div>
         <span className={styles.barPct}>--</span>
+        {row.note && <span className={styles.barTooltip}>{row.note}</span>}
       </div>
     );
   }
