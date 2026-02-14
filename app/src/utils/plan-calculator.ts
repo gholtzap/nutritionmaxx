@@ -29,8 +29,10 @@ const INSUFFICIENT_THRESHOLD = 0.5;
 const EXCESS_THRESHOLD = 2.0;
 const EXCESS_PENALTY = 0.3;
 
+const FORCE_INSUFFICIENT: Set<NutrientKey> = new Set(['vitamin_d_mcg']);
+
 function getInsufficientNutrients(fruits: NutrientFruit[]): Set<NutrientKey> {
-  const result = new Set<NutrientKey>();
+  const result = new Set<NutrientKey>(FORCE_INSUFFICIENT);
   if (fruits.length === 0) return result;
   for (const meta of PLAN_NUTRIENTS) {
     let hasData = 0;
