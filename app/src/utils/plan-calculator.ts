@@ -211,13 +211,26 @@ const TYPE_MAX: Record<ItemType, number> = {
 
 const CATEGORY_MAX: Partial<Record<ItemCategory, number>> = {
   'Ancient Grain': 3,
+  'Wheat': 0,
+  'Animal Fat': 7,
   'Other': 5,
   'Other Cut': 3,
   'Mollusk': 2,
   'Crustacean': 3,
 };
 
+const ITEM_MAX: Record<string, number> = {
+  'Shortening': 0,
+  'Chicken Liver': 1,
+  'Fava Bean': 3,
+  'Rutabaga': 3,
+  'Mung Bean': 3,
+  'Ribeye Steak': 2,
+};
+
 function maxServingsFor(fruit: NutrientFruit): number {
+  const itemCap = ITEM_MAX[fruit.name];
+  if (itemCap !== undefined) return itemCap;
   const catCap = CATEGORY_MAX[fruit.category as ItemCategory];
   if (catCap !== undefined) return catCap;
   return TYPE_MAX[fruit.type as ItemType] ?? 7;
