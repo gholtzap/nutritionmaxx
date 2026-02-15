@@ -156,9 +156,6 @@
 }
 
 .showEmptyCheckbox {
-  width: 14px;
-  height: 14px;
-  accent-color: var(--text-accent, #63b3ed);
   cursor: pointer;
 }
 
