@@ -1,0 +1,13 @@
+.notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(38, 92%, 50%);
+  background: hsla(38, 92%, 50%, 0.08);
+  border: 1px solid hsla(38, 92%, 50%, 0.2);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}

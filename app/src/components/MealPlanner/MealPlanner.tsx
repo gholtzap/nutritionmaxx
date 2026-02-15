@@ -4,9 +4,11 @@ import { useStore } from '../../store';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import { computePlanDailyTotals, generateAutoFillPlan } from '../../utils/plan-calculator';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
+import { useRateLimit } from '../../utils/use-rate-limit.ts';
 import PlanFoodSelector from './PlanFoodSelector';
 import PlanEntryRow from './PlanEntryRow';
 import NutrientCoverage from './NutrientCoverage';
+import RateLimitNotice from '../shared/RateLimitNotice';
 import styles from './MealPlanner.module.css';
 
 export default function MealPlanner() {
@@ -16,6 +18,9 @@ export default function MealPlanner() {
   const clearPlan = useStore((s) => s.clearPlan);
   const setPlanEntries = useStore((s) => s.setPlanEntries);
   const dvMap = useEffectiveDailyValues();
+
+  const autoFillLimit = useRateLimit({ action: 'autofill', windowMs: 60_000, maxRequests: 10, checkServer: true });
+  const shareLimit = useRateLimit({ action: 'share', windowMs: 60_000, maxRequests: 20 });
 
   const [copied, setCopied] = useState(false);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -36,8 +41,10 @@ export default function MealPlanner() {
     [planEntries, fruits, dvMap]
   );
 
-  const handleShare = useCallback(() => {
+  const handleShare = useCallback(async () => {
     if (planEntries.length === 0) return;
+    const allowed = await shareLimit.checkLimit();
+    if (!allowed) return;
     const url = new URL(window.location.href);
     url.searchParams.set(
       'plan',
@@ -49,13 +56,15 @@ export default function MealPlanner() {
     setCopied(true);
     if (copiedTimer.current) clearTimeout(copiedTimer.current);
     copiedTimer.current = setTimeout(() => setCopied(false), 1500);
-  }, [planEntries]);
+  }, [planEntries, shareLimit]);
 
-  const handleAutoFill = useCallback(() => {
+  const handleAutoFill = useCallback(async () => {
+    const allowed = await autoFillLimit.checkLimit();
+    if (!allowed) return;
     const locked = planEntries.filter((e) => lockedPlanEntries.has(e.name));
     const plan = generateAutoFillPlan(fruits, locked, 10, dvMap);
     setPlanEntries(plan);
-  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap]);
+  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap, autoFillLimit]);
 
   return (
     <div className={styles.container}>
@@ -91,10 +100,17 @@ export default function MealPlanner() {
             type="button"
             className={styles.autoFillButton}
             onClick={handleAutoFill}
+            disabled={autoFillLimit.isLimited}
           >
             <Lightning size={14} weight="fill" />
             <span>Auto-fill</span>
           </button>
+          {autoFillLimit.isLimited && (
+            <RateLimitNotice retryAfterMs={autoFillLimit.retryAfterMs} />
+          )}
+          {shareLimit.isLimited && (
+            <RateLimitNotice retryAfterMs={shareLimit.retryAfterMs} />
+          )}
         </div>
       </div>
 

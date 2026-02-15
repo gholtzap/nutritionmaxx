@@ -70,8 +70,13 @@
   white-space: nowrap;
 }
 
-.autoFillButton:hover {
+.autoFillButton:hover:not(:disabled) {
   background: rgba(99, 179, 237, 0.1);
+}
+
+.autoFillButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .searchContainer {
