@@ -1,4 +1,5 @@
 import { Table, GitDiff, SquaresFour, Pill, Scales, SlidersHorizontal, GearSix, SidebarSimple } from '@phosphor-icons/react';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
 import { countExcluded } from '../../utils/dietary';
@@ -40,6 +41,16 @@ export default function Sidebar() {
         >
           <SidebarSimple size={16} weight="regular" />
         </button>
+      </div>
+      <div className={styles.auth}>
+        <SignedOut>
+          <SignInButton>
+            <button type="button" className={styles.signInButton}>Sign in</button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </div>
       <nav className={styles.nav}>
         {NAV_ITEMS.map((item) => (

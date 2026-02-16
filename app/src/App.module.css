@@ -83,6 +83,23 @@
   color: var(--text-secondary);
 }
 
+.mobileHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobileSignIn {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-primary);
+  cursor: pointer;
+}
+
 @media (max-width: 767px) {
   .layout {
     flex-direction: column;

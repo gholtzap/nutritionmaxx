@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { List } from '@phosphor-icons/react';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from './store';
 import { useIsMobile } from './utils/use-is-mobile';
 import Sidebar from './components/Sidebar/Sidebar';
@@ -139,15 +140,25 @@ function App() {
       {isMobile && (
         <header className={styles.mobileHeader}>
           <span className={styles.mobileTitle}>Nutrition</span>
-          <label className={styles.mobileDvToggle}>
-            <input
-              type="checkbox"
-              checked={showDailyValue}
-              onChange={toggleDailyValue}
-              className={styles.mobileDvCheckbox}
-            />
-            <span className={styles.mobileDvLabel}>% DV</span>
-          </label>
+          <div className={styles.mobileHeaderRight}>
+            <label className={styles.mobileDvToggle}>
+              <input
+                type="checkbox"
+                checked={showDailyValue}
+                onChange={toggleDailyValue}
+                className={styles.mobileDvCheckbox}
+              />
+              <span className={styles.mobileDvLabel}>% DV</span>
+            </label>
+            <SignedOut>
+              <SignInButton>
+                <button type="button" className={styles.mobileSignIn}>Sign in</button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </div>
         </header>
       )}
       <main className={contentClass}>

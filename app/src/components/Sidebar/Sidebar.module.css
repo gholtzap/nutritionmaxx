@@ -49,6 +49,30 @@
   color: var(--text-primary);
 }
 
+.auth {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.signInButton {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-primary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.signInButton:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
 .nav {
   flex: 1;
   padding: 8px;
@@ -168,6 +192,10 @@
     border-left-color: transparent;
     border-bottom-color: var(--accent);
     background: transparent;
+  }
+
+  .auth {
+    display: none;
   }
 
   .dvToggle {
