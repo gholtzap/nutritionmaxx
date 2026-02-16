@@ -110,6 +110,7 @@ export interface Fruit {
   fdc_id: string;
   serving_size_g: number | null;
   serving_label: string | null;
+  cost_index: number | null;
   [key: string]: string | ItemType | ItemCategory | number | null;
 }
 

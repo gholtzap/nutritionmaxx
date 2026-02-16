@@ -77,6 +77,7 @@ export async function loadFruits(): Promise<NutrientFruit[]> {
             fdc_id: row.fdc_id?.trim() || '',
             serving_size_g: parseNumeric(row.serving_size_g),
             serving_label: row.serving_label?.trim() || null,
+            cost_index: parseNumeric(row.cost_index),
           };
 
           for (const field of NUMERIC_FIELDS) {
