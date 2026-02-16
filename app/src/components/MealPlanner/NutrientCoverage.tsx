@@ -1,3 +1,4 @@
+import type { NutrientKey } from '../../types';
 import type { PlanNutrientRow } from '../../utils/plan-calculator';
 import NutrientBar from './NutrientBar';
 import styles from './MealPlanner.module.css';
@@ -5,6 +6,7 @@ import styles from './MealPlanner.module.css';
 interface NutrientCoverageProps {
   rows: PlanNutrientRow[];
   entryCount: number;
+  lockedNutrients: Set<NutrientKey>;
 }
 
 const GROUP_LABELS: Record<string, string> = {
@@ -15,7 +17,7 @@ const GROUP_LABELS: Record<string, string> = {
 
 const GROUP_ORDER = ['macro', 'vitamin', 'mineral'] as const;
 
-export default function NutrientCoverage({ rows, entryCount }: NutrientCoverageProps) {
+export default function NutrientCoverage({ rows, entryCount, lockedNutrients }: NutrientCoverageProps) {
   const tracked = rows.filter((r) => !r.insufficientData);
   const metCount = tracked.filter((r) => r.dailyValue > 0 && r.total >= r.dailyValue).length;
 
@@ -31,7 +33,12 @@ export default function NutrientCoverage({ rows, entryCount }: NutrientCoverageP
           <div key={group} className={styles.coverageGroup}>
             <div className={styles.coverageGroupLabel}>{GROUP_LABELS[group]}</div>
             {groupRows.map((row) => (
-              <NutrientBar key={row.key} row={row} entryCount={entryCount} />
+              <NutrientBar
+                key={row.key}
+                row={row}
+                entryCount={entryCount}
+                locked={lockedNutrients.has(row.key)}
+              />
             ))}
           </div>
         );

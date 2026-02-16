@@ -1,3 +1,5 @@
+import { LockSimple, LockSimpleOpen } from '@phosphor-icons/react';
+import { useStore } from '../../store';
 import type { PlanNutrientRow } from '../../utils/plan-calculator';
 import styles from './MealPlanner.module.css';
 
@@ -12,9 +14,12 @@ function barColor(pct: number): string {
 interface NutrientBarProps {
   row: PlanNutrientRow;
   entryCount: number;
+  locked: boolean;
 }
 
-export default function NutrientBar({ row, entryCount }: NutrientBarProps) {
+export default function NutrientBar({ row, entryCount, locked }: NutrientBarProps) {
+  const toggleLockedNutrient = useStore((s) => s.toggleLockedNutrient);
+
   if (row.insufficientData) {
     return (
       <div className={`${styles.barRow} ${styles.barRowInsufficient}`}>
@@ -26,6 +31,7 @@ export default function NutrientBar({ row, entryCount }: NutrientBarProps) {
           <div className={styles.barFill} style={{ width: 0 }} />
         </div>
         <span className={styles.barPct}>--</span>
+        <span className={styles.nutrientLockPlaceholder} />
         {row.note && <span className={styles.barTooltip}>{row.note}</span>}
       </div>
     );
@@ -60,6 +66,14 @@ export default function NutrientBar({ row, entryCount }: NutrientBarProps) {
       <span className={styles.barPct} style={{ color }}>
         {pct.toFixed(0)}%
       </span>
+      <button
+        type="button"
+        className={`${styles.nutrientLockBtn} ${locked ? styles.nutrientLockBtnActive : ''}`}
+        onClick={() => toggleLockedNutrient(row.key)}
+        aria-label={locked ? `Unlock ${row.label}` : `Lock ${row.label}`}
+      >
+        {locked ? <LockSimple size={12} weight="fill" /> : <LockSimpleOpen size={12} />}
+      </button>
     </div>
   );
 }

@@ -464,6 +464,44 @@
   font-weight: 600;
 }
 
+.nutrientLockBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.barRow:hover .nutrientLockBtn {
+  opacity: 1;
+}
+
+.nutrientLockBtnActive {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.nutrientLockBtn:hover {
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+}
+
+.nutrientLockBtnActive:hover {
+  color: var(--accent);
+  background: rgba(99, 179, 237, 0.1);
+}
+
+.nutrientLockPlaceholder {
+  width: 22px;
+  flex-shrink: 0;
+}
+
 .disclaimer {
   font-size: 11px;
   color: var(--text-tertiary);

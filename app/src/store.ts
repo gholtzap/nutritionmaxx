@@ -27,6 +27,9 @@ interface AppState {
   lockedPlanEntries: Set<string>;
   budgetTolerance: number;
   setBudgetTolerance: (value: number) => void;
+  lockedNutrients: Set<NutrientKey>;
+  toggleLockedNutrient: (key: NutrientKey) => void;
+  clearLockedNutrients: () => void;
 
   dietaryPreferences: DietaryPreferences;
   toggleDietaryPreference: (key: DietaryPreference) => void;
@@ -103,6 +106,31 @@ export const useStore = create<AppState>((set, get) => ({
   setBudgetTolerance: (value) => {
     localStorage.setItem('budgetTolerance', String(value));
     set({ budgetTolerance: value });
+  },
+
+  lockedNutrients: (() => {
+    try {
+      const stored = localStorage.getItem('lockedNutrients');
+      if (stored) return new Set<NutrientKey>(JSON.parse(stored));
+    } catch {}
+    return new Set<NutrientKey>();
+  })(),
+
+  toggleLockedNutrient: (key) =>
+    set((state) => {
+      const next = new Set(state.lockedNutrients);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      localStorage.setItem('lockedNutrients', JSON.stringify([...next]));
+      return { lockedNutrients: next };
+    }),
+
+  clearLockedNutrients: () => {
+    localStorage.removeItem('lockedNutrients');
+    set({ lockedNutrients: new Set<NutrientKey>() });
   },
 
   dietaryPreferences: (() => {

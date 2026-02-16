@@ -116,11 +116,14 @@ interface ScoredCandidate {
   servings: number;
 }
 
+const LOCKED_NUTRIENT_BOOST = 3;
+
 function scoreCandidate(
   fruit: NutrientFruit,
   totals: Map<NutrientKey, number>,
   insufficient: Set<NutrientKey>,
-  dvMap?: EffectiveDailyValues
+  dvMap?: EffectiveDailyValues,
+  lockedNutrients?: Set<NutrientKey>
 ): ScoredCandidate | null {
   const servingG = fruit.serving_size_g ?? 100;
   const perNutrientServings: number[] = [];
@@ -160,12 +163,14 @@ function scoreCandidate(
     const total = totals.get(meta.key)!;
     const dv = resolveDV(meta, dvMap) ?? meta.dailyValue!;
     const rem = Math.max(0, dv - total);
+    const isLocked = lockedNutrients?.has(meta.key) && total < dv;
+    const weight = isLocked ? LOCKED_NUTRIENT_BOOST : 1;
     if (rem > 0) {
-      score += Math.min(contribution, rem) / dv;
+      score += (Math.min(contribution, rem) / dv) * weight;
     }
-    const cap = dv * EXCESS_THRESHOLD;
+    const dvCap = dv * EXCESS_THRESHOLD;
     const addedExcess =
-      Math.max(0, total + contribution - cap) - Math.max(0, total - cap);
+      Math.max(0, total + contribution - dvCap) - Math.max(0, total - dvCap);
     if (addedExcess > 0) {
       score -= (addedExcess / dv) * EXCESS_PENALTY;
     }
@@ -329,12 +334,100 @@ function boostCalories(
   }
 }
 
+function nutrientTotal(
+  plan: PlanEntry[],
+  fruitMap: Map<string, NutrientFruit>,
+  key: NutrientKey
+): number {
+  let total = 0;
+  for (const entry of plan) {
+    const fruit = fruitMap.get(entry.name);
+    if (!fruit) continue;
+    const raw = fruit[key] as number | null;
+    if (raw === null) continue;
+    const servingG = fruit.serving_size_g ?? 100;
+    total += raw * (servingG / 100) * (entry.servingsPerWeek / 7);
+  }
+  return total;
+}
+
+function nutrientDensity(fruit: NutrientFruit, key: NutrientKey): number {
+  const raw = fruit[key] as number | null;
+  if (raw === null || raw <= 0) return 0;
+  return raw * ((fruit.serving_size_g ?? 100) / 100);
+}
+
+function boostLockedNutrients(
+  plan: PlanEntry[],
+  lockedEntryNames: Set<string>,
+  fruitMap: Map<string, NutrientFruit>,
+  pool: NutrientFruit[],
+  used: Set<string>,
+  lockedNutrients: Set<NutrientKey>,
+  insufficient: Set<NutrientKey>,
+  dvMap?: EffectiveDailyValues
+): void {
+  for (const nutrientKey of lockedNutrients) {
+    if (insufficient.has(nutrientKey)) continue;
+    const meta = PLAN_NUTRIENTS.find((m) => m.key === nutrientKey);
+    if (!meta) continue;
+    const dv = resolveDV(meta, dvMap) ?? meta.dailyValue!;
+    if (dv <= 0) continue;
+
+    let total = nutrientTotal(plan, fruitMap, nutrientKey);
+    if (total >= dv) continue;
+
+    const boostable = plan.filter((e) => {
+      if (lockedEntryNames.has(e.name)) return false;
+      const f = fruitMap.get(e.name);
+      if (!f || e.servingsPerWeek >= maxServingsFor(f)) return false;
+      return nutrientDensity(f, nutrientKey) > 0;
+    });
+    boostable.sort(
+      (a, b) => nutrientDensity(fruitMap.get(b.name)!, nutrientKey) - nutrientDensity(fruitMap.get(a.name)!, nutrientKey)
+    );
+
+    for (const entry of boostable) {
+      if (total >= dv) break;
+      const fruit = fruitMap.get(entry.name)!;
+      const perServing = nutrientDensity(fruit, nutrientKey);
+      const deficit = dv - total;
+      const spwNeeded = Math.ceil((deficit / perServing) * 7);
+      const cap = maxServingsFor(fruit);
+      const newSpw = Math.min(cap, entry.servingsPerWeek + spwNeeded);
+      const added = newSpw - entry.servingsPerWeek;
+      if (added > 0) {
+        entry.servingsPerWeek = newSpw;
+        total += perServing * (added / 7);
+      }
+    }
+
+    if (total >= dv) continue;
+
+    const candidates = pool
+      .filter((f) => !used.has(f.name) && nutrientDensity(f, nutrientKey) > 0)
+      .sort((a, b) => nutrientDensity(b, nutrientKey) - nutrientDensity(a, nutrientKey));
+
+    for (const fruit of candidates) {
+      if (total >= dv) break;
+      const perServing = nutrientDensity(fruit, nutrientKey);
+      const deficit = dv - total;
+      const cap = maxServingsFor(fruit);
+      const spw = Math.min(cap, Math.max(1, Math.ceil((deficit / perServing) * 7)));
+      plan.push({ name: fruit.name, servingsPerWeek: spw });
+      used.add(fruit.name);
+      total += perServing * (spw / 7);
+    }
+  }
+}
+
 export function generateAutoFillPlan(
   fruits: NutrientFruit[],
   lockedEntries: PlanEntry[] = [],
   maxEntries = 15,
   dvMap?: EffectiveDailyValues,
-  budgetTolerance = 10
+  budgetTolerance = 10,
+  lockedNutrients?: Set<NutrientKey>
 ): PlanEntry[] {
   const pool = fruits.filter(
     (f) => f.type !== 'spice' && (f.cost_index === null || (f.cost_index as number) <= budgetTolerance)
@@ -372,7 +465,7 @@ export function generateAutoFillPlan(
 
     for (const fruit of pool) {
       if (used.has(fruit.name)) continue;
-      const result = scoreCandidate(fruit, totals, insufficient, dvMap);
+      const result = scoreCandidate(fruit, totals, insufficient, dvMap, lockedNutrients);
       if (!result) continue;
       const count = typeCounts.get(fruit.type) ?? 0;
       result.score *= DIVERSITY_DECAY ** count;
@@ -382,8 +475,17 @@ export function generateAutoFillPlan(
     if (scored.length === 0) break;
 
     scored.sort((a, b) => b.score - a.score);
-    const topCandidates = scored.slice(0, TOP_N);
-    const picked = weightedRandomPick(topCandidates);
+    const hasUnmetLocked = lockedNutrients && lockedNutrients.size > 0 &&
+      [...lockedNutrients].some((key) => {
+        if (insufficient.has(key)) return false;
+        const meta = PLAN_NUTRIENTS.find((m) => m.key === key);
+        if (!meta) return false;
+        const dv = resolveDV(meta, dvMap) ?? meta.dailyValue!;
+        return totals.get(key)! < dv;
+      });
+    const picked = hasUnmetLocked
+      ? scored[0]
+      : weightedRandomPick(scored.slice(0, TOP_N));
 
     plan.push({ name: picked.fruit.name, servingsPerWeek: picked.servings });
     used.add(picked.fruit.name);
@@ -391,10 +493,15 @@ export function generateAutoFillPlan(
     applySelection(picked, totals);
   }
 
+  const lockedNames = new Set(lockedEntries.map((e) => e.name));
+
+  if (lockedNutrients && lockedNutrients.size > 0) {
+    boostLockedNutrients(plan, lockedNames, fruitMap, pool, used, lockedNutrients, insufficient, dvMap);
+  }
+
   const calorieMeta = PLAN_NUTRIENTS.find((m) => m.key === 'calories_kcal');
   if (calorieMeta) {
     const calorieDV = resolveDV(calorieMeta, dvMap) ?? calorieMeta.dailyValue!;
-    const lockedNames = new Set(lockedEntries.map((e) => e.name));
     boostCalories(plan, lockedNames, fruitMap, pool, used, calorieDV);
   }
 

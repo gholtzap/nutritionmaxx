@@ -32,6 +32,7 @@ export default function MealPlanner() {
   const setPlanEntries = useStore((s) => s.setPlanEntries);
   const budgetTolerance = useStore((s) => s.budgetTolerance);
   const setBudgetTolerance = useStore((s) => s.setBudgetTolerance);
+  const lockedNutrients = useStore((s) => s.lockedNutrients);
   const dvMap = useEffectiveDailyValues();
 
   const autoFillLimit = useRateLimit({ action: 'autofill', windowMs: 60_000, maxRequests: 10, checkServer: true });
@@ -77,9 +78,9 @@ export default function MealPlanner() {
     const allowed = await autoFillLimit.checkLimit();
     if (!allowed) return;
     const locked = planEntries.filter((e) => lockedPlanEntries.has(e.name));
-    const plan = generateAutoFillPlan(fruits, locked, 10, dvMap, budgetTolerance);
+    const plan = generateAutoFillPlan(fruits, locked, 10, dvMap, budgetTolerance, lockedNutrients);
     setPlanEntries(plan);
-  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance]);
+  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance, lockedNutrients]);
 
   return (
     <div className={styles.container}>
@@ -165,7 +166,7 @@ export default function MealPlanner() {
       )}
 
       {planEntries.length > 0 && (
-        <NutrientCoverage rows={nutrientRows} entryCount={planEntries.length} />
+        <NutrientCoverage rows={nutrientRows} entryCount={planEntries.length} lockedNutrients={lockedNutrients} />
       )}
     </div>
   );
