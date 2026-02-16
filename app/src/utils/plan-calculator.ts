@@ -333,9 +333,12 @@ export function generateAutoFillPlan(
   fruits: NutrientFruit[],
   lockedEntries: PlanEntry[] = [],
   maxEntries = 15,
-  dvMap?: EffectiveDailyValues
+  dvMap?: EffectiveDailyValues,
+  budgetTolerance = 10
 ): PlanEntry[] {
-  const pool = fruits.filter((f) => f.type !== 'spice');
+  const pool = fruits.filter(
+    (f) => f.type !== 'spice' && (f.cost_index === null || (f.cost_index as number) <= budgetTolerance)
+  );
   const fruitMap = new Map(fruits.map((f) => [f.name, f]));
   const insufficient = getInsufficientNutrients(fruits);
 

@@ -9,6 +9,7 @@ export default function PlanFoodSelector() {
   const fruits = useDietaryFruits();
   const planEntries = useStore((s) => s.planEntries);
   const addPlanEntry = useStore((s) => s.addPlanEntry);
+  const budgetTolerance = useStore((s) => s.budgetTolerance);
 
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -20,6 +21,7 @@ export default function PlanFoodSelector() {
     query.length > 0
       ? fruits
           .filter((f) => !planNames.has(f.name))
+          .filter((f) => f.cost_index === null || (f.cost_index as number) <= budgetTolerance)
           .filter((f) => f.name.toLowerCase().includes(query.toLowerCase()))
           .slice(0, 8)
       : [];

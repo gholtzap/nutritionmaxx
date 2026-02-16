@@ -25,6 +25,8 @@ interface AppState {
 
   planEntries: PlanEntry[];
   lockedPlanEntries: Set<string>;
+  budgetTolerance: number;
+  setBudgetTolerance: (value: number) => void;
 
   dietaryPreferences: DietaryPreferences;
   toggleDietaryPreference: (key: DietaryPreference) => void;
@@ -86,6 +88,22 @@ export const useStore = create<AppState>((set, get) => ({
 
   planEntries: [],
   lockedPlanEntries: new Set(),
+
+  budgetTolerance: (() => {
+    try {
+      const stored = localStorage.getItem('budgetTolerance');
+      if (stored) {
+        const val = parseInt(stored, 10);
+        if (val >= 1 && val <= 10) return val;
+      }
+    } catch {}
+    return 10;
+  })(),
+
+  setBudgetTolerance: (value) => {
+    localStorage.setItem('budgetTolerance', String(value));
+    set({ budgetTolerance: value });
+  },
 
   dietaryPreferences: (() => {
     try {

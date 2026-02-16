@@ -11,12 +11,27 @@ import NutrientCoverage from './NutrientCoverage';
 import RateLimitNotice from '../shared/RateLimitNotice';
 import styles from './MealPlanner.module.css';
 
+const BUDGET_LABELS: Record<number, string> = {
+  1: '$',
+  2: '$',
+  3: '$$',
+  4: '$$',
+  5: '$$$',
+  6: '$$$',
+  7: '$$$$',
+  8: '$$$$',
+  9: '$$$$$',
+  10: 'Any',
+};
+
 export default function MealPlanner() {
   const fruits = useDietaryFruits();
   const planEntries = useStore((s) => s.planEntries);
   const lockedPlanEntries = useStore((s) => s.lockedPlanEntries);
   const clearPlan = useStore((s) => s.clearPlan);
   const setPlanEntries = useStore((s) => s.setPlanEntries);
+  const budgetTolerance = useStore((s) => s.budgetTolerance);
+  const setBudgetTolerance = useStore((s) => s.setBudgetTolerance);
   const dvMap = useEffectiveDailyValues();
 
   const autoFillLimit = useRateLimit({ action: 'autofill', windowMs: 60_000, maxRequests: 10, checkServer: true });
@@ -62,9 +77,9 @@ export default function MealPlanner() {
     const allowed = await autoFillLimit.checkLimit();
     if (!allowed) return;
     const locked = planEntries.filter((e) => lockedPlanEntries.has(e.name));
-    const plan = generateAutoFillPlan(fruits, locked, 10, dvMap);
+    const plan = generateAutoFillPlan(fruits, locked, 10, dvMap, budgetTolerance);
     setPlanEntries(plan);
-  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap, autoFillLimit]);
+  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance]);
 
   return (
     <div className={styles.container}>
@@ -112,6 +127,20 @@ export default function MealPlanner() {
             <RateLimitNotice retryAfterMs={shareLimit.retryAfterMs} />
           )}
         </div>
+      </div>
+
+      <div className={styles.budgetRow}>
+        <span className={styles.budgetLabel}>Budget</span>
+        <input
+          type="range"
+          className={styles.budgetSlider}
+          min={1}
+          max={10}
+          step={1}
+          value={budgetTolerance}
+          onChange={(e) => setBudgetTolerance(Number(e.target.value))}
+        />
+        <span className={styles.budgetValue}>{BUDGET_LABELS[budgetTolerance]}</span>
       </div>
 
       <PlanFoodSelector />
