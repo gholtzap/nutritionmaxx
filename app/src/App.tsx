@@ -3,6 +3,7 @@ import { List } from '@phosphor-icons/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from './store';
 import { useIsMobile } from './utils/use-is-mobile';
+import { usePreferencesSync } from './hooks/use-preferences-sync';
 import Sidebar from './components/Sidebar/Sidebar';
 import DataTable from './components/DataTable/DataTable';
 import FruitDetail from './components/FruitDetail/FruitDetail';
@@ -26,6 +27,7 @@ function App() {
   const sidebarCollapsed = useStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useStore((s) => s.toggleSidebar);
   const isMobile = useIsMobile();
+  usePreferencesSync();
 
   const fruits = useStore((s) => s.fruits);
   const setSelectedFruit = useStore((s) => s.setSelectedFruit);

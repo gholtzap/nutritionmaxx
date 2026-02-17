@@ -5,6 +5,7 @@ import { loadFruits } from './utils/parse-csv';
 import type { DietaryPreference, DietaryPreferences } from './utils/dietary';
 import { DEFAULT_PREFERENCES } from './utils/dietary';
 import type { UserProfile } from './utils/daily-values';
+import type { StorePreferenceFields } from './utils/preferences-sync';
 
 interface AppState {
   fruits: NutrientFruit[];
@@ -70,6 +71,8 @@ interface AppState {
   togglePlanEntryLock: (name: string) => void;
   clearPlan: () => void;
   setPlanEntries: (entries: PlanEntry[]) => void;
+
+  _loadPreferences: (prefs: StorePreferenceFields) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -357,4 +360,29 @@ export const useStore = create<AppState>((set, get) => ({
   clearPlan: () => set({ planEntries: [], lockedPlanEntries: new Set() }),
 
   setPlanEntries: (entries) => set({ planEntries: entries }),
+
+  _loadPreferences: (prefs) => {
+    localStorage.setItem('dietaryPreferences', JSON.stringify(prefs.dietaryPreferences));
+    localStorage.setItem('blockedFoods', JSON.stringify([...prefs.blockedFoods]));
+    if (prefs.userProfile) {
+      localStorage.setItem('userProfile', JSON.stringify(prefs.userProfile));
+    } else {
+      localStorage.removeItem('userProfile');
+    }
+    localStorage.setItem('customDailyValues', JSON.stringify(prefs.customDailyValues));
+    localStorage.setItem('budgetTolerance', String(prefs.budgetTolerance));
+    localStorage.setItem('lockedNutrients', JSON.stringify([...prefs.lockedNutrients]));
+
+    set({
+      dietaryPreferences: prefs.dietaryPreferences,
+      blockedFoods: prefs.blockedFoods,
+      userProfile: prefs.userProfile,
+      customDailyValues: prefs.customDailyValues,
+      budgetTolerance: prefs.budgetTolerance,
+      lockedNutrients: prefs.lockedNutrients,
+      visibleColumns: prefs.visibleColumns,
+      showDailyValue: prefs.showDailyValue,
+      showPerServing: prefs.showPerServing,
+    });
+  },
 }));
