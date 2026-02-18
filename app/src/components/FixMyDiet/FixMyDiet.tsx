@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
+import { ArrowLeft, ArrowRight, Info } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import type { BiologicalSex, AgeRange, DietPattern, HealthFocus, WizardAnswers } from '../../utils/deficiency-profile';
@@ -181,6 +181,14 @@ export default function FixMyDiet() {
           <ArrowRight size={14} weight="bold" />
         </button>
       </div>
+
+      <span className={styles.infoWrapper}>
+        <Info size={13} weight="fill" className={styles.infoIcon} />
+        <span className={styles.infoLabel}>How do we store your data?</span>
+        <span className={styles.infoTooltip}>
+          We do not track your data. Once you submit an answer, your settings are updated in your user profile accordingly. You can update them at any time.
+        </span>
+      </span>
     </div>
   );
 }
