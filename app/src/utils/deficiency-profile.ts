@@ -5,12 +5,18 @@ export type BiologicalSex = 'male' | 'female';
 export type AgeRange = '19-30' | '31-50' | '51+';
 export type DietPattern = 'omnivore' | 'pescatarian' | 'vegetarian' | 'vegan';
 export type HealthFocus = 'heart' | 'bone' | 'energy' | 'gut' | 'immune';
+export type PregnancyStatus = 'pregnant' | 'breastfeeding';
+export type LifestyleFactor = 'smoker' | 'alcohol' | 'caffeine';
+export type Symptom = 'fatigue' | 'cramps' | 'bruising' | 'colds';
 
 export interface WizardAnswers {
   sex: BiologicalSex;
   ageRange: AgeRange;
   dietPattern: DietPattern;
   healthFocus: HealthFocus[];
+  pregnancyStatus: PregnancyStatus | null;
+  lifestyleFactors: LifestyleFactor[];
+  symptoms: Symptom[];
 }
 
 export interface ScoredFood {
@@ -97,6 +103,64 @@ const HEALTH_FOCUS_WEIGHTS: Record<HealthFocus, Partial<Record<NutrientKey, numb
   },
 };
 
+const PREGNANCY_WEIGHTS: Record<PregnancyStatus, Partial<Record<NutrientKey, number>>> = {
+  pregnant: {
+    vitamin_b9_mcg: 0.4,
+    iron_mg: 0.35,
+    calcium_mg: 0.25,
+    zinc_mg: 0.2,
+  },
+  breastfeeding: {
+    calcium_mg: 0.3,
+    vitamin_b9_mcg: 0.3,
+    vitamin_a_mcg: 0.2,
+    zinc_mg: 0.2,
+  },
+};
+
+const LIFESTYLE_WEIGHTS: Record<LifestyleFactor, Partial<Record<NutrientKey, number>>> = {
+  smoker: {
+    vitamin_c_mg: 0.3,
+    vitamin_e_mg: 0.15,
+    vitamin_a_mcg: 0.1,
+  },
+  alcohol: {
+    vitamin_b1_mg: 0.25,
+    vitamin_b9_mcg: 0.2,
+    magnesium_mg: 0.15,
+    zinc_mg: 0.1,
+  },
+  caffeine: {
+    iron_mg: 0.2,
+    calcium_mg: 0.2,
+    magnesium_mg: 0.1,
+  },
+};
+
+const SYMPTOM_WEIGHTS: Record<Symptom, Partial<Record<NutrientKey, number>>> = {
+  fatigue: {
+    iron_mg: 0.25,
+    vitamin_b12_mcg: 0.25,
+    vitamin_b6_mg: 0.15,
+    magnesium_mg: 0.1,
+  },
+  cramps: {
+    magnesium_mg: 0.3,
+    potassium_mg: 0.25,
+    calcium_mg: 0.2,
+  },
+  bruising: {
+    vitamin_c_mg: 0.3,
+    vitamin_k_mcg: 0.25,
+  },
+  colds: {
+    vitamin_c_mg: 0.25,
+    zinc_mg: 0.2,
+    vitamin_a_mcg: 0.15,
+    selenium_mcg: 0.1,
+  },
+};
+
 const OMEGA3_BONUS_FOODS = new Set([
   'Flaxseed', 'Chia Seeds', 'Walnuts', 'Hemp Seeds',
   'Salmon', 'Sardines', 'Mackerel', 'Trout', 'Herring',
@@ -131,6 +195,18 @@ export function buildDeficiencyProfile(answers: WizardAnswers): DeficiencyWeight
 
   for (const focus of answers.healthFocus) {
     addWeights(weights, HEALTH_FOCUS_WEIGHTS[focus]);
+  }
+
+  if (answers.pregnancyStatus) {
+    addWeights(weights, PREGNANCY_WEIGHTS[answers.pregnancyStatus]);
+  }
+
+  for (const factor of answers.lifestyleFactors) {
+    addWeights(weights, LIFESTYLE_WEIGHTS[factor]);
+  }
+
+  for (const symptom of answers.symptoms) {
+    addWeights(weights, SYMPTOM_WEIGHTS[symptom]);
   }
 
   return weights;

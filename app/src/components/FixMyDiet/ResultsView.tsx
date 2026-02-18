@@ -30,7 +30,10 @@ export default function ResultsView({ answers, foods, onAddToPlan, onStartOver }
           <h2 className={styles.resultsTitle}>Your Recommendations</h2>
           <p className={styles.resultsSubtitle}>
             Based on your profile: {answers.sex}, {answers.ageRange}, {answers.dietPattern}
+            {answers.pregnancyStatus && ` / ${answers.pregnancyStatus}`}
             {answers.healthFocus.length > 0 && ` / ${answers.healthFocus.join(', ')}`}
+            {answers.lifestyleFactors.length > 0 && ` / ${answers.lifestyleFactors.join(', ')}`}
+            {answers.symptoms.length > 0 && ` / ${answers.symptoms.join(', ')}`}
           </p>
         </div>
         <button type="button" className={styles.startOver} onClick={onStartOver}>
