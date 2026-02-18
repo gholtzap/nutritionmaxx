@@ -12,6 +12,7 @@ import CategoryOverview from './components/CategoryOverview/CategoryOverview';
 import NutrientGuide from './components/NutrientGuide/NutrientGuide';
 import MealPlanner from './components/MealPlanner/MealPlanner';
 import DietaryPreferences from './components/DietaryPreferences/DietaryPreferences';
+import FixMyDiet from './components/FixMyDiet/FixMyDiet';
 import DailyValueSettings from './components/DailyValueSettings/DailyValueSettings';
 import Spinner from './components/shared/Spinner';
 import styles from './App.module.css';
@@ -168,6 +169,7 @@ function App() {
         {error && <div className={styles.status}>{error}</div>}
         {!loading && !error && (
           <>
+            {activeView === 'fixdiet' && <FixMyDiet />}
             {activeView === 'table' && <DataTable />}
             {activeView === 'comparison' && <Comparison />}
             {activeView === 'categories' && <CategoryOverview />}

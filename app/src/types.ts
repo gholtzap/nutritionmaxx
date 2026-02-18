@@ -125,7 +125,7 @@ export interface SortConfig {
   direction: SortDirection;
 }
 
-export type ViewId = 'table' | 'comparison' | 'categories' | 'nutrients' | 'planner' | 'dietary' | 'settings';
+export type ViewId = 'fixdiet' | 'table' | 'comparison' | 'categories' | 'nutrients' | 'planner' | 'dietary' | 'settings';
 
 export type NutrientGroup = 'macro' | 'vitamin' | 'mineral';
 

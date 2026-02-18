@@ -1,4 +1,4 @@
-import { Table, GitDiff, SquaresFour, Pill, Scales, SlidersHorizontal, GearSix, SidebarSimple } from '@phosphor-icons/react';
+import { Table, GitDiff, SquaresFour, Pill, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat } from '@phosphor-icons/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
@@ -7,6 +7,7 @@ import NavItem from './NavItem';
 import styles from './Sidebar.module.css';
 
 const NAV_ITEMS: { id: ViewId; label: string; icon: React.ReactNode }[] = [
+  { id: 'fixdiet', label: 'Fix My Diet', icon: <Heartbeat size={18} weight="regular" /> },
   { id: 'table', label: 'Explorer', icon: <Table size={18} weight="regular" /> },
   { id: 'comparison', label: 'Compare', icon: <GitDiff size={18} weight="regular" /> },
   { id: 'categories', label: 'Categories', icon: <SquaresFour size={18} weight="regular" /> },
