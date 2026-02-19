@@ -16,6 +16,8 @@ const TYPE_OPTIONS: { label: string; value: ItemType | null }[] = [
   { label: 'Pork', value: 'pork' },
   { label: 'Fats & Oils', value: 'fat_oil' },
   { label: 'Dairy', value: 'dairy' },
+  { label: 'Eggs', value: 'egg' },
+  { label: 'Lamb', value: 'lamb' },
 ];
 
 export default function TypeFilter() {

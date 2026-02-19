@@ -1,4 +1,4 @@
-export type ItemType = 'fruit' | 'vegetable' | 'spice' | 'nut_seed' | 'legume' | 'grain' | 'fish_seafood' | 'poultry' | 'beef' | 'pork' | 'fat_oil' | 'dairy';
+export type ItemType = 'fruit' | 'vegetable' | 'spice' | 'nut_seed' | 'legume' | 'grain' | 'fish_seafood' | 'poultry' | 'beef' | 'pork' | 'fat_oil' | 'dairy' | 'egg' | 'lamb';
 
 export type FruitCategory =
   | 'Pome'
@@ -76,7 +76,20 @@ export type DairyCategory =
   | 'Cheese'
   | 'Cream';
 
-export type ItemCategory = FruitCategory | VegetableCategory | SpiceCategory | NutSeedCategory | LegumeCategory | GrainCategory | FishSeafoodCategory | PoultryCategory | BeefCategory | PorkCategory | FatOilCategory | DairyCategory;
+export type EggCategory =
+  | 'Whole'
+  | 'Part'
+  | 'Other Egg';
+
+export type LambCategory =
+  | 'Ground'
+  | 'Leg'
+  | 'Loin'
+  | 'Shoulder'
+  | 'Rib'
+  | 'Shank';
+
+export type ItemCategory = FruitCategory | VegetableCategory | SpiceCategory | NutSeedCategory | LegumeCategory | GrainCategory | FishSeafoodCategory | PoultryCategory | BeefCategory | PorkCategory | FatOilCategory | DairyCategory | EggCategory | LambCategory;
 
 export type NutrientKey =
   | 'calories_kcal'

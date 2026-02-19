@@ -1,4 +1,4 @@
-import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, GrainCategory, FishSeafoodCategory, PoultryCategory, BeefCategory, PorkCategory, FatOilCategory, DairyCategory, ItemCategory } from '../types';
+import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, GrainCategory, FishSeafoodCategory, PoultryCategory, BeefCategory, PorkCategory, FatOilCategory, DairyCategory, EggCategory, LambCategory, ItemCategory } from '../types';
 
 export interface NutrientMeta {
   key: NutrientKey;
@@ -108,6 +108,12 @@ export const CATEGORY_COLORS: Record<string, string> = {
   Yogurt: 'var(--cat-yogurt)',
   Cheese: 'var(--cat-cheese)',
   Cream: 'var(--cat-cream)',
+  Whole: 'var(--cat-egg-whole)',
+  Part: 'var(--cat-egg-part)',
+  'Other Egg': 'var(--cat-egg-other)',
+  Leg: 'var(--cat-lamb-leg)',
+  Rib: 'var(--cat-lamb-rib)',
+  Shank: 'var(--cat-lamb-shank)',
   Other: 'var(--cat-other)',
 };
 
@@ -159,6 +165,14 @@ export const DAIRY_CATEGORIES: DairyCategory[] = [
   'Milk', 'Yogurt', 'Cheese', 'Cream',
 ];
 
+export const EGG_CATEGORIES: EggCategory[] = [
+  'Whole', 'Part', 'Other Egg',
+];
+
+export const LAMB_CATEGORIES: LambCategory[] = [
+  'Ground', 'Leg', 'Loin', 'Shoulder', 'Rib', 'Shank',
+];
+
 export const ALL_CATEGORIES: ItemCategory[] = [
   'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape',
   'Root', 'Leafy Green', 'Cruciferous', 'Legume', 'Allium', 'Nightshade', 'Squash',
@@ -172,6 +186,8 @@ export const ALL_CATEGORIES: ItemCategory[] = [
   'Loin', 'Shoulder',
   'Plant Oil', 'Nut & Seed Oil', 'Animal Fat', 'Processed',
   'Milk', 'Yogurt', 'Cheese', 'Cream',
+  'Whole', 'Part', 'Other Egg',
+  'Leg', 'Rib', 'Shank',
   'Other',
 ];
 
