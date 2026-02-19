@@ -59,7 +59,9 @@ export const MINERAL_KEYS: NutrientKey[] = NUTRIENT_META
   .filter((m) => m.group === 'mineral')
   .map((m) => m.key);
 
-export const DEFAULT_VISIBLE_COLUMNS: Set<NutrientKey> = new Set(MACRO_KEYS);
+export const ALL_NUTRIENT_KEYS: NutrientKey[] = NUTRIENT_META.map((m) => m.key);
+
+export const DEFAULT_VISIBLE_COLUMNS: Set<NutrientKey> = new Set(ALL_NUTRIENT_KEYS);
 
 export const CATEGORY_COLORS: Record<string, string> = {
   Pome: 'var(--cat-pome)',

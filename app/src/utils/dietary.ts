@@ -11,7 +11,9 @@ export type DietaryPreference =
   | 'shellfish_free'
   | 'soy_free'
   | 'gluten_free'
-  | 'fish_free';
+  | 'fish_free'
+  | 'dairy_free'
+  | 'egg_free';
 
 export type DietaryPreferences = Record<DietaryPreference, boolean>;
 
@@ -27,6 +29,8 @@ export const DEFAULT_PREFERENCES: DietaryPreferences = {
   soy_free: false,
   gluten_free: false,
   fish_free: false,
+  dairy_free: false,
+  egg_free: false,
 };
 
 const MEAT_TYPES = new Set(['beef', 'pork', 'poultry', 'fish_seafood', 'lamb']);
@@ -52,6 +56,8 @@ export const EXCLUSION_RULES: Record<DietaryPreference, (item: NutrientFruit) =>
   soy_free: (item) => item.category === 'Soy' || item.name === 'Soybean Oil',
   gluten_free: (item) => item.category === 'Wheat' || GLUTEN_NAMES.has(item.name),
   fish_free: (item) => item.category === 'Fish',
+  dairy_free: (item) => item.type === 'dairy' || BUTTER_NAMES.has(item.name),
+  egg_free: (item) => item.type === 'egg',
 };
 
 export function isItemExcluded(item: NutrientFruit, preferences: DietaryPreferences): boolean {
@@ -100,4 +106,6 @@ export const DIETARY_OPTIONS: DietaryOption[] = [
   { key: 'soy_free', label: 'Soy Free', group: 'allergy', description: 'Excludes soy products' },
   { key: 'gluten_free', label: 'Gluten Free', group: 'allergy', description: 'Excludes wheat, barley, rye, oats' },
   { key: 'fish_free', label: 'Fish Free', group: 'allergy', description: 'Excludes fish' },
+  { key: 'dairy_free', label: 'Dairy Free', group: 'allergy', description: 'Excludes milk, cheese, yogurt, butter' },
+  { key: 'egg_free', label: 'Egg Free', group: 'allergy', description: 'Excludes all egg products' },
 ];
