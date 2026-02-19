@@ -1,13 +1,20 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useStore } from '../../store';
 import type { ItemCategory } from '../../types';
 import { FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, BEEF_CATEGORIES, PORK_CATEGORIES, FAT_OIL_CATEGORIES, DAIRY_CATEGORIES, EGG_CATEGORIES, LAMB_CATEGORIES, ALL_CATEGORIES, CATEGORY_COLORS } from '../../utils/nutrition-meta';
 import styles from './DataTable.module.css';
 
+const COLLAPSED_LIMIT = 6;
+
 export default function CategoryFilter() {
   const selectedType = useStore((s) => s.selectedType);
   const selectedCategories = useStore((s) => s.selectedCategories);
   const toggleCategory = useStore((s) => s.toggleCategory);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    setExpanded(false);
+  }, [selectedType]);
 
   const categories = useMemo(() => {
     if (selectedType === 'fruit') return FRUIT_CATEGORIES as readonly ItemCategory[];
@@ -27,9 +34,15 @@ export default function CategoryFilter() {
     return ALL_CATEGORIES;
   }, [selectedType]);
 
+  const canCollapse = categories.length > COLLAPSED_LIMIT;
+  const visible = canCollapse && !expanded
+    ? categories.slice(0, COLLAPSED_LIMIT)
+    : categories;
+  const hiddenCount = categories.length - COLLAPSED_LIMIT;
+
   return (
     <div className={styles.categoryFilter}>
-      {categories.map((cat) => {
+      {visible.map((cat) => {
         const active = selectedCategories.has(cat);
         const color = CATEGORY_COLORS[cat];
         return (
@@ -48,6 +61,15 @@ export default function CategoryFilter() {
           </button>
         );
       })}
+      {canCollapse && (
+        <button
+          type="button"
+          className={styles.categoryExpandToggle}
+          onClick={() => setExpanded((v) => !v)}
+        >
+          {expanded ? 'Show less' : `+${hiddenCount} more`}
+        </button>
+      )}
     </div>
   );
 }

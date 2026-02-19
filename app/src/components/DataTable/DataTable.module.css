@@ -121,6 +121,22 @@
   flex-shrink: 0;
 }
 
+.categoryExpandToggle {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  border: 1px dashed var(--border-primary);
+  border-radius: 100px;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.categoryExpandToggle:hover {
+  color: var(--text-primary);
+  border-color: var(--border-accent);
+  background: var(--bg-tertiary);
+}
+
 .columnToggle {
   position: relative;
 }
