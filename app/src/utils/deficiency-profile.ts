@@ -195,6 +195,30 @@ const OMEGA3_BONUS_FOODS = new Set([
   'Salmon', 'Sardines', 'Mackerel', 'Trout', 'Herring',
 ]);
 
+const UNCOMMON_DISCOUNT: Record<string, number> = {
+  'Beef Liver': 0.25,
+  'Chicken Liver': 0.25,
+  'Pork Liver': 0.25,
+  'Duck': 0.4,
+  'Duck Egg': 0.4,
+  'Cornish Hen': 0.4,
+  'Pawpaw': 0.4,
+  'Teff': 0.4,
+  'Amaranth': 0.5,
+  'Sorghum': 0.5,
+  'Rutabaga': 0.5,
+  'Tomatillo': 0.5,
+  'Squid': 0.5,
+  'Mussel': 0.5,
+  'Oyster': 0.5,
+  'Herring': 0.6,
+  'Anchovy': 0.6,
+  'Mackerel': 0.6,
+  'Adzuki Bean': 0.6,
+  'Fava Bean': 0.6,
+  'Mung Bean': 0.6,
+};
+
 const EXCLUDED_NUTRIENTS: Set<NutrientKey> = new Set([
   'vitamin_d_mcg', 'sodium_mg', 'water_g', 'sugars_g',
   'calories_kcal', 'fat_g', 'carbs_g',
@@ -299,6 +323,11 @@ export function scoreFoodsForDeficiencies(
 
     if (OMEGA3_BONUS_FOODS.has(food.name)) {
       score += 0.15;
+    }
+
+    const discount = UNCOMMON_DISCOUNT[food.name];
+    if (discount !== undefined) {
+      score *= discount;
     }
 
     if (score > 0.05) {
