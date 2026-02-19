@@ -221,6 +221,7 @@ const TYPE_MAX: Record<ItemType, number> = {
   fruit: 7,
   vegetable: 7,
   nut_seed: 5,
+  dairy: 7,
   spice: 3,
 };
 

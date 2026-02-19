@@ -8,6 +8,7 @@ export type HealthFocus = 'heart' | 'bone' | 'energy' | 'gut' | 'immune';
 export type PregnancyStatus = 'pregnant' | 'breastfeeding';
 export type LifestyleFactor = 'smoker' | 'alcohol' | 'caffeine';
 export type Symptom = 'fatigue' | 'cramps' | 'bruising' | 'colds';
+export type FamilyCondition = 'osteoporosis' | 'heart_disease' | 'neurodegeneration' | 'diabetes';
 
 export interface WizardAnswers {
   sex: BiologicalSex;
@@ -17,6 +18,7 @@ export interface WizardAnswers {
   pregnancyStatus: PregnancyStatus | null;
   lifestyleFactors: LifestyleFactor[];
   symptoms: Symptom[];
+  familyHistory: FamilyCondition[];
 }
 
 export interface ScoredFood {
@@ -161,6 +163,33 @@ const SYMPTOM_WEIGHTS: Record<Symptom, Partial<Record<NutrientKey, number>>> = {
   },
 };
 
+const FAMILY_HISTORY_WEIGHTS: Record<FamilyCondition, Partial<Record<NutrientKey, number>>> = {
+  osteoporosis: {
+    calcium_mg: 0.3,
+    vitamin_k_mcg: 0.2,
+    magnesium_mg: 0.15,
+    phosphorus_mg: 0.1,
+  },
+  heart_disease: {
+    potassium_mg: 0.25,
+    magnesium_mg: 0.2,
+    fiber_g: 0.2,
+    vitamin_b9_mcg: 0.15,
+  },
+  neurodegeneration: {
+    vitamin_e_mg: 0.25,
+    vitamin_b9_mcg: 0.2,
+    vitamin_b12_mcg: 0.2,
+    vitamin_b6_mg: 0.15,
+  },
+  diabetes: {
+    fiber_g: 0.3,
+    magnesium_mg: 0.25,
+    potassium_mg: 0.15,
+    zinc_mg: 0.1,
+  },
+};
+
 const OMEGA3_BONUS_FOODS = new Set([
   'Flaxseed', 'Chia Seeds', 'Walnuts', 'Hemp Seeds',
   'Salmon', 'Sardines', 'Mackerel', 'Trout', 'Herring',
@@ -207,6 +236,10 @@ export function buildDeficiencyProfile(answers: WizardAnswers): DeficiencyWeight
 
   for (const symptom of answers.symptoms) {
     addWeights(weights, SYMPTOM_WEIGHTS[symptom]);
+  }
+
+  for (const condition of answers.familyHistory) {
+    addWeights(weights, FAMILY_HISTORY_WEIGHTS[condition]);
   }
 
   return weights;

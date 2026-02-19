@@ -111,7 +111,9 @@ export default function DataTable() {
                       ? sorted.length === 1 ? 'pork cut' : 'pork cuts'
                       : selectedType === 'fat_oil'
                         ? sorted.length === 1 ? 'fat/oil' : 'fats & oils'
-                        : sorted.length === 1 ? 'item' : 'items';
+                        : selectedType === 'dairy'
+                          ? sorted.length === 1 ? 'dairy product' : 'dairy products'
+                          : sorted.length === 1 ? 'item' : 'items';
 
   return (
     <div className={styles.container}>

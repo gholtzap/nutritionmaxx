@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useStore } from '../../store';
 import type { ItemCategory } from '../../types';
-import { FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, BEEF_CATEGORIES, PORK_CATEGORIES, FAT_OIL_CATEGORIES, ALL_CATEGORIES, CATEGORY_COLORS } from '../../utils/nutrition-meta';
+import { FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, BEEF_CATEGORIES, PORK_CATEGORIES, FAT_OIL_CATEGORIES, DAIRY_CATEGORIES, ALL_CATEGORIES, CATEGORY_COLORS } from '../../utils/nutrition-meta';
 import styles from './DataTable.module.css';
 
 export default function CategoryFilter() {
@@ -21,6 +21,7 @@ export default function CategoryFilter() {
     if (selectedType === 'beef') return BEEF_CATEGORIES as readonly ItemCategory[];
     if (selectedType === 'pork') return PORK_CATEGORIES as readonly ItemCategory[];
     if (selectedType === 'fat_oil') return FAT_OIL_CATEGORIES as readonly ItemCategory[];
+    if (selectedType === 'dairy') return DAIRY_CATEGORIES as readonly ItemCategory[];
     return ALL_CATEGORIES;
   }, [selectedType]);
 

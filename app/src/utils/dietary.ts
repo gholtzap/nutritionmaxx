@@ -37,7 +37,7 @@ const GLUTEN_NAMES = new Set(['Barley', 'Rye', 'Oats', 'Oat Bran', 'Spelt', 'Bul
 
 export const EXCLUSION_RULES: Record<DietaryPreference, (item: NutrientFruit) => boolean> = {
   vegetarian: (item) => MEAT_TYPES.has(item.type) || item.name === 'Lard',
-  vegan: (item) => MEAT_TYPES.has(item.type) || item.name === 'Lard' || BUTTER_NAMES.has(item.name),
+  vegan: (item) => MEAT_TYPES.has(item.type) || item.type === 'dairy' || item.name === 'Lard' || BUTTER_NAMES.has(item.name),
   pescatarian: (item) => LAND_MEAT_TYPES.has(item.type) || item.name === 'Lard',
   halal: (item) => item.type === 'pork' || item.name === 'Lard',
   kosher: (item) =>

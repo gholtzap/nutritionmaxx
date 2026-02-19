@@ -34,6 +34,7 @@ export default function ResultsView({ answers, foods, onAddToPlan, onStartOver }
             {answers.healthFocus.length > 0 && ` / ${answers.healthFocus.join(', ')}`}
             {answers.lifestyleFactors.length > 0 && ` / ${answers.lifestyleFactors.join(', ')}`}
             {answers.symptoms.length > 0 && ` / ${answers.symptoms.join(', ')}`}
+            {answers.familyHistory.length > 0 && ` / ${answers.familyHistory.join(', ')}`}
           </p>
         </div>
         <button type="button" className={styles.startOver} onClick={onStartOver}>

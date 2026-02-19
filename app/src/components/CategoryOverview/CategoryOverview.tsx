@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useStore } from '../../store';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import type { ItemCategory } from '../../types';
-import { NUTRIENT_META, FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, BEEF_CATEGORIES, PORK_CATEGORIES, FAT_OIL_CATEGORIES, ALL_CATEGORIES } from '../../utils/nutrition-meta';
+import { NUTRIENT_META, FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, BEEF_CATEGORIES, PORK_CATEGORIES, FAT_OIL_CATEGORIES, DAIRY_CATEGORIES, ALL_CATEGORIES } from '../../utils/nutrition-meta';
 import { computeCategoryAverages } from '../../utils/aggregations';
 import TypeFilter from '../DataTable/TypeFilter';
 import CategoryCard from './CategoryCard';
@@ -32,6 +32,7 @@ export default function CategoryOverview() {
     if (selectedType === 'beef') return [...BEEF_CATEGORIES];
     if (selectedType === 'pork') return [...PORK_CATEGORIES];
     if (selectedType === 'fat_oil') return [...FAT_OIL_CATEGORIES];
+    if (selectedType === 'dairy') return [...DAIRY_CATEGORIES];
     return [...ALL_CATEGORIES];
   }, [selectedType]);
 
@@ -67,7 +68,9 @@ export default function CategoryOverview() {
                       ? 'pork'
                       : selectedType === 'fat_oil'
                         ? 'fat & oil'
-                        : 'item';
+                        : selectedType === 'dairy'
+                          ? 'dairy'
+                          : 'item';
 
   const basisLabel = showPerServing ? 'per serving' : 'per 100g';
 

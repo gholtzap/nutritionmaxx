@@ -10,13 +10,14 @@ import type {
   PregnancyStatus,
   LifestyleFactor,
   Symptom,
+  FamilyCondition,
   WizardAnswers,
 } from '../../utils/deficiency-profile';
 import WizardStep from './WizardStep';
 import ResultsView from './ResultsView';
 import styles from './FixMyDiet.module.css';
 
-type StepId = 'sex' | 'age' | 'pregnancy' | 'diet' | 'lifestyle' | 'health' | 'symptoms';
+type StepId = 'sex' | 'age' | 'pregnancy' | 'diet' | 'lifestyle' | 'health' | 'symptoms' | 'family';
 
 const SEX_OPTIONS = [
   { value: 'male', label: 'Male' },
@@ -62,12 +63,19 @@ const SYMPTOM_OPTIONS = [
   { value: 'colds', label: 'Frequent Colds', description: 'Vitamin C, zinc, vitamin A' },
 ];
 
+const FAMILY_HISTORY_OPTIONS = [
+  { value: 'osteoporosis', label: 'Osteoporosis', description: 'Calcium, vitamin K, magnesium' },
+  { value: 'heart_disease', label: 'Heart Disease', description: 'Potassium, magnesium, fiber, folate' },
+  { value: 'neurodegeneration', label: 'Neurodegeneration', description: 'Vitamin E, folate, B12, B6' },
+  { value: 'diabetes', label: 'Diabetes', description: 'Fiber, magnesium, potassium, zinc' },
+];
+
 function getSteps(sex: BiologicalSex | null, ageRange: AgeRange | null): StepId[] {
   const steps: StepId[] = ['sex', 'age'];
   if (sex === 'female' && (ageRange === '19-30' || ageRange === '31-50')) {
     steps.push('pregnancy');
   }
-  steps.push('diet', 'lifestyle', 'health', 'symptoms');
+  steps.push('diet', 'lifestyle', 'health', 'symptoms', 'family');
   return steps;
 }
 
@@ -84,6 +92,7 @@ export default function FixMyDiet() {
   const [lifestyleFactors, setLifestyleFactors] = useState<LifestyleFactor[]>([]);
   const [healthFocus, setHealthFocus] = useState<HealthFocus[]>([]);
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
+  const [familyHistory, setFamilyHistory] = useState<FamilyCondition[]>([]);
   const [showResults, setShowResults] = useState(false);
 
   const steps = useMemo(() => getSteps(sex, ageRange), [sex, ageRange]);
@@ -140,6 +149,7 @@ export default function FixMyDiet() {
   const handleHealthFocusSelect = useMemo(() => handleMultiSelect(setHealthFocus), [handleMultiSelect]);
   const handleLifestyleSelect = useMemo(() => handleMultiSelect(setLifestyleFactors), [handleMultiSelect]);
   const handleSymptomSelect = useMemo(() => handleMultiSelect(setSymptoms), [handleMultiSelect]);
+  const handleFamilySelect = useMemo(() => handleMultiSelect(setFamilyHistory), [handleMultiSelect]);
 
   const handleAddToPlan = useCallback((name: string) => {
     addPlanEntry(name);
@@ -155,6 +165,7 @@ export default function FixMyDiet() {
     setLifestyleFactors([]);
     setHealthFocus([]);
     setSymptoms([]);
+    setFamilyHistory([]);
     setShowResults(false);
   }, []);
 
@@ -167,6 +178,7 @@ export default function FixMyDiet() {
       pregnancyStatus,
       lifestyleFactors,
       symptoms,
+      familyHistory,
     };
     return (
       <div className={styles.container}>
@@ -270,6 +282,18 @@ export default function FixMyDiet() {
           maxSelections={3}
           optional
           onSelect={handleSymptomSelect}
+        />
+      )}
+
+      {currentStepId === 'family' && (
+        <WizardStep
+          title="Family History"
+          subtitle="Flag hereditary risk factors to adjust recommendations"
+          options={FAMILY_HISTORY_OPTIONS}
+          selected={familyHistory}
+          multiSelect
+          optional
+          onSelect={handleFamilySelect}
         />
       )}
 

@@ -13,10 +13,11 @@ const VALID_CATEGORIES = new Set([
   'Ground', 'Steak', 'Other Cut',
   'Loin', 'Shoulder',
   'Plant Oil', 'Nut & Seed Oil', 'Animal Fat', 'Processed',
+  'Milk', 'Yogurt', 'Cheese', 'Cream',
   'Other',
 ]);
 
-const VALID_TYPES = new Set(['fruit', 'vegetable', 'spice', 'nut_seed', 'legume', 'grain', 'fish_seafood', 'poultry', 'beef', 'pork', 'fat_oil']);
+const VALID_TYPES = new Set(['fruit', 'vegetable', 'spice', 'nut_seed', 'legume', 'grain', 'fish_seafood', 'poultry', 'beef', 'pork', 'fat_oil', 'dairy']);
 
 function parseNumeric(value: string | undefined): number | null {
   if (value === undefined || value === null || value === '') return null;
