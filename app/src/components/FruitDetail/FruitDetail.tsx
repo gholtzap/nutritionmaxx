@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { X, ShareNetwork, Check } from '@phosphor-icons/react';
 import { useStore } from '../../store';
+import { useScoreFunction } from '../../utils/use-nutrient-density-score';
 import Badge from '../shared/Badge';
 import MacroChart from './MacroChart';
 import NutrientList from './NutrientList';
@@ -10,6 +11,7 @@ export default function FruitDetail() {
   const selectedFruit = useStore((s) => s.selectedFruit);
   const setSelectedFruit = useStore((s) => s.setSelectedFruit);
   const showPerServing = useStore((s) => s.showPerServing);
+  const getScore = useScoreFunction();
   const [copied, setCopied] = useState(false);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -47,6 +49,8 @@ export default function FruitDetail() {
     ? selectedFruit.serving_label
     : 'per 100g';
 
+  const score = selectedFruit ? getScore(selectedFruit) : null;
+
   return (
     <div className={`${styles.panel} ${selectedFruit ? styles.panelOpen : ''}`}>
       {selectedFruit && (
@@ -57,6 +61,9 @@ export default function FruitDetail() {
               <div className={styles.headerMeta}>
                 <Badge category={selectedFruit.category} />
                 <span className={styles.basisLabel}>{basisLabel}</span>
+                {score !== null && (
+                  <span className={styles.scoreLabel}>Score {score.toFixed(1)}</span>
+                )}
               </div>
             </div>
             <div className={styles.headerActions}>

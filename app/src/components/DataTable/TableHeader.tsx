@@ -51,6 +51,15 @@ export default function TableHeader({ visibleKeys, showCheckbox }: TableHeaderPr
             Category {renderSortIcon('category')}
           </span>
         </th>
+        <th
+          className={`${styles.th} ${styles.thNumeric}`}
+          onClick={() => handleSort('score')}
+        >
+          <span className={styles.thContent}>
+            Score
+            {renderSortIcon('score')}
+          </span>
+        </th>
         {visibleKeys.map((key) => {
           const meta = NUTRIENT_MAP.get(key);
           return (

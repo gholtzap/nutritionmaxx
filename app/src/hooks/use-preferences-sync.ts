@@ -15,6 +15,7 @@ const SYNCED_KEYS: (keyof StorePreferenceFields)[] = [
   'customDailyValues',
   'budgetTolerance',
   'lockedNutrients',
+  'scoreNutrients',
   'visibleColumns',
   'showDailyValue',
   'showPerServing',

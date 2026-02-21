@@ -4,6 +4,7 @@ import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import type { NutrientFruit, NutrientKey } from '../../types';
 import { NUTRIENT_META } from '../../utils/nutrition-meta';
 import { getItemDisplayValue } from '../../utils/format';
+import { useScoreFunction } from '../../utils/use-nutrient-density-score';
 import SearchBar from './SearchBar';
 import TypeFilter from './TypeFilter';
 import CategoryFilter from './CategoryFilter';
@@ -23,6 +24,8 @@ export default function DataTable() {
   const setSelectedFruit = useStore((s) => s.setSelectedFruit);
   const toggleComparisonFruit = useStore((s) => s.toggleComparisonFruit);
   const showPerServing = useStore((s) => s.showPerServing);
+
+  const getScore = useScoreFunction();
 
   const visibleKeys = useMemo(
     () =>
@@ -51,6 +54,14 @@ export default function DataTable() {
     return result;
   }, [fruits, searchQuery, selectedType, selectedCategories]);
 
+  const scoreMap = useMemo(() => {
+    const map = new Map<string, number | null>();
+    for (const f of filtered) {
+      map.set(f.name, getScore(f));
+    }
+    return map;
+  }, [filtered, getScore]);
+
   const sorted = useMemo(() => {
     const { key, direction } = sort;
     const mult = direction === 'asc' ? 1 : -1;
@@ -60,7 +71,10 @@ export default function DataTable() {
       let aVal: string | number | null;
       let bVal: string | number | null;
 
-      if (isNutrientKey && showPerServing) {
+      if (key === 'score') {
+        aVal = scoreMap.get(a.name) ?? null;
+        bVal = scoreMap.get(b.name) ?? null;
+      } else if (isNutrientKey && showPerServing) {
         aVal = getItemDisplayValue(a, key as NutrientKey, true);
         bVal = getItemDisplayValue(b, key as NutrientKey, true);
       } else {
@@ -82,7 +96,7 @@ export default function DataTable() {
 
       return 0;
     });
-  }, [filtered, sort, showPerServing]);
+  }, [filtered, sort, showPerServing, scoreMap]);
 
   const comparisonNames = useMemo(
     () => new Set(comparisonFruits.map((f) => f.name)),
@@ -146,6 +160,7 @@ export default function DataTable() {
                 key={fruit.name}
                 fruit={fruit}
                 visibleKeys={visibleKeys as NutrientKey[]}
+                score={scoreMap.get(fruit.name) ?? null}
                 isCompared={comparisonNames.has(fruit.name)}
                 onSelect={() => setSelectedFruit(fruit)}
                 onToggleCompare={() => toggleComparisonFruit(fruit)}

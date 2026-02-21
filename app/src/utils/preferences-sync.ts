@@ -1,6 +1,7 @@
 import type { NutrientKey } from '../types';
 import type { DietaryPreferences } from './dietary';
 import type { UserProfile } from './daily-values';
+import { DEFAULT_SCORE_NUTRIENTS } from './score-defaults';
 
 export interface SyncedPreferences {
   dietaryPreferences: DietaryPreferences;
@@ -9,6 +10,7 @@ export interface SyncedPreferences {
   customDailyValues: Partial<Record<NutrientKey, number>>;
   budgetTolerance: number;
   lockedNutrients: NutrientKey[];
+  scoreNutrients?: NutrientKey[];
   visibleColumns: NutrientKey[];
   showDailyValue: boolean;
   showPerServing: boolean;
@@ -21,6 +23,7 @@ export interface StorePreferenceFields {
   customDailyValues: Partial<Record<NutrientKey, number>>;
   budgetTolerance: number;
   lockedNutrients: Set<NutrientKey>;
+  scoreNutrients: Set<NutrientKey>;
   visibleColumns: Set<NutrientKey>;
   showDailyValue: boolean;
   showPerServing: boolean;
@@ -34,6 +37,7 @@ export function serializePreferences(state: StorePreferenceFields): SyncedPrefer
     customDailyValues: state.customDailyValues,
     budgetTolerance: state.budgetTolerance,
     lockedNutrients: [...state.lockedNutrients] as NutrientKey[],
+    scoreNutrients: [...state.scoreNutrients] as NutrientKey[],
     visibleColumns: [...state.visibleColumns] as NutrientKey[],
     showDailyValue: state.showDailyValue,
     showPerServing: state.showPerServing,
@@ -48,6 +52,7 @@ export function deserializePreferences(json: SyncedPreferences): StorePreference
     customDailyValues: json.customDailyValues,
     budgetTolerance: json.budgetTolerance,
     lockedNutrients: new Set(json.lockedNutrients),
+    scoreNutrients: json.scoreNutrients ? new Set(json.scoreNutrients) : new Set(DEFAULT_SCORE_NUTRIENTS),
     visibleColumns: new Set(json.visibleColumns),
     showDailyValue: json.showDailyValue,
     showPerServing: json.showPerServing,

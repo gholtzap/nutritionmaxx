@@ -54,6 +54,13 @@
   font-family: var(--font-data);
 }
 
+.scoreLabel {
+  font-size: 11px;
+  color: var(--accent);
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+}
+
 .headerActions {
   display: flex;
   align-items: center;

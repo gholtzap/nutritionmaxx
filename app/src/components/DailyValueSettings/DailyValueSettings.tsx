@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { ArrowCounterClockwise } from '@phosphor-icons/react';
 import { useStore } from '../../store';
-import { NUTRIENT_META, MACRO_KEYS, VITAMIN_KEYS, MINERAL_KEYS } from '../../utils/nutrition-meta';
+import { NUTRIENT_META, MACRO_KEYS, VITAMIN_KEYS, MINERAL_KEYS, NUTRIENT_MAP } from '../../utils/nutrition-meta';
 import type { NutrientKey } from '../../types';
 import type { UserProfile } from '../../utils/daily-values';
 import { computeProfileDailyValues } from '../../utils/daily-values';
@@ -146,6 +146,68 @@ function DvGroup({ title, keys, profileValues, overrides, dvMap, onOverride, inp
           </div>
         );
       })}
+    </div>
+  );
+}
+
+interface ScoreGroupConfig {
+  label: string;
+  keys: NutrientKey[];
+}
+
+const SCORE_GROUPS: ScoreGroupConfig[] = [
+  { label: 'Macros', keys: MACRO_KEYS.filter((k) => NUTRIENT_MAP.get(k)?.dailyValue !== null) },
+  { label: 'Vitamins', keys: VITAMIN_KEYS },
+  { label: 'Minerals', keys: MINERAL_KEYS },
+];
+
+function ScoreNutrientSection() {
+  const scoreNutrients = useStore((s) => s.scoreNutrients);
+  const toggleScoreNutrient = useStore((s) => s.toggleScoreNutrient);
+  const setScoreNutrientGroup = useStore((s) => s.setScoreNutrientGroup);
+  const resetScoreNutrients = useStore((s) => s.resetScoreNutrients);
+
+  return (
+    <div className={styles.section}>
+      <h3 className={styles.sectionTitle}>Nutrient Density Score</h3>
+      <p className={styles.scoreDescription}>
+        Select which nutrients contribute to the density score. The score measures average %DV per 100 kcal.
+      </p>
+      {SCORE_GROUPS.map((group) => {
+        const allSelected = group.keys.every((k) => scoreNutrients.has(k));
+        const someSelected = group.keys.some((k) => scoreNutrients.has(k));
+        return (
+          <div key={group.label} className={styles.scoreGroup}>
+            <label className={styles.scoreGroupHeader}>
+              <input
+                type="checkbox"
+                checked={allSelected}
+                ref={(el) => {
+                  if (el) el.indeterminate = someSelected && !allSelected;
+                }}
+                onChange={() => setScoreNutrientGroup(group.keys, !allSelected)}
+              />
+              <span>{group.label}</span>
+            </label>
+            {group.keys.map((key) => {
+              const meta = NUTRIENT_MAP.get(key);
+              return (
+                <label key={key} className={styles.scoreItem}>
+                  <input
+                    type="checkbox"
+                    checked={scoreNutrients.has(key)}
+                    onChange={() => toggleScoreNutrient(key)}
+                  />
+                  <span>{meta?.label || key}</span>
+                </label>
+              );
+            })}
+          </div>
+        );
+      })}
+      <button type="button" className={styles.clearButton} onClick={resetScoreNutrients}>
+        Reset to defaults
+      </button>
     </div>
   );
 }
@@ -338,6 +400,8 @@ export default function DailyValueSettings() {
         onOverride={setCustomDailyValue}
         inputMode={inputMode}
       />
+
+      <ScoreNutrientSection />
 
       {hasAnything && (
         <div className={styles.actions}>

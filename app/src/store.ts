@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType, PlanEntry } from './types';
 import { DEFAULT_VISIBLE_COLUMNS } from './utils/nutrition-meta';
+import { DEFAULT_SCORE_NUTRIENTS } from './utils/score-defaults';
 import { loadFruits } from './utils/parse-csv';
 import type { DietaryPreference, DietaryPreferences } from './utils/dietary';
 import { DEFAULT_PREFERENCES } from './utils/dietary';
@@ -31,6 +32,11 @@ interface AppState {
   lockedNutrients: Set<NutrientKey>;
   toggleLockedNutrient: (key: NutrientKey) => void;
   clearLockedNutrients: () => void;
+
+  scoreNutrients: Set<NutrientKey>;
+  toggleScoreNutrient: (key: NutrientKey) => void;
+  setScoreNutrientGroup: (keys: NutrientKey[], included: boolean) => void;
+  resetScoreNutrients: () => void;
 
   dietaryPreferences: DietaryPreferences;
   toggleDietaryPreference: (key: DietaryPreference) => void;
@@ -134,6 +140,45 @@ export const useStore = create<AppState>((set, get) => ({
   clearLockedNutrients: () => {
     localStorage.removeItem('lockedNutrients');
     set({ lockedNutrients: new Set<NutrientKey>() });
+  },
+
+  scoreNutrients: (() => {
+    try {
+      const stored = localStorage.getItem('scoreNutrients');
+      if (stored) return new Set<NutrientKey>(JSON.parse(stored));
+    } catch {}
+    return new Set<NutrientKey>(DEFAULT_SCORE_NUTRIENTS);
+  })(),
+
+  toggleScoreNutrient: (key) =>
+    set((state) => {
+      const next = new Set(state.scoreNutrients);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      localStorage.setItem('scoreNutrients', JSON.stringify([...next]));
+      return { scoreNutrients: next };
+    }),
+
+  setScoreNutrientGroup: (keys, included) =>
+    set((state) => {
+      const next = new Set(state.scoreNutrients);
+      for (const k of keys) {
+        if (included) {
+          next.add(k);
+        } else {
+          next.delete(k);
+        }
+      }
+      localStorage.setItem('scoreNutrients', JSON.stringify([...next]));
+      return { scoreNutrients: next };
+    }),
+
+  resetScoreNutrients: () => {
+    localStorage.removeItem('scoreNutrients');
+    set({ scoreNutrients: new Set<NutrientKey>(DEFAULT_SCORE_NUTRIENTS) });
   },
 
   dietaryPreferences: (() => {
@@ -372,6 +417,7 @@ export const useStore = create<AppState>((set, get) => ({
     localStorage.setItem('customDailyValues', JSON.stringify(prefs.customDailyValues));
     localStorage.setItem('budgetTolerance', String(prefs.budgetTolerance));
     localStorage.setItem('lockedNutrients', JSON.stringify([...prefs.lockedNutrients]));
+    localStorage.setItem('scoreNutrients', JSON.stringify([...prefs.scoreNutrients]));
 
     set({
       dietaryPreferences: prefs.dietaryPreferences,
@@ -380,6 +426,7 @@ export const useStore = create<AppState>((set, get) => ({
       customDailyValues: prefs.customDailyValues,
       budgetTolerance: prefs.budgetTolerance,
       lockedNutrients: prefs.lockedNutrients,
+      scoreNutrients: prefs.scoreNutrients,
       visibleColumns: prefs.visibleColumns,
       showDailyValue: prefs.showDailyValue,
       showPerServing: prefs.showPerServing,
