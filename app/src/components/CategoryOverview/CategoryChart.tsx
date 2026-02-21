@@ -59,19 +59,21 @@ export default function CategoryChart({ data }: CategoryChartProps) {
           ))}
         </select>
       </div>
-      <ResponsiveContainer width="100%" height={280}>
-        <BarChart data={chartData} margin={{ left: 8, right: 8, top: 8, bottom: 4 }}>
+      <ResponsiveContainer width="100%" height={Math.max(280, chartData.length * 28)}>
+        <BarChart data={chartData} layout="vertical" margin={{ left: 8, right: 16, top: 8, bottom: 4 }}>
           <XAxis
+            type="number"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#64748b', fontSize: 11 }}
+          />
+          <YAxis
+            type="category"
             dataKey="category"
             axisLine={false}
             tickLine={false}
             tick={{ fill: '#94a3b8', fontSize: 11 }}
-          />
-          <YAxis
-            axisLine={false}
-            tickLine={false}
-            tick={{ fill: '#64748b', fontSize: 11 }}
-            width={48}
+            width={90}
           />
           <Tooltip
             cursor={{ fill: 'rgba(255,255,255,0.03)' }}
@@ -92,7 +94,7 @@ export default function CategoryChart({ data }: CategoryChartProps) {
               ];
             }}
           />
-          <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={40}>
+          <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={24}>
             {chartData.map((entry) => (
               <Cell
                 key={entry.category}
