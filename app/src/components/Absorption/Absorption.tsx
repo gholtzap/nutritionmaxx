@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { RULES, findSuggestedFoods } from '../../utils/nutrient-interactions';
 import type { InteractionRule } from '../../utils/nutrient-interactions';
 import { NUTRIENT_MAP } from '../../utils/nutrition-meta';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
+import InteractionDetail from './InteractionDetail';
 import styles from './Absorption.module.css';
 
 const ENHANCERS = RULES.filter((r) => r.type === 'enhancer');
@@ -14,7 +15,7 @@ function nutrientLabel(key: string): string {
   return NUTRIENT_MAP.get(key as never)?.label ?? key;
 }
 
-function InteractionCard({ rule, topFoods }: { rule: InteractionRule; topFoods: string[] }) {
+function InteractionCard({ rule, topFoods, onClick }: { rule: InteractionRule; topFoods: string[]; onClick: () => void }) {
   const isEnhancer = rule.type === 'enhancer';
   const cardColor = isEnhancer ? styles.cardEnhancer : styles.cardWarning;
   const typeStyle = isEnhancer
@@ -24,7 +25,7 @@ function InteractionCard({ rule, topFoods }: { rule: InteractionRule; topFoods: 
       : styles.cardTypeRequirement;
 
   return (
-    <div className={`${styles.card} ${cardColor}`}>
+    <button type="button" className={`${styles.card} ${cardColor}`} onClick={onClick}>
       <div className={styles.cardHeader}>
         <span className={`${styles.cardType} ${typeStyle}`}>{rule.type}</span>
       </div>
@@ -46,11 +47,12 @@ function InteractionCard({ rule, topFoods }: { rule: InteractionRule; topFoods: 
           </div>
         </div>
       )}
-    </div>
+    </button>
   );
 }
 
 export default function Absorption() {
+  const [selected, setSelected] = useState<InteractionRule | null>(null);
   const fruits = useDietaryFruits();
 
   const topFoodsMap = useMemo(() => {
@@ -63,6 +65,10 @@ export default function Absorption() {
     }
     return map;
   }, [fruits]);
+
+  if (selected) {
+    return <InteractionDetail rule={selected} onBack={() => setSelected(null)} />;
+  }
 
   return (
     <div className={styles.container}>
@@ -81,6 +87,7 @@ export default function Absorption() {
               key={rule.id}
               rule={rule}
               topFoods={topFoodsMap.get(rule.id) ?? []}
+              onClick={() => setSelected(rule)}
             />
           ))}
         </div>
@@ -94,6 +101,7 @@ export default function Absorption() {
               key={rule.id}
               rule={rule}
               topFoods={topFoodsMap.get(rule.id) ?? []}
+              onClick={() => setSelected(rule)}
             />
           ))}
         </div>
