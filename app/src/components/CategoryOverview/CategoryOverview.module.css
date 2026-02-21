@@ -56,6 +56,43 @@
   border-color: var(--border-accent);
 }
 
+.chartClip {
+  position: relative;
+  overflow: hidden;
+}
+
+.chartClipCollapsed::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: linear-gradient(to bottom, transparent, var(--bg-secondary));
+  pointer-events: none;
+}
+
+.chartExpandToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  border: 1px dashed var(--border-primary);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.chartExpandToggle:hover {
+  color: var(--text-primary);
+  border-color: var(--border-accent);
+  background: var(--bg-tertiary);
+}
+
 .ratioSelects {
   display: flex;
   align-items: center;

@@ -16,12 +16,16 @@ import { formatNutrientDisplay, toDailyValuePercent } from '../../utils/format';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import styles from './CategoryOverview.module.css';
 
+const COLLAPSED_LIMIT = 12;
+const BAR_HEIGHT = 28;
+
 interface CategoryChartProps {
   data: CategoryAverage[];
 }
 
 export default function CategoryChart({ data }: CategoryChartProps) {
   const [selectedKey, setSelectedKey] = useState<NutrientKey>('calories_kcal');
+  const [expanded, setExpanded] = useState(false);
   const meta = NUTRIENT_MAP.get(selectedKey)!;
   const showDV = useStore((s) => s.showDailyValue);
   const dvMap = useEffectiveDailyValues();
@@ -41,6 +45,14 @@ export default function CategoryChart({ data }: CategoryChartProps) {
     })
     .sort((a, b) => b.value - a.value);
 
+  const canCollapse = chartData.length > COLLAPSED_LIMIT;
+  const visibleData = canCollapse && !expanded
+    ? chartData.slice(0, COLLAPSED_LIMIT)
+    : chartData;
+  const hiddenCount = chartData.length - COLLAPSED_LIMIT;
+  const chartHeight = Math.max(280, visibleData.length * BAR_HEIGHT);
+  const collapsedHeight = COLLAPSED_LIMIT * BAR_HEIGHT;
+
   const unitLabel = useDV ? '% DV' : meta.unit;
 
   return (
@@ -59,52 +71,66 @@ export default function CategoryChart({ data }: CategoryChartProps) {
           ))}
         </select>
       </div>
-      <ResponsiveContainer width="100%" height={Math.max(280, chartData.length * 28)}>
-        <BarChart data={chartData} layout="vertical" margin={{ left: 8, right: 16, top: 8, bottom: 4 }}>
-          <XAxis
-            type="number"
-            axisLine={false}
-            tickLine={false}
-            tick={{ fill: '#64748b', fontSize: 11 }}
-          />
-          <YAxis
-            type="category"
-            dataKey="category"
-            axisLine={false}
-            tickLine={false}
-            tick={{ fill: '#94a3b8', fontSize: 11 }}
-            width={90}
-          />
-          <Tooltip
-            cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-            contentStyle={{
-              background: '#222636',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: 6,
-              fontSize: 12,
-              color: '#e2e8f0',
-            }}
-            labelStyle={{ color: '#94a3b8' }}
-            itemStyle={{ color: '#e2e8f0' }}
-            formatter={(_: unknown, __: unknown, props: { payload?: { rawValue: number | null } }) => {
-              if (!props.payload) return ['', ''];
-              return [
-                `${formatNutrientDisplay(props.payload.rawValue, selectedKey, showDV, dvMap)} ${unitLabel}`,
-                `Avg ${meta.label}`,
-              ];
-            }}
-          />
-          <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={24}>
-            {chartData.map((entry) => (
-              <Cell
-                key={entry.category}
-                fill={entry.color}
-                fillOpacity={entry.isNull ? 0.2 : 0.7}
-              />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+      <div
+        className={`${styles.chartClip} ${canCollapse && !expanded ? styles.chartClipCollapsed : ''}`}
+        style={canCollapse && !expanded ? { maxHeight: collapsedHeight } : undefined}
+      >
+        <ResponsiveContainer width="100%" height={chartHeight}>
+          <BarChart data={visibleData} layout="vertical" margin={{ left: 8, right: 16, top: 8, bottom: 4 }}>
+            <XAxis
+              type="number"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: '#64748b', fontSize: 11 }}
+            />
+            <YAxis
+              type="category"
+              dataKey="category"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: '#94a3b8', fontSize: 11 }}
+              width={90}
+            />
+            <Tooltip
+              cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+              contentStyle={{
+                background: '#222636',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 6,
+                fontSize: 12,
+                color: '#e2e8f0',
+              }}
+              labelStyle={{ color: '#94a3b8' }}
+              itemStyle={{ color: '#e2e8f0' }}
+              formatter={(_: unknown, __: unknown, props: { payload?: { rawValue: number | null } }) => {
+                if (!props.payload) return ['', ''];
+                return [
+                  `${formatNutrientDisplay(props.payload.rawValue, selectedKey, showDV, dvMap)} ${unitLabel}`,
+                  `Avg ${meta.label}`,
+                ];
+              }}
+            />
+            <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={24}>
+              {visibleData.map((entry) => (
+                <Cell
+                  key={entry.category}
+                  fill={entry.color}
+                  fillOpacity={entry.isNull ? 0.2 : 0.7}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      {canCollapse && (
+        <button
+          type="button"
+          className={styles.chartExpandToggle}
+          onClick={() => setExpanded((v) => !v)}
+        >
+          {expanded ? 'Show less' : `+${hiddenCount} more`}
+        </button>
+      )}
     </div>
   );
 }
