@@ -6,15 +6,32 @@ import { countExcluded } from '../../utils/dietary';
 import NavItem from './NavItem';
 import styles from './Sidebar.module.css';
 
-const NAV_ITEMS: { id: ViewId; label: string; icon: React.ReactNode }[] = [
-  { id: 'fixdiet', label: 'Fix My Diet', icon: <Heartbeat size={18} weight="regular" /> },
-  { id: 'table', label: 'Explorer', icon: <Table size={18} weight="regular" /> },
-  { id: 'comparison', label: 'Compare', icon: <GitDiff size={18} weight="regular" /> },
-  { id: 'categories', label: 'Categories', icon: <SquaresFour size={18} weight="regular" /> },
-  { id: 'nutrients', label: 'Nutrients', icon: <Pill size={18} weight="regular" /> },
-  { id: 'planner', label: 'Planner', icon: <Scales size={18} weight="regular" /> },
-  { id: 'dietary', label: 'Diet', icon: <SlidersHorizontal size={18} weight="regular" /> },
-  { id: 'settings', label: 'Settings', icon: <GearSix size={18} weight="regular" /> },
+type NavItem = { id: ViewId; label: string; icon: React.ReactNode };
+
+const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
+  {
+    label: 'Create',
+    items: [
+      { id: 'fixdiet', label: 'Fix My Diet', icon: <Heartbeat size={18} weight="regular" /> },
+      { id: 'planner', label: 'Planner', icon: <Scales size={18} weight="regular" /> },
+    ],
+  },
+  {
+    label: 'Learn',
+    items: [
+      { id: 'table', label: 'Explorer', icon: <Table size={18} weight="regular" /> },
+      { id: 'comparison', label: 'Compare', icon: <GitDiff size={18} weight="regular" /> },
+      { id: 'categories', label: 'Categories', icon: <SquaresFour size={18} weight="regular" /> },
+      { id: 'nutrients', label: 'Nutrients', icon: <Pill size={18} weight="regular" /> },
+      { id: 'dietary', label: 'Diet', icon: <SlidersHorizontal size={18} weight="regular" /> },
+    ],
+  },
+  {
+    label: '',
+    items: [
+      { id: 'settings', label: 'Settings', icon: <GearSix size={18} weight="regular" /> },
+    ],
+  },
 ];
 
 export default function Sidebar() {
@@ -54,14 +71,19 @@ export default function Sidebar() {
         </SignedIn>
       </div>
       <nav className={styles.nav}>
-        {NAV_ITEMS.map((item) => (
-          <NavItem
-            key={item.id}
-            icon={item.icon}
-            label={item.label}
-            active={activeView === item.id}
-            onClick={() => setActiveView(item.id)}
-          />
+        {NAV_SECTIONS.map((section) => (
+          <div key={section.label || 'ungrouped'} className={styles.navSection}>
+            {section.label && <span className={styles.navSectionLabel}>{section.label}</span>}
+            {section.items.map((item) => (
+              <NavItem
+                key={item.id}
+                icon={item.icon}
+                label={item.label}
+                active={activeView === item.id}
+                onClick={() => setActiveView(item.id)}
+              />
+            ))}
+          </div>
         ))}
       </nav>
       <label className={styles.dvToggle}>

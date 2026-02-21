@@ -78,7 +78,26 @@
   padding: 8px;
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.navSection {
+  display: flex;
+  flex-direction: column;
   gap: 2px;
+}
+
+.navSection:last-child {
+  margin-top: auto;
+}
+
+.navSectionLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 12px 4px;
 }
 
 .navItem {
@@ -172,6 +191,14 @@
     align-items: center;
     padding: 0;
     gap: 0;
+  }
+
+  .navSection {
+    display: contents;
+  }
+
+  .navSectionLabel {
+    display: none;
   }
 
   .navItem {
