@@ -5,6 +5,7 @@ import { useScoreFunction } from '../../utils/use-nutrient-density-score';
 import Badge from '../shared/Badge';
 import MacroChart from './MacroChart';
 import NutrientList from './NutrientList';
+import SimilarFoods from './SimilarFoods';
 import styles from './FruitDetail.module.css';
 
 export default function FruitDetail() {
@@ -88,6 +89,7 @@ export default function FruitDetail() {
           <div className={styles.body}>
             <MacroChart fruit={selectedFruit} />
             <NutrientList fruit={selectedFruit} />
+            <SimilarFoods fruit={selectedFruit} />
           </div>
         </div>
       )}

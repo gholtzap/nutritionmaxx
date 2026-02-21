@@ -171,6 +171,51 @@
   color: var(--text-secondary);
 }
 
+.similarSection {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-primary);
+}
+
+.similarList {
+  display: flex;
+  flex-direction: column;
+}
+
+.similarRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+  width: 100%;
+}
+
+.similarRow:hover {
+  background: var(--bg-tertiary);
+}
+
+.similarName {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.similarScore {
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  font-size: 12px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
 @media (max-width: 767px) {
   .panel {
     width: 100%;
