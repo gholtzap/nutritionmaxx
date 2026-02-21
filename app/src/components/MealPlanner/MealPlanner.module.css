@@ -552,3 +552,113 @@
     min-width: 60px;
   }
 }
+
+@media print {
+  .container {
+    padding: 0;
+    max-width: none;
+    color: #111;
+    background: #fff;
+  }
+
+  .subtitle,
+  .headerActions,
+  .budgetRow,
+  .searchContainer,
+  .empty {
+    display: none !important;
+  }
+
+  .title {
+    font-size: 18px;
+    color: #111;
+  }
+
+  .header {
+    margin-bottom: 12px;
+  }
+
+  .entries {
+    margin-bottom: 16px;
+  }
+
+  .entryRow {
+    background: none;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+    padding: 6px 0;
+  }
+
+  .entryRowLocked {
+    border-color: #ddd;
+    background: none;
+  }
+
+  .entryName {
+    color: #111;
+  }
+
+  .entryServing {
+    color: #555;
+  }
+
+  .entryFreq {
+    color: #555;
+  }
+
+  .stepperBtn,
+  .stepperInput,
+  .lockBtn,
+  .removeBtn {
+    display: none !important;
+  }
+
+  .coverage {
+    border-top: 1px solid #ddd;
+  }
+
+  .coverageSummary {
+    color: #111;
+  }
+
+  .coverageGroupLabel {
+    color: #333;
+  }
+
+  .barName {
+    color: #111;
+  }
+
+  .barValue {
+    color: #555;
+  }
+
+  .barTrack {
+    background: #eee;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .barFill {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .barPct {
+    color: #111 !important;
+  }
+
+  .nutrientLockBtn,
+  .nutrientLockPlaceholder {
+    display: none !important;
+  }
+
+  .barRowInsufficient {
+    display: none;
+  }
+
+  .disclaimer {
+    color: #777;
+  }
+}

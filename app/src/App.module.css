@@ -134,3 +134,15 @@
     border-bottom: 1px solid var(--border-primary);
   }
 }
+
+@media print {
+  .content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .expandButton,
+  .mobileHeader {
+    display: none !important;
+  }
+}
