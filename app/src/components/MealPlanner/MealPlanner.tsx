@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { ShareNetwork, Check, Trash, Lightning, Export } from '@phosphor-icons/react';
+import { ShareNetwork, Check, Trash, Lightning, Export, CircleNotch } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ItemType } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
@@ -57,6 +57,7 @@ export default function MealPlanner() {
   const shareLimit = useRateLimit({ action: 'share', windowMs: 60_000, maxRequests: 20 });
 
   const [copied, setCopied] = useState(false);
+  const [isAutoFilling, setIsAutoFilling] = useState(false);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
@@ -128,11 +129,16 @@ export default function MealPlanner() {
   }, [planEntries, fruitMap, nutrientRows]);
 
   const handleAutoFill = useCallback(async () => {
-    const allowed = await autoFillLimit.checkLimit();
-    if (!allowed) return;
-    const locked = planEntries.filter((e) => lockedPlanEntries.has(e.name));
-    const plan = generateAutoFillPlan(fruits, locked, 10, dvMap, budgetTolerance, lockedNutrients);
-    setPlanEntries(plan);
+    setIsAutoFilling(true);
+    try {
+      const allowed = await autoFillLimit.checkLimit();
+      if (!allowed) return;
+      const locked = planEntries.filter((e) => lockedPlanEntries.has(e.name));
+      const plan = generateAutoFillPlan(fruits, locked, 10, dvMap, budgetTolerance, lockedNutrients);
+      setPlanEntries(plan);
+    } finally {
+      setIsAutoFilling(false);
+    }
   }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance, lockedNutrients]);
 
   return (
@@ -177,10 +183,12 @@ export default function MealPlanner() {
             type="button"
             className={styles.autoFillButton}
             onClick={handleAutoFill}
-            disabled={autoFillLimit.isLimited}
+            disabled={autoFillLimit.isLimited || isAutoFilling}
           >
-            <Lightning size={14} weight="fill" />
-            <span>Auto-fill</span>
+            {isAutoFilling
+              ? <CircleNotch size={14} className={styles.spinner} />
+              : <Lightning size={14} weight="fill" />}
+            <span>{isAutoFilling ? 'Generating...' : 'Auto-fill'}</span>
           </button>
           {autoFillLimit.isLimited && (
             <RateLimitNotice retryAfterMs={autoFillLimit.retryAfterMs} />
