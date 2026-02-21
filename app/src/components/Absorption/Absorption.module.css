@@ -1,0 +1,142 @@
+.container {
+  padding: 20px 24px;
+  max-width: 900px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.groupTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+  margin-top: 32px;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card {
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  border: 1px solid;
+}
+
+.cardEnhancer {
+  background: color-mix(in srgb, hsl(142, 60%, 45%) 10%, var(--bg-secondary));
+  border-color: color-mix(in srgb, hsl(142, 60%, 45%) 25%, var(--bg-secondary));
+}
+
+.cardWarning {
+  background: color-mix(in srgb, #f59e0b 10%, var(--bg-secondary));
+  border-color: color-mix(in srgb, #f59e0b 25%, var(--bg-secondary));
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.cardType {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.cardTypeEnhancer {
+  color: hsl(142, 60%, 35%);
+  background: color-mix(in srgb, hsl(142, 60%, 45%) 15%, transparent);
+}
+
+.cardTypeInhibitor {
+  color: hsl(38, 90%, 40%);
+  background: color-mix(in srgb, #f59e0b 15%, transparent);
+}
+
+.cardTypeRequirement {
+  color: hsl(38, 90%, 40%);
+  background: color-mix(in srgb, #f59e0b 15%, transparent);
+}
+
+.cardMessage {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.cardNutrients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.nutrientTag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.topFoods {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--border-primary) 50%, transparent);
+}
+
+.topFoodsLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.foodList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.foodPill {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 12px;
+    max-width: none;
+  }
+}

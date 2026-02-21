@@ -10,6 +10,7 @@ import FruitDetail from './components/FruitDetail/FruitDetail';
 import Comparison from './components/Comparison/Comparison';
 import CategoryOverview from './components/CategoryOverview/CategoryOverview';
 import NutrientGuide from './components/NutrientGuide/NutrientGuide';
+import Absorption from './components/Absorption/Absorption';
 import MealPlanner from './components/MealPlanner/MealPlanner';
 import DietaryPreferences from './components/DietaryPreferences/DietaryPreferences';
 import FixMyDiet from './components/FixMyDiet/FixMyDiet';
@@ -174,6 +175,7 @@ function App() {
             {activeView === 'comparison' && <Comparison />}
             {activeView === 'categories' && <CategoryOverview />}
             {activeView === 'nutrients' && <NutrientGuide />}
+            {activeView === 'absorption' && <Absorption />}
             {activeView === 'planner' && <MealPlanner />}
             {activeView === 'dietary' && <DietaryPreferences />}
             {activeView === 'settings' && <DailyValueSettings />}
