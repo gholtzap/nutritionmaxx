@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { ArrowCounterClockwise } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import { NUTRIENT_META, MACRO_KEYS, VITAMIN_KEYS, MINERAL_KEYS, NUTRIENT_MAP } from '../../utils/nutrition-meta';
+import { DEFAULT_DEFICIENCY_WEIGHTS } from '../../utils/score-defaults';
 import type { NutrientKey } from '../../types';
 import type { UserProfile } from '../../utils/daily-values';
 import { computeProfileDailyValues } from '../../utils/daily-values';
@@ -171,7 +172,10 @@ function ScoreNutrientSection() {
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>Nutrient Density Score</h3>
       <p className={styles.scoreDescription}>
-        Select which nutrients contribute to the density score. The score measures average %DV per 100 kcal.
+        Select which nutrients contribute to the density score. Each nutrient's %DV is capped at 100%
+        to prevent single-nutrient dominance. Sodium and sugars are penalized rather than rewarded.
+        Nutrients of public health concern (potassium, fiber, vitamin D, calcium, iron) receive extra
+        weight. Items with fewer than 10 reported nutrients show "--" to avoid inflating sparse data.
       </p>
       {SCORE_GROUPS.map((group) => {
         const allSelected = group.keys.every((k) => scoreNutrients.has(k));
@@ -191,6 +195,7 @@ function ScoreNutrientSection() {
             </label>
             {group.keys.map((key) => {
               const meta = NUTRIENT_MAP.get(key);
+              const weight = DEFAULT_DEFICIENCY_WEIGHTS.get(key);
               return (
                 <label key={key} className={styles.scoreItem}>
                   <input
@@ -199,6 +204,9 @@ function ScoreNutrientSection() {
                     onChange={() => toggleScoreNutrient(key)}
                   />
                   <span>{meta?.label || key}</span>
+                  {weight !== undefined && (
+                    <span className={styles.weightBadge}>{weight}x</span>
+                  )}
                 </label>
               );
             })}

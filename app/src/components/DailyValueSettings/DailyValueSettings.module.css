@@ -302,6 +302,17 @@
   background: var(--bg-tertiary);
 }
 
+.weightBadge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  padding: 1px 5px;
+  border-radius: 9999px;
+  margin-left: 2px;
+  white-space: nowrap;
+}
+
 .actions {
   display: flex;
   gap: 8px;
