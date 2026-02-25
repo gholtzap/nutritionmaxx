@@ -16,7 +16,6 @@ const EXCLUDED: Set<NutrientKey> = new Set([
 
 export const DEFAULT_PENALTY_NUTRIENTS: Set<NutrientKey> = new Set([
   'sodium_mg',
-  'sugars_g',
 ]);
 
 export const DEFAULT_DEFICIENCY_WEIGHTS: Map<NutrientKey, number> = new Map([
