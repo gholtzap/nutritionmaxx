@@ -318,4 +318,14 @@
   .grid {
     grid-template-columns: 1fr;
   }
+
+  .ratioSelects {
+    flex-wrap: wrap;
+  }
+
+  .ratioRow {
+    grid-template-columns: 20px 1fr 80px 72px;
+    gap: 4px;
+    font-size: 12px;
+  }
 }

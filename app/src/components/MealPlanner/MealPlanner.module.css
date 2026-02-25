@@ -562,6 +562,10 @@
   .entryFreq {
     min-width: 60px;
   }
+
+  .suggestions {
+    max-height: 180px;
+  }
 }
 
 @media print {

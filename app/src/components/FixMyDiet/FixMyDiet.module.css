@@ -26,6 +26,10 @@
   gap: 5px;
   margin-top: 16px;
   cursor: help;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
 }
 
 .infoIcon {
@@ -41,7 +45,9 @@
 }
 
 .infoWrapper:hover .infoIcon,
-.infoWrapper:hover .infoLabel {
+.infoWrapper:hover .infoLabel,
+.infoWrapper:focus-within .infoIcon,
+.infoWrapper:focus-within .infoLabel {
   color: var(--text-secondary);
 }
 
@@ -64,7 +70,8 @@
   pointer-events: none;
 }
 
-.infoWrapper:hover .infoTooltip {
+.infoWrapper:hover .infoTooltip,
+.infoWrapper:focus-within .infoTooltip {
   display: block;
 }
 

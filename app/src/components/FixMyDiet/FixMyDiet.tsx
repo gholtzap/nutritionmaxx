@@ -318,13 +318,13 @@ export default function FixMyDiet() {
         </button>
       </div>
 
-      <span className={styles.infoWrapper}>
+      <button type="button" className={styles.infoWrapper}>
         <Info size={13} weight="fill" className={styles.infoIcon} />
         <span className={styles.infoLabel}>How do we store your data?</span>
         <span className={styles.infoTooltip}>
           We do not track your data. Once you submit an answer, your settings are updated in your user profile accordingly. You can update them at any time.
         </span>
-      </span>
+      </button>
     </div>
   );
 }

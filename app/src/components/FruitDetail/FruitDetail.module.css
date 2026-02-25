@@ -4,6 +4,7 @@
   right: 0;
   width: var(--detail-width);
   height: 100vh;
+  height: 100dvh;
   background: var(--bg-secondary);
   border-left: 1px solid var(--border-primary);
   transform: translateX(100%);
@@ -236,6 +237,6 @@
   }
 
   .body {
-    padding: 12px 16px calc(var(--bottom-bar-height) + 16px);
+    padding: 12px 16px calc(var(--bottom-bar-height) + 16px + env(safe-area-inset-bottom, 0px));
   }
 }

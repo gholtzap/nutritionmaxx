@@ -300,4 +300,8 @@
     font-size: 11px;
     padding: 4px 8px 4px 4px;
   }
+
+  .suggestions {
+    max-height: 180px;
+  }
 }
