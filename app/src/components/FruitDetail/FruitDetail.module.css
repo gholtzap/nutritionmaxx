@@ -234,34 +234,77 @@
 .breakdownFormula {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.formulaTerm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.formulaValue {
   font-family: var(--font-data);
   font-feature-settings: 'tnum';
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-data);
-  margin-bottom: 2px;
+}
+
+.formulaLabel {
+  font-size: 9px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  position: relative;
+  cursor: help;
+  text-decoration: underline dotted var(--text-tertiary);
+  text-underline-offset: 2px;
+}
+
+.formulaLabel::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  width: max-content;
+  max-width: 200px;
+  padding: 6px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: normal;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.formulaLabel:hover::after {
+  opacity: 1;
+}
+
+.formulaTerm:nth-last-child(-n+3) .formulaLabel::after {
+  left: auto;
+  right: 0;
 }
 
 .breakdownOp {
   color: var(--text-tertiary);
   font-size: 11px;
+  margin-top: -12px;
 }
 
 .breakdownTotal {
   font-weight: 600;
   color: var(--accent);
-}
-
-.breakdownFormulaLabels {
-  display: flex;
-  gap: 6px;
-  font-size: 10px;
-  color: var(--text-tertiary);
-  margin-bottom: 16px;
-}
-
-.breakdownFormulaLabels span {
-  text-align: center;
 }
 
 .breakdownNote {

@@ -96,20 +96,37 @@ export default function ScoreBreakdown({ fruit }: Props) {
       <h3 className={styles.sectionTitle}>My Score Breakdown</h3>
 
       <div className={styles.breakdownFormula}>
-        <span>{breakdown.beneficialAvg.toFixed(1)}</span>
+        <div className={styles.formulaTerm}>
+          <span className={styles.formulaValue}>{breakdown.beneficialAvg.toFixed(1)}</span>
+          <span
+            className={styles.formulaLabel}
+            data-tip="Weighted average of how much %DV each nutrient provides. Higher = more nutrient-dense."
+          >nutrient avg</span>
+        </div>
         <span className={styles.breakdownOp}>x</span>
-        <span>{breakdown.penaltyMultiplier.toFixed(2)}</span>
+        <div className={styles.formulaTerm}>
+          <span className={styles.formulaValue}>{breakdown.penaltyMultiplier.toFixed(2)}</span>
+          <span
+            className={styles.formulaLabel}
+            data-tip="Reduces the score based on sodium content. 1.00 = no sodium, lower = more sodium."
+          >sodium penalty</span>
+        </div>
         <span className={styles.breakdownOp}>x</span>
-        <span>{breakdown.caloriesFactor.toFixed(2)}</span>
+        <div className={styles.formulaTerm}>
+          <span className={styles.formulaValue}>{breakdown.caloriesFactor.toFixed(2)}</span>
+          <span
+            className={styles.formulaLabel}
+            data-tip="Nutrients per calorie. Low-calorie foods score higher because you get more nutrition per calorie."
+          >per 100 kcal</span>
+        </div>
         <span className={styles.breakdownOp}>=</span>
-        <span className={styles.breakdownTotal}>{breakdown.finalScore.toFixed(1)}</span>
-      </div>
-
-      <div className={styles.breakdownFormulaLabels}>
-        <span>avg nutrients</span>
-        <span>penalty</span>
-        <span>cal efficiency</span>
-        <span>score</span>
+        <div className={styles.formulaTerm}>
+          <span className={`${styles.formulaValue} ${styles.breakdownTotal}`}>{breakdown.finalScore.toFixed(1)}</span>
+          <span
+            className={styles.formulaLabel}
+            data-tip="Final personalized score. Multiply all three factors together."
+          >score</span>
+        </div>
       </div>
 
       {!hasBoosted && (
