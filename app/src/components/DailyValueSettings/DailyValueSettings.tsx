@@ -173,9 +173,10 @@ function ScoreNutrientSection() {
       <h3 className={styles.sectionTitle}>Nutrient Density Score</h3>
       <p className={styles.scoreDescription}>
         Select which nutrients contribute to the density score. Each nutrient's %DV is capped at 100%
-        to prevent single-nutrient dominance. Sodium is penalized rather than rewarded.
-        Nutrients of public health concern (potassium, fiber, vitamin D, calcium, iron) receive extra
-        weight. Items with fewer than 10 reported nutrients show "--" to avoid inflating sparse data.
+        to prevent single-nutrient dominance. Sodium acts as a multiplicative penalty that scales the
+        score down (e.g. 100% DV sodium halves the score). Nutrients of public health concern
+        (potassium, fiber, vitamin D, calcium, iron) receive extra weight. Items with fewer than 10
+        reported nutrients show "--" to avoid inflating sparse data.
       </p>
       {SCORE_GROUPS.map((group) => {
         const allSelected = group.keys.every((k) => scoreNutrients.has(k));

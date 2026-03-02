@@ -5,6 +5,7 @@ export interface ScoreConfig {
   penaltyNutrients: Set<NutrientKey>;
   weights: Map<NutrientKey, number>;
   minNutrientCount: number;
+  penaltyScale: number;
 }
 
 const EXCLUDED: Set<NutrientKey> = new Set([
@@ -12,6 +13,7 @@ const EXCLUDED: Set<NutrientKey> = new Set([
   'water_g',
   'fat_g',
   'carbs_g',
+  'sugars_g',
 ]);
 
 export const DEFAULT_PENALTY_NUTRIENTS: Set<NutrientKey> = new Set([
@@ -28,6 +30,8 @@ export const DEFAULT_DEFICIENCY_WEIGHTS: Map<NutrientKey, number> = new Map([
 
 export const MIN_NUTRIENT_COUNT = 10;
 
+export const PENALTY_SCALE = 200;
+
 export const DEFAULT_SCORE_NUTRIENTS: Set<NutrientKey> = new Set(
   NUTRIENT_META
     .filter((m) => m.dailyValue !== null && !EXCLUDED.has(m.key) && !DEFAULT_PENALTY_NUTRIENTS.has(m.key))
@@ -38,4 +42,5 @@ export const DEFAULT_SCORE_CONFIG: ScoreConfig = {
   penaltyNutrients: DEFAULT_PENALTY_NUTRIENTS,
   weights: DEFAULT_DEFICIENCY_WEIGHTS,
   minNutrientCount: MIN_NUTRIENT_COUNT,
+  penaltyScale: PENALTY_SCALE,
 };

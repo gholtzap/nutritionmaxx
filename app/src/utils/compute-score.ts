@@ -37,8 +37,8 @@ export function computeNutrientDensityScore(
     const dv = dvMap.get(key);
     if (dv === null || dv === undefined || dv === 0) continue;
 
-    const cappedDV = Math.min((value / dv) * 100, 100);
-    penaltySum += cappedDV;
+    const pctDV = (value / dv) * 100;
+    penaltySum += pctDV;
     penaltyCount++;
   }
 
@@ -46,6 +46,7 @@ export function computeNutrientDensityScore(
 
   const beneficialAvg = beneficialWeightedSum / beneficialWeightSum;
   const penaltyAvg = penaltyCount > 0 ? penaltySum / penaltyCount : 0;
+  const penaltyMultiplier = Math.max(0, 1 - penaltyAvg / config.penaltyScale);
 
-  return (beneficialAvg - penaltyAvg) * (100 / calories);
+  return beneficialAvg * penaltyMultiplier * (100 / calories);
 }
