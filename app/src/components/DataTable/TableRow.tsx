@@ -9,6 +9,8 @@ interface TableRowProps {
   fruit: NutrientFruit;
   visibleKeys: NutrientKey[];
   score: number | null;
+  personalizedScore: number | null;
+  showPersonalizedScore: boolean;
   isCompared: boolean;
   onSelect: () => void;
   onToggleCompare: () => void;
@@ -19,6 +21,8 @@ export default function TableRow({
   fruit,
   visibleKeys,
   score,
+  personalizedScore,
+  showPersonalizedScore,
   isCompared,
   onSelect,
   onToggleCompare,
@@ -51,6 +55,11 @@ export default function TableRow({
       <td className={`${styles.td} ${styles.tdNumeric} ${score === null ? styles.tdNull : ''}`}>
         {score !== null ? score.toFixed(1) : '--'}
       </td>
+      {showPersonalizedScore && (
+        <td className={`${styles.td} ${styles.tdNumeric} ${personalizedScore === null ? styles.tdNull : ''}`}>
+          {personalizedScore !== null ? personalizedScore.toFixed(1) : '--'}
+        </td>
+      )}
       {visibleKeys.map((key) => {
         const value = getItemDisplayValue(fruit, key, showPerServing);
         const formatted = formatNutrientDisplay(value, key, showDV, dvMap);

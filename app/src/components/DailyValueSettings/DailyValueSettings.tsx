@@ -1,12 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { ArrowCounterClockwise } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import { NUTRIENT_META, MACRO_KEYS, VITAMIN_KEYS, MINERAL_KEYS, NUTRIENT_MAP } from '../../utils/nutrition-meta';
-import { DEFAULT_DEFICIENCY_WEIGHTS } from '../../utils/score-defaults';
-import type { NutrientKey } from '../../types';
+import { DEFAULT_DEFICIENCY_WEIGHTS, DEFAULT_SCORE_CONFIG } from '../../utils/score-defaults';
+import type { NutrientKey, HealthGoal, ActivityLevel, LifeStage, DietaryPattern } from '../../types';
 import type { UserProfile } from '../../utils/daily-values';
 import { computeProfileDailyValues } from '../../utils/daily-values';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
+import { computePersonalizedConfig, hasPersonalization, getTopWeights } from '../../utils/personalized-score';
 import styles from './DailyValueSettings.module.css';
 
 const NUTRIENT_MAP_LOCAL = new Map(NUTRIENT_META.map((m) => [m.key, m]));
@@ -221,6 +222,171 @@ function ScoreNutrientSection() {
   );
 }
 
+const HEALTH_GOAL_OPTIONS: Array<{ key: HealthGoal; label: string }> = [
+  { key: 'heart', label: 'Heart Health' },
+  { key: 'bone', label: 'Bone Health' },
+  { key: 'energy', label: 'Energy' },
+  { key: 'immune', label: 'Immune Support' },
+  { key: 'digestive', label: 'Digestive Health' },
+];
+
+const ACTIVITY_OPTIONS: Array<{ key: ActivityLevel; label: string }> = [
+  { key: 'sedentary', label: 'Sedentary' },
+  { key: 'light', label: 'Light' },
+  { key: 'active', label: 'Active' },
+  { key: 'very_active', label: 'Very Active' },
+];
+
+const PATTERN_OPTIONS: Array<{ key: DietaryPattern; label: string }> = [
+  { key: 'general', label: 'General' },
+  { key: 'western', label: 'Western' },
+  { key: 'mediterranean', label: 'Mediterranean' },
+  { key: 'east_asian', label: 'East Asian' },
+  { key: 'south_asian', label: 'South Asian' },
+  { key: 'latin_american', label: 'Latin American' },
+];
+
+const LIFE_STAGE_OPTIONS: Array<{ key: LifeStage; label: string }> = [
+  { key: 'default', label: 'Default' },
+  { key: 'pregnant', label: 'Pregnant' },
+  { key: 'lactating', label: 'Lactating' },
+  { key: 'postmenopausal', label: 'Postmenopausal' },
+];
+
+function PersonalizationSection() {
+  const userProfile = useStore((s) => s.userProfile);
+  const dietaryPreferences = useStore((s) => s.dietaryPreferences);
+  const personalization = useStore((s) => s.personalization);
+  const setHealthGoals = useStore((s) => s.setHealthGoals);
+  const setActivityLevel = useStore((s) => s.setActivityLevel);
+  const setLifeStage = useStore((s) => s.setLifeStage);
+  const setDietaryPattern = useStore((s) => s.setDietaryPattern);
+  const clearPersonalization = useStore((s) => s.clearPersonalization);
+
+  const active = hasPersonalization(userProfile, dietaryPreferences, personalization);
+
+  const config = useMemo(() => {
+    if (!active) return null;
+    return computePersonalizedConfig(userProfile, dietaryPreferences, personalization, DEFAULT_SCORE_CONFIG);
+  }, [active, userProfile, dietaryPreferences, personalization]);
+
+  const topWeights = useMemo(() => {
+    if (!config) return [];
+    return getTopWeights(config, DEFAULT_SCORE_CONFIG, 5);
+  }, [config]);
+
+  const toggleGoal = useCallback(
+    (goal: HealthGoal) => {
+      const current = personalization.healthGoals;
+      if (current.includes(goal)) {
+        setHealthGoals(current.filter((g) => g !== goal));
+      } else {
+        setHealthGoals([...current, goal]);
+      }
+    },
+    [personalization.healthGoals, setHealthGoals]
+  );
+
+  const isFemale = userProfile?.sex === 'female';
+
+  return (
+    <div className={styles.section}>
+      <h3 className={styles.sectionTitle}>Personalized Score</h3>
+      <p className={styles.personalizationDescription}>
+        Adjust nutrient weights based on your health goals, activity level, and dietary pattern.
+        When active, a "My Score" column appears alongside the generic score.
+      </p>
+
+      <div className={styles.fieldGroup}>
+        <span className={styles.fieldGroupLabel}>Health Goals</span>
+        <div className={styles.healthGoalGrid}>
+          {HEALTH_GOAL_OPTIONS.map((opt) => (
+            <label key={opt.key} className={styles.healthGoalItem}>
+              <input
+                type="checkbox"
+                checked={personalization.healthGoals.includes(opt.key)}
+                onChange={() => toggleGoal(opt.key)}
+              />
+              <span>{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.fieldGroup}>
+        <span className={styles.fieldGroupLabel}>Activity Level</span>
+        <div className={styles.segmentedGroup}>
+          {ACTIVITY_OPTIONS.map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              className={`${styles.segmentedButton} ${personalization.activityLevel === opt.key ? styles.segmentedButtonActive : ''}`}
+              onClick={() => setActivityLevel(opt.key)}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.fieldGroup}>
+        <span className={styles.fieldGroupLabel}>Dietary Pattern</span>
+        <div className={styles.segmentedGroup}>
+          {PATTERN_OPTIONS.map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              className={`${styles.segmentedButton} ${personalization.dietaryPattern === opt.key ? styles.segmentedButtonActive : ''}`}
+              onClick={() => setDietaryPattern(opt.key)}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {isFemale && (
+        <div className={styles.fieldGroup}>
+          <span className={styles.fieldGroupLabel}>Life Stage</span>
+          <div className={styles.segmentedGroup}>
+            {LIFE_STAGE_OPTIONS.map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                className={`${styles.segmentedButton} ${personalization.lifeStage === opt.key ? styles.segmentedButtonActive : ''}`}
+                onClick={() => setLifeStage(opt.key)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {topWeights.length > 0 && (
+        <div className={styles.weightSummary}>
+          <div className={styles.weightSummaryTitle}>Top Boosted Nutrients</div>
+          {topWeights.map(({ key, weight }) => {
+            const meta = NUTRIENT_MAP.get(key);
+            return (
+              <div key={key} className={styles.weightSummaryRow}>
+                <span className={styles.weightSummaryName}>{meta?.label ?? key}</span>
+                <span className={styles.weightSummaryValue}>{weight.toFixed(1)}x</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {active && (
+        <button type="button" className={styles.clearButton} onClick={clearPersonalization}>
+          Reset personalization
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function DailyValueSettings() {
   const userProfile = useStore((s) => s.userProfile);
   const setUserProfile = useStore((s) => s.setUserProfile);
@@ -411,6 +577,8 @@ export default function DailyValueSettings() {
       />
 
       <ScoreNutrientSection />
+
+      <PersonalizationSection />
 
       {hasAnything && (
         <div className={styles.actions}>

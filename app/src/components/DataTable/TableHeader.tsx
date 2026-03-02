@@ -7,9 +7,10 @@ import styles from './DataTable.module.css';
 interface TableHeaderProps {
   visibleKeys: NutrientKey[];
   showCheckbox: boolean;
+  showPersonalizedScore: boolean;
 }
 
-export default function TableHeader({ visibleKeys, showCheckbox }: TableHeaderProps) {
+export default function TableHeader({ visibleKeys, showCheckbox, showPersonalizedScore }: TableHeaderProps) {
   const sort = useStore((s) => s.sort);
   const setSort = useStore((s) => s.setSort);
   const showDV = useStore((s) => s.showDailyValue);
@@ -60,6 +61,17 @@ export default function TableHeader({ visibleKeys, showCheckbox }: TableHeaderPr
             {renderSortIcon('score')}
           </span>
         </th>
+        {showPersonalizedScore && (
+          <th
+            className={`${styles.th} ${styles.thNumeric} ${styles.thPersonalized}`}
+            onClick={() => handleSort('personalizedScore')}
+          >
+            <span className={styles.thContent}>
+              My Score
+              {renderSortIcon('personalizedScore')}
+            </span>
+          </th>
+        )}
         {visibleKeys.map((key) => {
           const meta = NUTRIENT_MAP.get(key);
           return (

@@ -152,3 +152,18 @@ export interface PlanEntry {
   name: string;
   servingsPerWeek: number;
 }
+
+export type HealthGoal = 'heart' | 'bone' | 'energy' | 'immune' | 'digestive';
+
+export type ActivityLevel = 'sedentary' | 'light' | 'active' | 'very_active';
+
+export type LifeStage = 'default' | 'pregnant' | 'lactating' | 'postmenopausal';
+
+export type DietaryPattern = 'general' | 'western' | 'mediterranean' | 'east_asian' | 'south_asian' | 'latin_american';
+
+export interface PersonalizationSettings {
+  healthGoals: HealthGoal[];
+  activityLevel: ActivityLevel;
+  lifeStage: LifeStage;
+  dietaryPattern: DietaryPattern;
+}

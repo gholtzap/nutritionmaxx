@@ -5,6 +5,7 @@ import type { NutrientFruit, NutrientKey } from '../../types';
 import { NUTRIENT_META } from '../../utils/nutrition-meta';
 import { getItemDisplayValue } from '../../utils/format';
 import { useScoreFunction } from '../../utils/use-nutrient-density-score';
+import { usePersonalizedScoreFunction } from '../../utils/use-personalized-score';
 import SearchBar from './SearchBar';
 import TypeFilter from './TypeFilter';
 import CategoryFilter from './CategoryFilter';
@@ -26,6 +27,8 @@ export default function DataTable() {
   const showPerServing = useStore((s) => s.showPerServing);
 
   const getScore = useScoreFunction();
+  const getPersonalizedScore = usePersonalizedScoreFunction();
+  const showPersonalizedScore = getPersonalizedScore !== null;
 
   const visibleKeys = useMemo(
     () =>
@@ -62,6 +65,15 @@ export default function DataTable() {
     return map;
   }, [filtered, getScore]);
 
+  const personalizedScoreMap = useMemo(() => {
+    if (!getPersonalizedScore) return new Map<string, number | null>();
+    const map = new Map<string, number | null>();
+    for (const f of filtered) {
+      map.set(f.name, getPersonalizedScore(f));
+    }
+    return map;
+  }, [filtered, getPersonalizedScore]);
+
   const sorted = useMemo(() => {
     const { key, direction } = sort;
     const mult = direction === 'asc' ? 1 : -1;
@@ -74,6 +86,9 @@ export default function DataTable() {
       if (key === 'score') {
         aVal = scoreMap.get(a.name) ?? null;
         bVal = scoreMap.get(b.name) ?? null;
+      } else if (key === 'personalizedScore') {
+        aVal = personalizedScoreMap.get(a.name) ?? null;
+        bVal = personalizedScoreMap.get(b.name) ?? null;
       } else if (isNutrientKey && showPerServing) {
         aVal = getItemDisplayValue(a, key as NutrientKey, true);
         bVal = getItemDisplayValue(b, key as NutrientKey, true);
@@ -96,7 +111,7 @@ export default function DataTable() {
 
       return 0;
     });
-  }, [filtered, sort, showPerServing, scoreMap]);
+  }, [filtered, sort, showPerServing, scoreMap, personalizedScoreMap]);
 
   const comparisonNames = useMemo(
     () => new Set(comparisonFruits.map((f) => f.name)),
@@ -153,7 +168,7 @@ export default function DataTable() {
       </div>
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
-          <TableHeader visibleKeys={visibleKeys} showCheckbox={true} />
+          <TableHeader visibleKeys={visibleKeys} showCheckbox={true} showPersonalizedScore={showPersonalizedScore} />
           <tbody>
             {sorted.map((fruit) => (
               <TableRow
@@ -161,6 +176,8 @@ export default function DataTable() {
                 fruit={fruit}
                 visibleKeys={visibleKeys as NutrientKey[]}
                 score={scoreMap.get(fruit.name) ?? null}
+                personalizedScore={personalizedScoreMap.get(fruit.name) ?? null}
+                showPersonalizedScore={showPersonalizedScore}
                 isCompared={comparisonNames.has(fruit.name)}
                 onSelect={() => setSelectedFruit(fruit)}
                 onToggleCompare={() => toggleComparisonFruit(fruit)}

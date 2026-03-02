@@ -62,6 +62,14 @@
   font-feature-settings: 'tnum';
 }
 
+.personalizedScoreLabel {
+  font-size: 11px;
+  color: var(--accent);
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  opacity: 0.8;
+}
+
 .headerActions {
   display: flex;
   align-items: center;

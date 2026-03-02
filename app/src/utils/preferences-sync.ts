@@ -1,7 +1,8 @@
-import type { NutrientKey } from '../types';
+import type { NutrientKey, PersonalizationSettings } from '../types';
 import type { DietaryPreferences } from './dietary';
 import type { UserProfile } from './daily-values';
 import { DEFAULT_SCORE_NUTRIENTS } from './score-defaults';
+import { DEFAULT_PERSONALIZATION } from './personalized-score';
 
 export interface SyncedPreferences {
   dietaryPreferences: DietaryPreferences;
@@ -14,6 +15,7 @@ export interface SyncedPreferences {
   visibleColumns: NutrientKey[];
   showDailyValue: boolean;
   showPerServing: boolean;
+  personalization?: PersonalizationSettings;
 }
 
 export interface StorePreferenceFields {
@@ -27,6 +29,7 @@ export interface StorePreferenceFields {
   visibleColumns: Set<NutrientKey>;
   showDailyValue: boolean;
   showPerServing: boolean;
+  personalization: PersonalizationSettings;
 }
 
 export function serializePreferences(state: StorePreferenceFields): SyncedPreferences {
@@ -41,6 +44,7 @@ export function serializePreferences(state: StorePreferenceFields): SyncedPrefer
     visibleColumns: [...state.visibleColumns] as NutrientKey[],
     showDailyValue: state.showDailyValue,
     showPerServing: state.showPerServing,
+    personalization: state.personalization,
   };
 }
 
@@ -56,6 +60,7 @@ export function deserializePreferences(json: SyncedPreferences): StorePreference
     visibleColumns: new Set(json.visibleColumns),
     showDailyValue: json.showDailyValue,
     showPerServing: json.showPerServing,
+    personalization: json.personalization ?? { ...DEFAULT_PERSONALIZATION },
   };
 }
 

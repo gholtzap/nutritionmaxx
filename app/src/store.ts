@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType, PlanEntry } from './types';
+import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType, PlanEntry, PersonalizationSettings, HealthGoal, ActivityLevel, LifeStage, DietaryPattern } from './types';
 import { DEFAULT_VISIBLE_COLUMNS } from './utils/nutrition-meta';
 import { DEFAULT_SCORE_NUTRIENTS } from './utils/score-defaults';
 import { loadFruits } from './utils/parse-csv';
@@ -7,6 +7,7 @@ import type { DietaryPreference, DietaryPreferences } from './utils/dietary';
 import { DEFAULT_PREFERENCES } from './utils/dietary';
 import type { UserProfile } from './utils/daily-values';
 import type { StorePreferenceFields } from './utils/preferences-sync';
+import { DEFAULT_PERSONALIZATION } from './utils/personalized-score';
 
 interface AppState {
   fruits: NutrientFruit[];
@@ -53,6 +54,14 @@ interface AppState {
   setCustomDailyValue: (key: NutrientKey, value: number | null) => void;
   clearCustomDailyValues: () => void;
   clearUserProfile: () => void;
+
+  personalization: PersonalizationSettings;
+  setPersonalization: (settings: PersonalizationSettings) => void;
+  setHealthGoals: (goals: HealthGoal[]) => void;
+  setActivityLevel: (level: ActivityLevel) => void;
+  setLifeStage: (stage: LifeStage) => void;
+  setDietaryPattern: (pattern: DietaryPattern) => void;
+  clearPersonalization: () => void;
 
   fetchFruits: () => Promise<void>;
   setActiveView: (view: ViewId) => void;
@@ -277,6 +286,52 @@ export const useStore = create<AppState>((set, get) => ({
     set({ userProfile: null });
   },
 
+  personalization: (() => {
+    try {
+      const stored = localStorage.getItem('personalization');
+      if (stored) return { ...DEFAULT_PERSONALIZATION, ...JSON.parse(stored) };
+    } catch {}
+    return { ...DEFAULT_PERSONALIZATION };
+  })(),
+
+  setPersonalization: (settings) => {
+    localStorage.setItem('personalization', JSON.stringify(settings));
+    set({ personalization: settings });
+  },
+
+  setHealthGoals: (goals) =>
+    set((state) => {
+      const next = { ...state.personalization, healthGoals: goals };
+      localStorage.setItem('personalization', JSON.stringify(next));
+      return { personalization: next };
+    }),
+
+  setActivityLevel: (level) =>
+    set((state) => {
+      const next = { ...state.personalization, activityLevel: level };
+      localStorage.setItem('personalization', JSON.stringify(next));
+      return { personalization: next };
+    }),
+
+  setLifeStage: (stage) =>
+    set((state) => {
+      const next = { ...state.personalization, lifeStage: stage };
+      localStorage.setItem('personalization', JSON.stringify(next));
+      return { personalization: next };
+    }),
+
+  setDietaryPattern: (pattern) =>
+    set((state) => {
+      const next = { ...state.personalization, dietaryPattern: pattern };
+      localStorage.setItem('personalization', JSON.stringify(next));
+      return { personalization: next };
+    }),
+
+  clearPersonalization: () => {
+    localStorage.removeItem('personalization');
+    set({ personalization: { ...DEFAULT_PERSONALIZATION } });
+  },
+
   fetchFruits: async () => {
     if (get().fruits.length > 0 || get().loading) return;
     set({ loading: true, error: null });
@@ -418,6 +473,7 @@ export const useStore = create<AppState>((set, get) => ({
     localStorage.setItem('budgetTolerance', String(prefs.budgetTolerance));
     localStorage.setItem('lockedNutrients', JSON.stringify([...prefs.lockedNutrients]));
     localStorage.setItem('scoreNutrients', JSON.stringify([...prefs.scoreNutrients]));
+    localStorage.setItem('personalization', JSON.stringify(prefs.personalization));
 
     set({
       dietaryPreferences: prefs.dietaryPreferences,
@@ -430,6 +486,7 @@ export const useStore = create<AppState>((set, get) => ({
       visibleColumns: prefs.visibleColumns,
       showDailyValue: prefs.showDailyValue,
       showPerServing: prefs.showPerServing,
+      personalization: prefs.personalization,
     });
   },
 }));

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { X, ShareNetwork, Check } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import { useScoreFunction } from '../../utils/use-nutrient-density-score';
+import { usePersonalizedScoreFunction } from '../../utils/use-personalized-score';
 import Badge from '../shared/Badge';
 import MacroChart from './MacroChart';
 import NutrientList from './NutrientList';
@@ -13,6 +14,7 @@ export default function FruitDetail() {
   const setSelectedFruit = useStore((s) => s.setSelectedFruit);
   const showPerServing = useStore((s) => s.showPerServing);
   const getScore = useScoreFunction();
+  const getPersonalizedScore = usePersonalizedScoreFunction();
   const [copied, setCopied] = useState(false);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -51,6 +53,7 @@ export default function FruitDetail() {
     : 'per 100g';
 
   const score = selectedFruit ? getScore(selectedFruit) : null;
+  const personalizedScore = selectedFruit && getPersonalizedScore ? getPersonalizedScore(selectedFruit) : null;
 
   return (
     <div className={`${styles.panel} ${selectedFruit ? styles.panelOpen : ''}`}>
@@ -64,6 +67,9 @@ export default function FruitDetail() {
                 <span className={styles.basisLabel}>{basisLabel}</span>
                 {score !== null && (
                   <span className={styles.scoreLabel}>Score {score.toFixed(1)}</span>
+                )}
+                {personalizedScore !== null && (
+                  <span className={styles.personalizedScoreLabel}>My Score {personalizedScore.toFixed(1)}</span>
                 )}
               </div>
             </div>

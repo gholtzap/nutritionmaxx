@@ -293,6 +293,10 @@
   text-align: right;
 }
 
+.thPersonalized {
+  color: var(--accent);
+}
+
 .row {
   cursor: pointer;
   transition: background 0.1s;

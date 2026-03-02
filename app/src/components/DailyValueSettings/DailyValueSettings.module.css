@@ -318,3 +318,112 @@
   gap: 8px;
   margin-top: 12px;
 }
+
+.personalizationDescription {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.healthGoalGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+}
+
+.healthGoalItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.healthGoalItem:hover {
+  color: var(--accent);
+}
+
+.segmentedGroup {
+  display: flex;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-primary);
+  height: 32px;
+}
+
+.segmentedButton {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
+.segmentedButton:not(:last-child) {
+  border-right: 1px solid var(--border-primary);
+}
+
+.segmentedButtonActive {
+  background: var(--accent);
+  color: #fff;
+}
+
+.fieldGroup {
+  margin-bottom: 14px;
+}
+
+.fieldGroupLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.weightSummary {
+  margin-top: 16px;
+  padding: 10px 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+}
+
+.weightSummaryTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.weightSummaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 0;
+  font-size: 12px;
+}
+
+.weightSummaryName {
+  color: var(--text-primary);
+}
+
+.weightSummaryValue {
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.weightSummaryEmpty {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
