@@ -6,6 +6,7 @@ import { usePersonalizedScoreFunction } from '../../utils/use-personalized-score
 import Badge from '../shared/Badge';
 import MacroChart from './MacroChart';
 import NutrientList from './NutrientList';
+import ScoreBreakdown from './ScoreBreakdown';
 import SimilarFoods from './SimilarFoods';
 import styles from './FruitDetail.module.css';
 
@@ -94,6 +95,9 @@ export default function FruitDetail() {
           </div>
           <div className={styles.body}>
             <MacroChart fruit={selectedFruit} />
+            {getPersonalizedScore !== null && (
+              <ScoreBreakdown fruit={selectedFruit} />
+            )}
             <NutrientList fruit={selectedFruit} />
             <SimilarFoods fruit={selectedFruit} />
           </div>

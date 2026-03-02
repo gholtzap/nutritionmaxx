@@ -168,6 +168,98 @@ export function hasPersonalization(
   return false;
 }
 
+export interface WeightSource {
+  factor: 'sex' | 'age' | 'diet' | 'pattern' | 'goal' | 'activity' | 'lifeStage';
+  label: string;
+  multiplier: number;
+}
+
+function traceTable(
+  result: Map<NutrientKey, WeightSource[]>,
+  table: WeightTable,
+  factor: WeightSource['factor'],
+  label: string
+): void {
+  for (const [key, mult] of Object.entries(table) as [NutrientKey, number][]) {
+    if (!result.has(key)) result.set(key, []);
+    result.get(key)!.push({ factor, label, multiplier: mult });
+  }
+}
+
+const GOAL_LABELS: Record<HealthGoal, string> = {
+  heart: 'Heart',
+  bone: 'Bone',
+  energy: 'Energy',
+  immune: 'Immune',
+  digestive: 'Digestive',
+};
+
+const ACTIVITY_LABELS: Record<ActivityLevel, string> = {
+  sedentary: 'Sedentary',
+  light: 'Light',
+  active: 'Active',
+  very_active: 'Very Active',
+};
+
+const PATTERN_LABELS: Record<DietaryPattern, string> = {
+  general: 'General',
+  western: 'Western',
+  mediterranean: 'Mediterranean',
+  east_asian: 'East Asian',
+  south_asian: 'South Asian',
+  latin_american: 'Latin American',
+};
+
+const LIFE_STAGE_LABELS: Record<LifeStage, string> = {
+  default: 'Default',
+  pregnant: 'Pregnant',
+  lactating: 'Lactating',
+  postmenopausal: 'Postmenopausal',
+};
+
+export function traceWeightSources(
+  userProfile: UserProfile | null,
+  dietaryPrefs: DietaryPreferences,
+  settings: PersonalizationSettings
+): Map<NutrientKey, WeightSource[]> {
+  const result = new Map<NutrientKey, WeightSource[]>();
+
+  if (userProfile) {
+    const isPostmenopausal = settings.lifeStage === 'postmenopausal';
+    if (userProfile.sex === 'female') {
+      const table = isPostmenopausal ? SEX_WEIGHTS.female_post : SEX_WEIGHTS.female_pre;
+      traceTable(result, table, 'sex', 'Female');
+    } else {
+      traceTable(result, SEX_WEIGHTS.male, 'sex', 'Male');
+    }
+
+    const ageCat = getAgeCategory(userProfile.age);
+    const ageLabels: Record<string, string> = { young: '18-30', middle: '31-50', senior: '51+' };
+    traceTable(result, AGE_WEIGHTS[ageCat], 'age', ageLabels[ageCat]);
+  }
+
+  if (dietaryPrefs.vegan) {
+    traceTable(result, DIET_TYPE_WEIGHTS.vegan, 'diet', 'Vegan');
+  } else if (dietaryPrefs.vegetarian) {
+    traceTable(result, DIET_TYPE_WEIGHTS.vegetarian, 'diet', 'Vegetarian');
+  }
+
+  const patternCfg = DIETARY_PATTERN_CONFIG[settings.dietaryPattern];
+  traceTable(result, patternCfg.weights, 'pattern', PATTERN_LABELS[settings.dietaryPattern]);
+
+  for (const goal of settings.healthGoals) {
+    traceTable(result, HEALTH_GOAL_CONFIG[goal].weights, 'goal', GOAL_LABELS[goal]);
+  }
+
+  traceTable(result, ACTIVITY_WEIGHTS[settings.activityLevel], 'activity', ACTIVITY_LABELS[settings.activityLevel]);
+
+  if (userProfile?.sex === 'female' && settings.lifeStage !== 'default') {
+    traceTable(result, LIFE_STAGE_CONFIG[settings.lifeStage].weights, 'lifeStage', LIFE_STAGE_LABELS[settings.lifeStage]);
+  }
+
+  return result;
+}
+
 export function getTopWeights(
   config: ScoreConfig,
   baseConfig: ScoreConfig,

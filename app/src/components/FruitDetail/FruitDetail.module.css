@@ -225,6 +225,221 @@
   flex-shrink: 0;
 }
 
+.breakdownSection {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-primary);
+}
+
+.breakdownFormula {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  font-size: 13px;
+  color: var(--text-data);
+  margin-bottom: 2px;
+}
+
+.breakdownOp {
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+
+.breakdownTotal {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.breakdownFormulaLabels {
+  display: flex;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-bottom: 16px;
+}
+
+.breakdownFormulaLabels span {
+  text-align: center;
+}
+
+.breakdownNote {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-bottom: 12px;
+}
+
+.breakdownHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border-primary);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.breakdownHeaderLabel {
+  flex: 1;
+  min-width: 0;
+}
+
+.breakdownHeaderBar {
+  width: 60px;
+  text-align: center;
+}
+
+.breakdownHeaderDV {
+  width: 32px;
+  text-align: right;
+}
+
+.breakdownHeaderWeight {
+  width: 32px;
+  text-align: right;
+}
+
+.breakdownHeaderShare {
+  width: 36px;
+  text-align: right;
+}
+
+.breakdownRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border-primary);
+  flex-wrap: wrap;
+}
+
+.breakdownRow:last-child {
+  border-bottom: none;
+}
+
+.breakdownLabel {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.breakdownBarWrap {
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.breakdownBar {
+  width: 100%;
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.breakdownBarFill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.2s ease;
+}
+
+.breakdownDV {
+  width: 32px;
+  text-align: right;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  font-size: 11px;
+  color: var(--text-data);
+  flex-shrink: 0;
+}
+
+.breakdownWeight {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  padding: 1px 5px;
+  border-radius: 9999px;
+  white-space: nowrap;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.breakdownShare {
+  width: 36px;
+  text-align: right;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  font-size: 11px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.breakdownSources {
+  display: flex;
+  gap: 3px;
+  flex-basis: 100%;
+  padding-left: 4px;
+  flex-wrap: wrap;
+}
+
+.sourceBadge {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  padding: 1px 6px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.breakdownToggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 0;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.breakdownToggle:hover {
+  color: var(--text-primary);
+}
+
+.breakdownPenalty {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-primary);
+}
+
+.breakdownPenaltyRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.breakdownPenaltyValue {
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  font-size: 12px;
+  color: var(--text-data);
+}
+
 @media (max-width: 767px) {
   .panel {
     width: 100%;

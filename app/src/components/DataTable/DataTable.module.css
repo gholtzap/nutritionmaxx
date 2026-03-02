@@ -341,6 +341,17 @@
   color: var(--text-tertiary);
 }
 
+.tdPersonalized {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.15s;
+}
+
+.row:hover .tdPersonalized {
+  text-decoration-color: var(--accent);
+}
+
 .empty {
   display: flex;
   align-items: center;

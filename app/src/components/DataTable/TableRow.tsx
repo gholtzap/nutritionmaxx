@@ -56,7 +56,7 @@ export default function TableRow({
         {score !== null ? score.toFixed(1) : '--'}
       </td>
       {showPersonalizedScore && (
-        <td className={`${styles.td} ${styles.tdNumeric} ${personalizedScore === null ? styles.tdNull : ''}`}>
+        <td className={`${styles.td} ${styles.tdNumeric} ${personalizedScore === null ? styles.tdNull : styles.tdPersonalized}`}>
           {personalizedScore !== null ? personalizedScore.toFixed(1) : '--'}
         </td>
       )}
