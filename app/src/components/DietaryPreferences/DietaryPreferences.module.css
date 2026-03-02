@@ -1,6 +1,18 @@
 .container {
   padding: 20px 24px;
-  max-width: 600px;
+  max-width: 900px;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 32px;
+}
+
+@media (max-width: 640px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
 }
 
 .header {

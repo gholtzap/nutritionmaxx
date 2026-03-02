@@ -86,44 +86,46 @@ export default function DietaryPreferences() {
         </p>
       </div>
 
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Diets</h3>
-        {diets.map((opt) => (
-          <div key={opt.key} className={styles.row}>
-            <div className={styles.rowInfo}>
-              <div className={styles.rowLabel}>{opt.label}</div>
-              <div className={styles.rowDescription}>{opt.description}</div>
+      <div className={styles.columns}>
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Diets</h3>
+          {diets.map((opt) => (
+            <div key={opt.key} className={styles.row}>
+              <div className={styles.rowInfo}>
+                <div className={styles.rowLabel}>{opt.label}</div>
+                <div className={styles.rowDescription}>{opt.description}</div>
+              </div>
+              <span className={styles.rowCount}>{ruleCounts.get(opt.key)} items</span>
+              <button
+                type="button"
+                className={`${styles.toggle} ${preferences[opt.key] ? styles.toggleActive : ''}`}
+                onClick={() => toggle(opt.key)}
+                aria-pressed={preferences[opt.key]}
+                aria-label={opt.label}
+              />
             </div>
-            <span className={styles.rowCount}>{ruleCounts.get(opt.key)} items</span>
-            <button
-              type="button"
-              className={`${styles.toggle} ${preferences[opt.key] ? styles.toggleActive : ''}`}
-              onClick={() => toggle(opt.key)}
-              aria-pressed={preferences[opt.key]}
-              aria-label={opt.label}
-            />
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Allergies</h3>
-        {allergies.map((opt) => (
-          <div key={opt.key} className={styles.row}>
-            <div className={styles.rowInfo}>
-              <div className={styles.rowLabel}>{opt.label}</div>
-              <div className={styles.rowDescription}>{opt.description}</div>
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Allergies</h3>
+          {allergies.map((opt) => (
+            <div key={opt.key} className={styles.row}>
+              <div className={styles.rowInfo}>
+                <div className={styles.rowLabel}>{opt.label}</div>
+                <div className={styles.rowDescription}>{opt.description}</div>
+              </div>
+              <span className={styles.rowCount}>{ruleCounts.get(opt.key)} items</span>
+              <button
+                type="button"
+                className={`${styles.toggle} ${preferences[opt.key] ? styles.toggleActive : ''}`}
+                onClick={() => toggle(opt.key)}
+                aria-pressed={preferences[opt.key]}
+                aria-label={opt.label}
+              />
             </div>
-            <span className={styles.rowCount}>{ruleCounts.get(opt.key)} items</span>
-            <button
-              type="button"
-              className={`${styles.toggle} ${preferences[opt.key] ? styles.toggleActive : ''}`}
-              onClick={() => toggle(opt.key)}
-              aria-pressed={preferences[opt.key]}
-              aria-label={opt.label}
-            />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <div className={styles.section}>
