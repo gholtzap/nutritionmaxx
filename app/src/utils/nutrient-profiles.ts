@@ -34,11 +34,13 @@ export const NUTRIENT_PROFILES: NutrientProfile[] = [
   },
   {
     key: 'vitamin_b1_mg',
-    description: 'Thiamine (B1) is vital for converting carbohydrates into usable energy. It supports nervous system function and is required for the synthesis of neurotransmitters that regulate mood and cognition.',
+    description: 'Thiamine diphosphate (the active form of B1) is a required cofactor for pyruvate dehydrogenase -- the enzyme that links glycolysis to the citric acid cycle -- and for alpha-ketoglutarate dehydrogenase within the cycle itself, making it indispensable for converting carbohydrates into ATP. In the nervous system, pyruvate dehydrogenase produces acetyl-CoA, the direct precursor of the neurotransmitter acetylcholine, while thiamine also contributes to the synthesis of serotonin, glutamate, and aspartate. Thiamine maintains myelin sheaths and nerve conduction velocity, and independently inhibits acetylcholinesterase, the enzyme that breaks down acetylcholine. The body stores only about 30 mg with a half-life of 1-12 hours, so deficiency can develop within 18 days of insufficient intake -- manifesting as beriberi (peripheral neuropathy and cardiac failure) or Wernicke-Korsakoff syndrome (confusion, ataxia, and irreversible memory loss) when the thalamus and mammillary bodies are damaged.',
     color: 'hsl(45, 85%, 55%)',
     stats: { Brain: 4, Heart: 3, Bones: 0, Eyes: 0, Skin: 0, Immune: 1, Blood: 0, Energy: 5 },
     sources: [
       { title: 'NIH Office of Dietary Supplements -- Thiamine Fact Sheet for Health Professionals', url: 'https://ods.od.nih.gov/factsheets/Thiamin-HealthProfessional/' },
+      { title: 'Dhir et al. (2023) -- The Importance of Thiamine (Vitamin B1) in Humans, Bioscience Reports', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10568373/' },
+      { title: 'Calderon-Ospina & Nava-Mesa (2020) -- B Vitamins in the Nervous System: Thiamine, Pyridoxine, and Cobalamin, CNS Neuroscience & Therapeutics', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6930825/' },
     ],
   },
   {
