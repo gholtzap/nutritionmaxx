@@ -7,6 +7,8 @@ import {
   shouldShowB12Note,
 } from '../../utils/deficiency-profile';
 import type { NutrientFruit } from '../../types';
+import type { DietaryPreference } from '../../utils/dietary';
+import { EXCLUSION_RULES } from '../../utils/dietary';
 import FoodCard from './FoodCard';
 import styles from './FixMyDiet.module.css';
 
@@ -20,7 +22,11 @@ interface ResultsViewProps {
 export default function ResultsView({ answers, foods, onAddToPlan, onStartOver }: ResultsViewProps) {
   const profile = buildDeficiencyProfile(answers);
   const topDeficiencies = getTopDeficiencies(profile, 5);
-  const recommendations = scoreFoodsForDeficiencies(foods, profile, 3);
+  const dietExclusion = answers.dietPattern !== 'omnivore'
+    ? EXCLUSION_RULES[answers.dietPattern as DietaryPreference]
+    : null;
+  const eligibleFoods = dietExclusion ? foods.filter((f) => !dietExclusion(f)) : foods;
+  const recommendations = scoreFoodsForDeficiencies(eligibleFoods, profile, 3);
   const showB12 = shouldShowB12Note(answers);
 
   return (
