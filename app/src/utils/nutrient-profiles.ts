@@ -22,11 +22,14 @@ export interface NutrientProfile {
 export const NUTRIENT_PROFILES: NutrientProfile[] = [
   {
     key: 'vitamin_a_mcg',
-    description: 'Vitamin A is essential for maintaining healthy vision, supporting immune function, and promoting cell growth. It plays a critical role in the retina, where it helps form the pigments needed for low-light and color vision.',
+    description: 'Vitamin A is critical for vision as an essential component of rhodopsin, the light-sensitive protein in retinal rod cells that responds to light. When light hits the retina, the vitamin A derivative 11-cis-retinal isomerizes to all-trans-retinal, triggering the phototransduction cascade that enables sight. Without adequate vitamin A, rhodopsin regeneration fails, causing night blindness -- historically one of the earliest recognized deficiency symptoms. Beyond vision, vitamin A supports cell growth and differentiation of the heart, lungs, and other organs, and regulates both innate and adaptive immunity by promoting regulatory T cell differentiation while modulating inflammatory responses. Deficiency remains the world\'s leading preventable cause of childhood blindness, affecting an estimated 250,000-500,000 children annually.',
     color: 'hsl(25, 90%, 55%)',
     stats: { Brain: 1, Heart: 1, Bones: 2, Eyes: 5, Skin: 4, Immune: 4, Blood: 1, Energy: 0 },
     sources: [
       { title: 'NIH Office of Dietary Supplements -- Vitamin A Fact Sheet for Health Professionals', url: 'https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/' },
+      { title: 'Huang et al. (2018) -- Role of Vitamin A in the Immune System, Journal of Clinical Medicine', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6162863/' },
+      { title: 'Perusek & Maeda (2013) -- Vitamin A Derivatives as Treatment Options for Retinal Degenerative Diseases, Nutrients', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3738993/' },
+      { title: 'WHO -- Vitamin A Deficiency', url: 'https://www.who.int/data/nutrition/nlis/info/vitamin-a-deficiency' },
     ],
   },
   {
