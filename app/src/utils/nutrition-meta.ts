@@ -110,8 +110,8 @@ export const CATEGORY_COLORS: Record<string, string> = {
   Yogurt: 'var(--cat-yogurt)',
   Cheese: 'var(--cat-cheese)',
   Cream: 'var(--cat-cream)',
-  Whole: 'var(--cat-egg-whole)',
-  Part: 'var(--cat-egg-part)',
+  'Whole Egg': 'var(--cat-egg-whole)',
+  'Egg Part': 'var(--cat-egg-part)',
   'Other Egg': 'var(--cat-egg-other)',
   Leg: 'var(--cat-lamb-leg)',
   Rib: 'var(--cat-lamb-rib)',
@@ -168,7 +168,7 @@ export const DAIRY_CATEGORIES: DairyCategory[] = [
 ];
 
 export const EGG_CATEGORIES: EggCategory[] = [
-  'Whole', 'Part', 'Other Egg',
+  'Whole Egg', 'Egg Part', 'Other Egg',
 ];
 
 export const LAMB_CATEGORIES: LambCategory[] = [
@@ -188,7 +188,7 @@ export const ALL_CATEGORIES: ItemCategory[] = [
   'Loin', 'Shoulder',
   'Plant Oil', 'Nut & Seed Oil', 'Animal Fat', 'Processed',
   'Milk', 'Yogurt', 'Cheese', 'Cream',
-  'Whole', 'Part', 'Other Egg',
+  'Whole Egg', 'Egg Part', 'Other Egg',
   'Leg', 'Rib', 'Shank',
   'Other',
 ];

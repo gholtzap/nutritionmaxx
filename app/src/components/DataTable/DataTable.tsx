@@ -156,10 +156,10 @@ export default function DataTable() {
       <div className={styles.headline}>
         <div className={styles.headlineText}>
           <h1 className={styles.headlineTitle}>
-            Compare the nutrition of {allFruits.length}+ foods, instantly.
+            Eat smarter, not harder.
           </h1>
           <p className={styles.headlineSubtitle}>
-            Find the best foods for energy, immunity, and recovery across 29 nutrients.
+            Find the exact foods that fill your nutrition gaps — backed by real USDA data across {allFruits.length}+ foods.
           </p>
           <div className={styles.trustBadge}>USDA FoodData Central</div>
         </div>
@@ -169,8 +169,8 @@ export default function DataTable() {
           onClick={() => setActiveView('fixdiet')}
         >
           <span className={styles.ctaContent}>
-            <span className={styles.ctaLabel}>Boost your energy, immunity, or recovery</span>
-            <span className={styles.ctaDescription}>Take a 2-min quiz — get foods matched to your goals</span>
+            <span className={styles.ctaLabel}>What should I eat more of?</span>
+            <span className={styles.ctaDescription}>Take a 2-min quiz — get personalized food recommendations</span>
           </span>
           <ArrowRight size={16} weight="bold" />
         </button>
