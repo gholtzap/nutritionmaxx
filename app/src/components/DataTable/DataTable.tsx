@@ -159,8 +159,9 @@ export default function DataTable() {
             Compare the nutrition of {allFruits.length}+ foods, instantly.
           </h1>
           <p className={styles.headlineSubtitle}>
-            Find the best foods for energy, immunity, and recovery — real USDA data across 29 nutrients.
+            Find the best foods for energy, immunity, and recovery across 29 nutrients.
           </p>
+          <div className={styles.trustBadge}>USDA FoodData Central</div>
         </div>
         <button
           type="button"
