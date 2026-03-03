@@ -77,8 +77,8 @@ export type DairyCategory =
   | 'Cream';
 
 export type EggCategory =
-  | 'Whole'
-  | 'Part'
+  | 'Whole Egg'
+  | 'Egg Part'
   | 'Other Egg';
 
 export type LambCategory =

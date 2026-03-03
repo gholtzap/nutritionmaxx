@@ -66,7 +66,7 @@ const LAMB_LEG = makeFoodItem('Lamb Leg', 'lamb', 'Leg');
 const SALMON = makeFoodItem('Salmon', 'fish_seafood', 'Fish');
 const SHRIMP = makeFoodItem('Shrimp', 'fish_seafood', 'Crustacean');
 const LARD = makeFoodItem('Lard', 'fat_oil', 'Animal Fat');
-const EGG = makeFoodItem('Egg', 'egg', 'Whole');
+const EGG = makeFoodItem('Egg', 'egg', 'Whole Egg');
 const MILK = makeFoodItem('Whole Milk', 'dairy', 'Milk');
 const SPINACH = makeFoodItem('Spinach', 'vegetable', 'Leafy Green', {
   iron_mg: 2.7,

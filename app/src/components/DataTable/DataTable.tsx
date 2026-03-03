@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { ArrowRight } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import type { NutrientFruit, NutrientKey } from '../../types';
@@ -16,6 +17,7 @@ import styles from './DataTable.module.css';
 
 export default function DataTable() {
   const allFruits = useStore((s) => s.fruits);
+  const setActiveView = useStore((s) => s.setActiveView);
   const fruits = useDietaryFruits();
   const searchQuery = useStore((s) => s.searchQuery);
   const selectedType = useStore((s) => s.selectedType);
@@ -152,12 +154,26 @@ export default function DataTable() {
   return (
     <div className={styles.container}>
       <div className={styles.headline}>
-        <h1 className={styles.headlineTitle}>
-          Compare the nutrition of {allFruits.length}+ foods, instantly.
-        </h1>
-        <p className={styles.headlineSubtitle}>
-          Search, sort, and compare real USDA data across 29 nutrients. Click any food to dive deeper.
-        </p>
+        <div className={styles.headlineText}>
+          <h1 className={styles.headlineTitle}>
+            Eat smarter, not harder.
+          </h1>
+          <p className={styles.headlineSubtitle}>
+            Find the exact foods that fill your nutrition gaps — backed by real USDA data across {allFruits.length}+ foods.
+          </p>
+          <div className={styles.trustBadge}>USDA FoodData Central</div>
+        </div>
+        <button
+          type="button"
+          className={styles.headlineCta}
+          onClick={() => setActiveView('fixdiet')}
+        >
+          <span className={styles.ctaContent}>
+            <span className={styles.ctaLabel}>What should I eat more of?</span>
+            <span className={styles.ctaDescription}>Take a 2-min quiz — get personalized food recommendations</span>
+          </span>
+          <ArrowRight size={16} weight="bold" />
+        </button>
       </div>
       <div className={styles.toolbar}>
         <SearchBar />

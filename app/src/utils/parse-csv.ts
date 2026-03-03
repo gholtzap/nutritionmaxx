@@ -14,7 +14,7 @@ const VALID_CATEGORIES = new Set([
   'Loin', 'Shoulder',
   'Plant Oil', 'Nut & Seed Oil', 'Animal Fat', 'Processed',
   'Milk', 'Yogurt', 'Cheese', 'Cream',
-  'Whole', 'Part', 'Other Egg',
+  'Whole Egg', 'Egg Part', 'Other Egg',
   'Leg', 'Loin', 'Shoulder', 'Rib', 'Shank',
   'Other',
 ]);
