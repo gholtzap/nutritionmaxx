@@ -45,11 +45,13 @@ export const NUTRIENT_PROFILES: NutrientProfile[] = [
   },
   {
     key: 'vitamin_b2_mg',
-    description: 'Riboflavin (B2) acts as a coenzyme in energy-producing reactions throughout the body. It helps maintain healthy skin and eyes, and supports the metabolism of fats, drugs, and steroids.',
+    description: 'Riboflavin converts into two coenzymes -- flavin adenine dinucleotide (FAD) and flavin mononucleotide (FMN) -- that power roughly 70-80 flavoenzymes in the human body. FMN is required by Complex I and FAD by Complex II of the mitochondrial electron transport chain, placing riboflavin at the core of aerobic ATP production. FAD is also required by acyl-CoA dehydrogenase, the enzyme that initiates beta-oxidation of fatty acids, and flavocoenzymes work alongside cytochrome P450 to metabolize drugs and xenobiotics. In the eye, FAD-dependent glutathione reductase regenerates reduced glutathione -- the primary antioxidant concentrated in the lens -- and observational studies have associated adequate riboflavin intake (1.6-2.2 mg/day) with a 33-51% reduction in cataract risk. Deficiency (ariboflavinosis) presents with angular stomatitis, cheilosis, glossitis, and seborrheic dermatitis, and in the retina causes irreversible RPE dystrophy with disrupted fatty acid and TCA cycle metabolism before photoreceptor function visibly declines.',
     color: 'hsl(55, 80%, 50%)',
     stats: { Brain: 2, Heart: 1, Bones: 0, Eyes: 3, Skin: 4, Immune: 1, Blood: 1, Energy: 5 },
     sources: [
       { title: 'NIH Office of Dietary Supplements -- Riboflavin Fact Sheet for Health Professionals', url: 'https://ods.od.nih.gov/factsheets/Riboflavin-HealthProfessional/' },
+      { title: 'Linus Pauling Institute -- Riboflavin, Micronutrient Information Center', url: 'https://lpi.oregonstate.edu/mic/vitamins/riboflavin' },
+      { title: 'Sinha et al. (2022) -- Riboflavin Deficiency Leads to Irreversible Cellular Changes in the RPE and Disrupts Retinal Function, Redox Biology', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9233280/' },
     ],
   },
   {
