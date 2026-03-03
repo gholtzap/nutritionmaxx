@@ -6,7 +6,15 @@
 }
 
 .headline {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
   margin-bottom: 16px;
+}
+
+.headlineText {
+  flex: 1;
+  min-width: 0;
 }
 
 .headlineTitle {
@@ -22,6 +30,47 @@
   color: var(--text-secondary);
   line-height: 1.5;
   margin: 0;
+}
+
+.headlineCta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  text-align: left;
+  white-space: nowrap;
+  transition: border-color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.headlineCta:hover {
+  border-color: var(--accent);
+  background: var(--bg-tertiary);
+}
+
+.ctaContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ctaLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ctaDescription {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.headlineCta svg {
+  color: var(--accent);
+  flex-shrink: 0;
 }
 
 .toolbar {
@@ -384,6 +433,15 @@
   .container {
     padding: 12px;
     height: auto;
+  }
+
+  .headline {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .headlineCta {
+    white-space: normal;
   }
 
   .headlineTitle {
