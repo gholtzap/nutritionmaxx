@@ -214,6 +214,7 @@ const UNCOMMON_DISCOUNT: Record<string, number> = {
   'Herring': 0.6,
   'Anchovy': 0.6,
   'Mackerel': 0.6,
+  'Soybean': 0.5,
   'Adzuki Bean': 0.6,
   'Fava Bean': 0.6,
   'Mung Bean': 0.6,
