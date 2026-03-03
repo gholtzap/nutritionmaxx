@@ -5,6 +5,25 @@
   flex-direction: column;
 }
 
+.headline {
+  margin-bottom: 16px;
+}
+
+.headlineTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin: 0 0 4px;
+}
+
+.headlineSubtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
 .toolbar {
   display: flex;
   align-items: center;
@@ -365,6 +384,10 @@
   .container {
     padding: 12px;
     height: auto;
+  }
+
+  .headlineTitle {
+    font-size: 17px;
   }
 
   .toolbar {

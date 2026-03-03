@@ -15,6 +15,7 @@ import TableRow from './TableRow';
 import styles from './DataTable.module.css';
 
 export default function DataTable() {
+  const allFruits = useStore((s) => s.fruits);
   const fruits = useDietaryFruits();
   const searchQuery = useStore((s) => s.searchQuery);
   const selectedType = useStore((s) => s.selectedType);
@@ -150,6 +151,14 @@ export default function DataTable() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.headline}>
+        <h1 className={styles.headlineTitle}>
+          Compare the nutrition of {allFruits.length}+ foods, instantly.
+        </h1>
+        <p className={styles.headlineSubtitle}>
+          Search, sort, and compare real USDA data across 29 nutrients. Click any food to dive deeper.
+        </p>
+      </div>
       <div className={styles.toolbar}>
         <SearchBar />
         <ColumnToggle />
