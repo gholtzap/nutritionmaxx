@@ -32,6 +32,12 @@
   text-transform: uppercase;
 }
 
+.logoActions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
 .collapseButton {
   display: flex;
   align-items: center;
