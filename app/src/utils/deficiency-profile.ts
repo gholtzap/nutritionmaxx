@@ -196,9 +196,9 @@ const OMEGA3_BONUS_FOODS = new Set([
 ]);
 
 const UNCOMMON_DISCOUNT: Record<string, number> = {
-  'Beef Liver': 0.1,
-  'Chicken Liver': 0.1,
-  'Pork Liver': 0.1,
+  'Beef Liver': 0.001,
+  'Chicken Liver': 0.001,
+  'Pork Liver': 0.001,
   'Duck': 0.4,
   'Duck Egg': 0.4,
   'Cornish Hen': 0.1,
@@ -223,12 +223,12 @@ const UNCOMMON_DISCOUNT: Record<string, number> = {
   'Great Northern Bean': 0.5,
   'Navy Bean': 0.5,
   'Split Pea': 0.5,
-  'Herring': 0.6,
-  'Anchovy': 0.6,
-  'Mackerel': 0.6,
-  'Adzuki Bean': 0.6,
-  'Fava Bean': 0.6,
-  'Mung Bean': 0.6,
+  'Herring': 0.2,
+  'Anchovy': 0.5,
+  'Mackerel': 0.5,
+  'Adzuki Bean': 0.3,
+  'Fava Bean': 0.3,
+  'Mung Bean': 0.3,
   'Collard Greens': 0.8,
   'Parsnip': 0.6,
   'Fennel': 0.6,
@@ -316,59 +316,66 @@ function getPercentDV(food: NutrientFruit, key: NutrientKey, servingMultiplier: 
   return (raw * servingMultiplier / dv) * 100;
 }
 
+function scoreFood(
+  food: NutrientFruit,
+  weights: DeficiencyWeights
+): { score: number; nutrients: { key: NutrientKey; pctDV: number }[] } {
+  const servingG = food.serving_size_g ?? 100;
+  const multiplier = servingG / 100;
+  let score = 0;
+  const nutrients: { key: NutrientKey; pctDV: number }[] = [];
+
+  for (const [key, weight] of weights) {
+    const pctDV = getPercentDV(food, key, multiplier);
+    if (pctDV > 0) {
+      score += (pctDV / 100) * weight;
+      nutrients.push({ key, pctDV });
+    }
+  }
+
+  if (OMEGA3_BONUS_FOODS.has(food.name)) {
+    score += 0.15;
+  }
+
+  const discount = UNCOMMON_DISCOUNT[food.name];
+  if (discount !== undefined) {
+    score *= discount;
+  }
+
+  return { score, nutrients };
+}
+
 export function scoreFoodsForDeficiencies(
   foods: NutrientFruit[],
   profile: DeficiencyWeights,
   maxResults: number = 3
 ): ScoredFood[] {
   const eligible = foods.filter((f) => f.type !== 'spice' && f.type !== 'fat_oil');
+  const remainingWeights: DeficiencyWeights = new Map(profile);
+  const results: ScoredFood[] = [];
+  const usedTypes = new Set<string>();
+  const usedFoods = new Set<string>();
 
-  const scored: { food: NutrientFruit; score: number; nutrients: { key: NutrientKey; pctDV: number }[] }[] = [];
+  for (let round = 0; round < maxResults; round++) {
+    let best: { food: NutrientFruit; score: number; nutrients: { key: NutrientKey; pctDV: number }[] } | null = null;
 
-  for (const food of eligible) {
-    const servingG = food.serving_size_g ?? 100;
-    const multiplier = servingG / 100;
-    let score = 0;
-    const nutrients: { key: NutrientKey; pctDV: number }[] = [];
+    for (const food of eligible) {
+      if (usedFoods.has(food.name)) continue;
 
-    for (const [key, weight] of profile) {
-      const pctDV = getPercentDV(food, key, multiplier);
-      if (pctDV > 0) {
-        score += (pctDV / 100) * weight;
-        nutrients.push({ key, pctDV });
+      let { score, nutrients } = scoreFood(food, remainingWeights);
+
+      if (usedTypes.has(food.type)) {
+        score *= 0.6;
+      }
+
+      if (score > 0.05 && (!best || score > best.score)) {
+        best = { food, score, nutrients };
       }
     }
 
-    if (OMEGA3_BONUS_FOODS.has(food.name)) {
-      score += 0.15;
-    }
+    if (!best) break;
 
-    const discount = UNCOMMON_DISCOUNT[food.name];
-    if (discount !== undefined) {
-      score *= discount;
-    }
-
-    if (score > 0.05) {
-      scored.push({ food, score, nutrients });
-    }
-  }
-
-  scored.sort((a, b) => b.score - a.score);
-
-  const results: ScoredFood[] = [];
-  const usedTypes = new Set<string>();
-
-  for (const item of scored) {
-    if (results.length >= maxResults) break;
-
-    let adjustedScore = item.score;
-    if (usedTypes.has(item.food.type)) {
-      adjustedScore *= 0.6;
-    }
-
-    if (adjustedScore < 0.05) continue;
-
-    const topNutrients = item.nutrients
+    const topNutrients = best.nutrients
       .sort((a, b) => b.pctDV - a.pctDV)
       .slice(0, 4)
       .map((n) => ({
@@ -377,8 +384,22 @@ export function scoreFoodsForDeficiencies(
         percentDV: Math.round(n.pctDV),
       }));
 
-    results.push({ food: item.food, score: adjustedScore, topNutrients });
-    usedTypes.add(item.food.type);
+    results.push({ food: best.food, score: best.score, topNutrients });
+    usedFoods.add(best.food.name);
+    usedTypes.add(best.food.type);
+
+    for (const { key, pctDV } of best.nutrients) {
+      const currentWeight = remainingWeights.get(key);
+      if (currentWeight === undefined) continue;
+      const coverage = Math.min(pctDV / 100, 1);
+      const reduction = coverage * 0.8;
+      const newWeight = currentWeight * (1 - reduction);
+      if (newWeight < 0.01) {
+        remainingWeights.delete(key);
+      } else {
+        remainingWeights.set(key, newWeight);
+      }
+    }
   }
 
   return results;
