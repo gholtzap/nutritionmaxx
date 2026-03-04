@@ -1,4 +1,4 @@
-import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat } from '@phosphor-icons/react';
+import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo } from '@phosphor-icons/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
@@ -52,14 +52,25 @@ export default function Sidebar() {
     <aside className={`${styles.sidebar} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
       <div className={styles.logo}>
         <span className={styles.logoText}>Nutrition</span>
-        <button
-          type="button"
-          className={styles.collapseButton}
-          onClick={toggleSidebar}
-          aria-label="Collapse sidebar"
-        >
-          <SidebarSimple size={16} weight="regular" />
-        </button>
+        <div className={styles.logoActions}>
+          <a
+            href="https://github.com/gholtzap/nutrition-db"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.collapseButton}
+            aria-label="View source on GitHub"
+          >
+            <GithubLogo size={16} weight="regular" />
+          </a>
+          <button
+            type="button"
+            className={styles.collapseButton}
+            onClick={toggleSidebar}
+            aria-label="Collapse sidebar"
+          >
+            <SidebarSimple size={16} weight="regular" />
+          </button>
+        </div>
       </div>
       <div className={styles.auth}>
         <SignedOut>
