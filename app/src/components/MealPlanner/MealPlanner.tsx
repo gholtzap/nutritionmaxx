@@ -1,11 +1,13 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { ShareNetwork, Check, Trash, Lightning, Export, CircleNotch, Plus } from '@phosphor-icons/react';
+import { ShareNetwork, Check, Trash, Lightning, Export, CircleNotch, Plus, ImageSquare } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ItemType } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import { computePlanDailyTotals, generateAutoFillPlan, generateAddOne } from '../../utils/plan-calculator';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import { useRateLimit } from '../../utils/use-rate-limit.ts';
+import { generateShareImage } from '../../utils/generate-share-image';
+import type { ShareFood } from '../../utils/generate-share-image';
 import PlanFoodSelector from './PlanFoodSelector';
 import PlanEntryRow, { servingsLabel } from './PlanEntryRow';
 import NutrientCoverage from './NutrientCoverage';
@@ -59,6 +61,7 @@ export default function MealPlanner() {
   const [copied, setCopied] = useState(false);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
   const [isAddingOne, setIsAddingOne] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
@@ -129,6 +132,46 @@ export default function MealPlanner() {
     copiedTimer.current = setTimeout(() => setCopied(false), 1500);
   }, [planEntries, fruitMap, nutrientRows]);
 
+  const handleShareImage = useCallback(async () => {
+    if (planEntries.length === 0) return;
+    const allowed = await shareLimit.checkLimit();
+    if (!allowed) return;
+
+    setIsGeneratingImage(true);
+    try {
+      const foods: ShareFood[] = planEntries.map((e) => {
+        const fruit = fruitMap.get(e.name);
+        return {
+          name: e.name,
+          servingsPerWeek: e.servingsPerWeek,
+          type: (fruit?.type ?? 'fruit') as ItemType,
+        };
+      });
+
+      const blob = await generateShareImage({ foods, nutrientRows });
+
+      if (navigator.share) {
+        const file = new File([blob], 'meal-plan.png', { type: 'image/png' });
+        const shareData = { files: [file] };
+        if (navigator.canShare?.(shareData)) {
+          await navigator.share(shareData);
+          return;
+        }
+      }
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'meal-plan.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  }, [planEntries, fruitMap, nutrientRows, shareLimit]);
+
   const handleAddOne = useCallback(async () => {
     setIsAddingOne(true);
     try {
@@ -181,6 +224,17 @@ export default function MealPlanner() {
               >
                 {copied ? <Check size={14} /> : <Export size={14} />}
                 <span>{copied ? 'Copied' : 'Export'}</span>
+              </button>
+              <button
+                type="button"
+                className={styles.actionButton}
+                onClick={handleShareImage}
+                disabled={isGeneratingImage}
+              >
+                {isGeneratingImage
+                  ? <CircleNotch size={14} className={styles.spinner} />
+                  : <ImageSquare size={14} />}
+                <span>{isGeneratingImage ? 'Generating...' : 'Image'}</span>
               </button>
               <button
                 type="button"

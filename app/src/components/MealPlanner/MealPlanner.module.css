@@ -45,9 +45,14 @@
   white-space: nowrap;
 }
 
-.actionButton:hover {
+.actionButton:hover:not(:disabled) {
   background: var(--bg-tertiary);
   color: var(--text-primary);
+}
+
+.actionButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .actionButtonCopied {
