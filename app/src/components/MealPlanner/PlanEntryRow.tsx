@@ -1,4 +1,4 @@
-import { LockSimple, LockSimpleOpen, Minus, Plus, X } from '@phosphor-icons/react';
+import { LockSimple, LockSimpleOpen, Minus, Plus, Prohibit, X } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useStore } from '../../store';
 import type { NutrientFruit, PlanEntry } from '../../types';
@@ -22,6 +22,7 @@ export default function PlanEntryRow({ entry, fruit, locked }: PlanEntryRowProps
   const setPlanEntryServings = useStore((s) => s.setPlanEntryServings);
   const removePlanEntry = useStore((s) => s.removePlanEntry);
   const togglePlanEntryLock = useStore((s) => s.togglePlanEntryLock);
+  const blockFood = useStore((s) => s.blockFood);
 
   const servingLabel = fruit?.serving_label ?? '100g';
   const [draft, setDraft] = useState(String(entry.servingsPerWeek));
@@ -92,6 +93,15 @@ export default function PlanEntryRow({ entry, fruit, locked }: PlanEntryRowProps
           aria-label={locked ? `Unlock ${entry.name}` : `Lock ${entry.name}`}
         >
           {locked ? <LockSimple size={14} /> : <LockSimpleOpen size={14} />}
+        </button>
+        <button
+          type="button"
+          className={styles.blockBtn}
+          onClick={() => { blockFood(entry.name); removePlanEntry(entry.name); }}
+          aria-label={`Block ${entry.name}`}
+          title="Block from recommendations"
+        >
+          <Prohibit size={14} />
         </button>
         <button
           type="button"

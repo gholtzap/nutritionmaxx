@@ -365,6 +365,22 @@
   color: var(--accent);
 }
 
+.blockBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  transition: background 0.15s, color 0.15s;
+}
+
+.blockBtn:hover {
+  color: hsl(30, 80%, 50%);
+  background: var(--bg-tertiary);
+}
+
 .removeBtn {
   display: flex;
   align-items: center;
@@ -654,6 +670,7 @@
   .stepperBtn,
   .stepperInput,
   .lockBtn,
+  .blockBtn,
   .removeBtn {
     display: none !important;
   }
