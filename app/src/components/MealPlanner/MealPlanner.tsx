@@ -150,15 +150,6 @@ export default function MealPlanner() {
 
       const blob = await generateShareImage({ foods, nutrientRows });
 
-      if (navigator.share) {
-        const file = new File([blob], 'meal-plan.png', { type: 'image/png' });
-        const shareData = { files: [file] };
-        if (navigator.canShare?.(shareData)) {
-          await navigator.share(shareData);
-          return;
-        }
-      }
-
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
