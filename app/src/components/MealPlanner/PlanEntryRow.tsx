@@ -1,4 +1,5 @@
 import { LockSimple, LockSimpleOpen, Minus, Plus, X } from '@phosphor-icons/react';
+import { useEffect, useState } from 'react';
 import { useStore } from '../../store';
 import type { NutrientFruit, PlanEntry } from '../../types';
 import Badge from '../shared/Badge';
@@ -23,18 +24,27 @@ export default function PlanEntryRow({ entry, fruit, locked }: PlanEntryRowProps
   const togglePlanEntryLock = useStore((s) => s.togglePlanEntryLock);
 
   const servingLabel = fruit?.serving_label ?? '100g';
+  const [draft, setDraft] = useState(String(entry.servingsPerWeek));
+  const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    if (!editing) setDraft(String(entry.servingsPerWeek));
+  }, [entry.servingsPerWeek, editing]);
 
   function adjust(delta: number) {
     const next = Math.round((entry.servingsPerWeek + delta) * 10) / 10;
-    if (next >= 0.5 && next <= 21) {
+    if (next >= 0.5 && next <= 100) {
       setPlanEntryServings(entry.name, next);
     }
   }
 
-  function handleInput(value: string) {
-    const parsed = parseFloat(value);
-    if (!isNaN(parsed) && parsed >= 0.5 && parsed <= 21) {
+  function commitDraft() {
+    setEditing(false);
+    const parsed = parseFloat(draft);
+    if (!isNaN(parsed) && parsed >= 0.5 && parsed <= 100) {
       setPlanEntryServings(entry.name, parsed);
+    } else {
+      setDraft(String(entry.servingsPerWeek));
     }
   }
 
@@ -57,10 +67,13 @@ export default function PlanEntryRow({ entry, fruit, locked }: PlanEntryRowProps
         <input
           type="number"
           className={styles.stepperInput}
-          value={entry.servingsPerWeek}
-          onChange={(e) => handleInput(e.target.value)}
+          value={draft}
+          onFocus={() => setEditing(true)}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commitDraft}
+          onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
           min={0.5}
-          max={21}
+          max={100}
           step={0.5}
         />
         <button
