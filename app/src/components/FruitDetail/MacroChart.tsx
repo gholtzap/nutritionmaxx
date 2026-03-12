@@ -38,12 +38,17 @@ export default function MacroChart({ fruit }: MacroChartProps) {
     };
   });
 
+  const maxValue = Math.max(...data.map((d) => d.value));
+  const xDomain: [number, number] | undefined = showDV
+    ? [0, Math.max(100, maxValue)]
+    : undefined;
+
   return (
     <div className={styles.chartSection}>
       <h3 className={styles.sectionTitle}>Macronutrients</h3>
       <ResponsiveContainer width="100%" height={180}>
         <BarChart data={data} layout="vertical" margin={{ left: 60, right: 16, top: 4, bottom: 4 }}>
-          <XAxis type="number" hide />
+          <XAxis type="number" hide domain={xDomain} />
           <YAxis
             type="category"
             dataKey="name"
