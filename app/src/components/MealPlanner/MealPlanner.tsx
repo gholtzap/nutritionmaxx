@@ -1,9 +1,9 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { ShareNetwork, Check, Trash, Lightning, Export, CircleNotch } from '@phosphor-icons/react';
+import { ShareNetwork, Check, Trash, Lightning, Export, CircleNotch, Plus } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ItemType } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
-import { computePlanDailyTotals, generateAutoFillPlan } from '../../utils/plan-calculator';
+import { computePlanDailyTotals, generateAutoFillPlan, generateAddOne } from '../../utils/plan-calculator';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import { useRateLimit } from '../../utils/use-rate-limit.ts';
 import PlanFoodSelector from './PlanFoodSelector';
@@ -58,6 +58,7 @@ export default function MealPlanner() {
 
   const [copied, setCopied] = useState(false);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
+  const [isAddingOne, setIsAddingOne] = useState(false);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
@@ -128,6 +129,18 @@ export default function MealPlanner() {
     copiedTimer.current = setTimeout(() => setCopied(false), 1500);
   }, [planEntries, fruitMap, nutrientRows]);
 
+  const handleAddOne = useCallback(async () => {
+    setIsAddingOne(true);
+    try {
+      const allowed = await autoFillLimit.checkLimit();
+      if (!allowed) return;
+      const entry = generateAddOne(fruits, planEntries, dvMap, budgetTolerance, lockedNutrients);
+      if (entry) setPlanEntries([...planEntries, entry]);
+    } finally {
+      setIsAddingOne(false);
+    }
+  }, [fruits, planEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance, lockedNutrients]);
+
   const handleAutoFill = useCallback(async () => {
     setIsAutoFilling(true);
     try {
@@ -179,6 +192,17 @@ export default function MealPlanner() {
               </button>
             </>
           )}
+          <button
+            type="button"
+            className={styles.addOneButton}
+            onClick={handleAddOne}
+            disabled={autoFillLimit.isLimited || isAddingOne}
+          >
+            {isAddingOne
+              ? <CircleNotch size={14} className={styles.spinner} />
+              : <Plus size={14} weight="bold" />}
+            <span>{isAddingOne ? 'Adding...' : 'Add 1'}</span>
+          </button>
           <button
             type="button"
             className={styles.autoFillButton}

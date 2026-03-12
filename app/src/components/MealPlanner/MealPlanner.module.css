@@ -55,6 +55,30 @@
   border-color: hsl(142, 60%, 45%);
 }
 
+.addOneButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.addOneButton:hover:not(:disabled) {
+  background: rgba(99, 179, 237, 0.1);
+}
+
+.addOneButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .autoFillButton {
   display: inline-flex;
   align-items: center;

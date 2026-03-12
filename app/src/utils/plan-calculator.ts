@@ -424,6 +424,62 @@ function boostLockedNutrients(
   }
 }
 
+export function generateAddOne(
+  fruits: NutrientFruit[],
+  currentEntries: PlanEntry[],
+  dvMap?: EffectiveDailyValues,
+  budgetTolerance = 10,
+  lockedNutrients?: Set<NutrientKey>
+): PlanEntry | null {
+  const pool = fruits.filter(
+    (f) => f.type !== 'spice' && (f.cost_index === null || (f.cost_index as number) <= budgetTolerance)
+  );
+  const fruitMap = new Map(fruits.map((f) => [f.name, f]));
+  const insufficient = getInsufficientNutrients(fruits);
+
+  const totals = new Map<NutrientKey, number>();
+  for (const meta of PLAN_NUTRIENTS) {
+    totals.set(meta.key, 0);
+  }
+
+  const used = new Set<string>();
+  for (const entry of currentEntries) {
+    used.add(entry.name);
+    const fruit = fruitMap.get(entry.name);
+    if (!fruit) continue;
+    const servingG = fruit.serving_size_g ?? 100;
+    const dailyFactor = (servingG / 100) * (entry.servingsPerWeek / 7);
+    for (const meta of PLAN_NUTRIENTS) {
+      const raw = fruit[meta.key] as number | null;
+      if (raw === null) continue;
+      totals.set(meta.key, totals.get(meta.key)! + raw * dailyFactor);
+    }
+  }
+
+  const typeCounts = new Map<string, number>();
+  for (const entry of currentEntries) {
+    const fruit = fruitMap.get(entry.name);
+    if (!fruit) continue;
+    typeCounts.set(fruit.type, (typeCounts.get(fruit.type) ?? 0) + 1);
+  }
+
+  const scored: ScoredCandidate[] = [];
+  for (const fruit of pool) {
+    if (used.has(fruit.name)) continue;
+    const result = scoreCandidate(fruit, totals, insufficient, dvMap, lockedNutrients);
+    if (!result) continue;
+    const count = typeCounts.get(fruit.type) ?? 0;
+    result.score *= DIVERSITY_DECAY ** count;
+    scored.push(result);
+  }
+
+  if (scored.length === 0) return null;
+
+  scored.sort((a, b) => b.score - a.score);
+  const picked = scored[0];
+  return { name: picked.fruit.name, servingsPerWeek: picked.servings };
+}
+
 export function generateAutoFillPlan(
   fruits: NutrientFruit[],
   lockedEntries: PlanEntry[] = [],
