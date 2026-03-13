@@ -55,7 +55,7 @@ export default function MealPlanner() {
   const lockedNutrients = useStore((s) => s.lockedNutrients);
   const dvMap = useEffectiveDailyValues();
 
-  const autoFillLimit = useRateLimit({ action: 'autofill', windowMs: 60_000, maxRequests: 10, checkServer: true });
+  const autoFillLimit = useRateLimit({ action: 'autofill', windowMs: 60_000, maxRequests: 10 });
   const shareLimit = useRateLimit({ action: 'share', windowMs: 60_000, maxRequests: 20 });
 
   const [copied, setCopied] = useState(false);

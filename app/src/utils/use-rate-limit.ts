@@ -1,16 +1,14 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { SlidingWindowRateLimiter } from './rate-limit.ts';
-import { getClientId } from './client-id.ts';
 
 interface UseRateLimitOptions {
   action: string;
   windowMs: number;
   maxRequests: number;
-  checkServer?: boolean;
 }
 
 interface UseRateLimitReturn {
-  checkLimit: () => Promise<boolean>;
+  checkLimit: () => boolean;
   isLimited: boolean;
   remaining: number;
   retryAfterMs: number;
@@ -32,7 +30,6 @@ export function useRateLimit({
   action,
   windowMs,
   maxRequests,
-  checkServer = false,
 }: UseRateLimitOptions): UseRateLimitReturn {
   const [isLimited, setIsLimited] = useState(false);
   const [remaining, setRemaining] = useState(maxRequests);
@@ -45,7 +42,7 @@ export function useRateLimit({
     };
   }, []);
 
-  const checkLimit = useCallback(async (): Promise<boolean> => {
+  const checkLimit = useCallback((): boolean => {
     const limiter = getLimiter(action, windowMs, maxRequests);
     const result = limiter.attempt(action);
 
@@ -62,38 +59,11 @@ export function useRateLimit({
       return false;
     }
 
-    if (checkServer) {
-      try {
-        getClientId();
-        const res = await fetch(`/api/check-rate?action=${encodeURIComponent(action)}`, {
-          credentials: 'same-origin',
-        });
-        if (res.status === 429) {
-          const retryAfter = parseInt(res.headers.get('Retry-After') || '10', 10) * 1000;
-          setIsLimited(true);
-          setRemaining(0);
-          setRetryAfterMs(retryAfter);
-          if (timerRef.current) clearTimeout(timerRef.current);
-          timerRef.current = setTimeout(() => {
-            setIsLimited(false);
-            setRemaining(maxRequests);
-            setRetryAfterMs(0);
-          }, retryAfter);
-          return false;
-        }
-        const serverRemaining = parseInt(res.headers.get('X-RateLimit-Remaining') || String(maxRequests), 10);
-        setRemaining(Math.min(result.remaining, serverRemaining));
-      } catch {
-        // server unreachable -- fall back to client-only
-      }
-    } else {
-      setRemaining(result.remaining);
-    }
-
+    setRemaining(result.remaining);
     setIsLimited(false);
     setRetryAfterMs(0);
     return true;
-  }, [action, windowMs, maxRequests, checkServer]);
+  }, [action, windowMs, maxRequests]);
 
   return { checkLimit, isLimited, remaining, retryAfterMs };
 }
