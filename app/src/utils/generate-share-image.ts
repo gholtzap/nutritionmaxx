@@ -260,11 +260,12 @@ export async function generateShareImage(input: ShareImageInput): Promise<Blob> 
       ctx.font = `400 16px ${UI}`;
       ctx.textAlign = 'left';
       ctx.fillText(row.label, cx, y + 16);
+      const nameW = ctx.measureText(row.label).width;
 
       ctx.fillStyle = pctColor(pct);
       ctx.font = `600 15px ${MONO}`;
-      ctx.textAlign = 'right';
-      ctx.fillText(`${pct}%`, cx + gridColW, y + 16);
+      ctx.textAlign = 'left';
+      ctx.fillText(`${pct}%`, cx + nameW + 12, y + 16);
     }
     y += 30;
   }
