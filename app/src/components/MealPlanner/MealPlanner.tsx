@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { ShareNetwork, Check, Trash, Lightning, Export, CircleNotch, Plus, ImageSquare } from '@phosphor-icons/react';
+import { Check, Trash, Lightning, Export, CircleNotch, Plus } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ItemType } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
@@ -8,6 +8,7 @@ import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values'
 import { useRateLimit } from '../../utils/use-rate-limit.ts';
 import { generateShareImage } from '../../utils/generate-share-image';
 import type { ShareFood } from '../../utils/generate-share-image';
+import ShareModal, { ShareButton } from './ShareModal';
 import PlanFoodSelector from './PlanFoodSelector';
 import PlanEntryRow, { servingsLabel } from './PlanEntryRow';
 import NutrientCoverage from './NutrientCoverage';
@@ -62,6 +63,7 @@ export default function MealPlanner() {
   const [isAutoFilling, setIsAutoFilling] = useState(false);
   const [isAddingOne, setIsAddingOne] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [shareModal, setShareModal] = useState<{ blob: Blob; url: string } | null>(null);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
@@ -84,18 +86,33 @@ export default function MealPlanner() {
     if (planEntries.length === 0) return;
     const allowed = await shareLimit.checkLimit();
     if (!allowed) return;
-    const url = new URL(window.location.href);
-    url.searchParams.set(
-      'plan',
-      planEntries.map((e) => `${e.name}:${e.servingsPerWeek}`).join(',')
-    );
-    url.searchParams.delete('food');
-    url.searchParams.delete('compare');
-    navigator.clipboard.writeText(url.toString());
-    setCopied(true);
-    if (copiedTimer.current) clearTimeout(copiedTimer.current);
-    copiedTimer.current = setTimeout(() => setCopied(false), 1500);
-  }, [planEntries, shareLimit]);
+
+    setIsGeneratingImage(true);
+    try {
+      const foods: ShareFood[] = planEntries.map((e) => {
+        const fruit = fruitMap.get(e.name);
+        return {
+          name: e.name,
+          servingsPerWeek: e.servingsPerWeek,
+          type: (fruit?.type ?? 'fruit') as ItemType,
+        };
+      });
+
+      const blob = await generateShareImage({ foods, nutrientRows });
+
+      const url = new URL(window.location.href);
+      url.searchParams.set(
+        'plan',
+        planEntries.map((e) => `${e.name}:${e.servingsPerWeek}`).join(',')
+      );
+      url.searchParams.delete('food');
+      url.searchParams.delete('compare');
+
+      setShareModal({ blob, url: url.toString() });
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  }, [planEntries, fruitMap, nutrientRows, shareLimit]);
 
   const handleExport = useCallback(() => {
     if (planEntries.length === 0) return;
@@ -131,37 +148,6 @@ export default function MealPlanner() {
     if (copiedTimer.current) clearTimeout(copiedTimer.current);
     copiedTimer.current = setTimeout(() => setCopied(false), 1500);
   }, [planEntries, fruitMap, nutrientRows]);
-
-  const handleShareImage = useCallback(async () => {
-    if (planEntries.length === 0) return;
-    const allowed = await shareLimit.checkLimit();
-    if (!allowed) return;
-
-    setIsGeneratingImage(true);
-    try {
-      const foods: ShareFood[] = planEntries.map((e) => {
-        const fruit = fruitMap.get(e.name);
-        return {
-          name: e.name,
-          servingsPerWeek: e.servingsPerWeek,
-          type: (fruit?.type ?? 'fruit') as ItemType,
-        };
-      });
-
-      const blob = await generateShareImage({ foods, nutrientRows });
-
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'meal-plan.png';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } finally {
-      setIsGeneratingImage(false);
-    }
-  }, [planEntries, fruitMap, nutrientRows, shareLimit]);
 
   const handleAddOne = useCallback(async () => {
     setIsAddingOne(true);
@@ -200,14 +186,7 @@ export default function MealPlanner() {
         <div className={styles.headerActions}>
           {planEntries.length > 0 && (
             <>
-              <button
-                type="button"
-                className={`${styles.actionButton} ${copied ? styles.actionButtonCopied : ''}`}
-                onClick={handleShare}
-              >
-                {copied ? <Check size={14} /> : <ShareNetwork size={14} />}
-                <span>{copied ? 'Copied' : 'Share'}</span>
-              </button>
+              <ShareButton onClick={handleShare} isLoading={isGeneratingImage} />
               <button
                 type="button"
                 className={`${styles.actionButton} ${copied ? styles.actionButtonCopied : ''}`}
@@ -215,17 +194,6 @@ export default function MealPlanner() {
               >
                 {copied ? <Check size={14} /> : <Export size={14} />}
                 <span>{copied ? 'Copied' : 'Export'}</span>
-              </button>
-              <button
-                type="button"
-                className={styles.actionButton}
-                onClick={handleShareImage}
-                disabled={isGeneratingImage}
-              >
-                {isGeneratingImage
-                  ? <CircleNotch size={14} className={styles.spinner} />
-                  : <ImageSquare size={14} />}
-                <span>{isGeneratingImage ? 'Generating...' : 'Image'}</span>
               </button>
               <button
                 type="button"
@@ -305,6 +273,14 @@ export default function MealPlanner() {
 
       {planEntries.length > 0 && (
         <NutrientCoverage rows={nutrientRows} entryCount={planEntries.length} lockedNutrients={lockedNutrients} />
+      )}
+
+      {shareModal && (
+        <ShareModal
+          imageBlob={shareModal.blob}
+          shareUrl={shareModal.url}
+          onClose={() => setShareModal(null)}
+        />
       )}
     </div>
   );
