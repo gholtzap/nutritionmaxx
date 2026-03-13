@@ -1,22 +1,26 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { X, DownloadSimple, Check, LinkSimple, CircleNotch } from '@phosphor-icons/react';
+import { X, DownloadSimple, Check, LinkSimple, CircleNotch, TextAlignLeft } from '@phosphor-icons/react';
 import styles from './ShareModal.module.css';
 
 interface ShareModalProps {
   imageBlob: Blob;
   shareUrl: string;
+  exportText: string;
   onClose: () => void;
 }
 
-export default function ShareModal({ imageBlob, shareUrl, onClose }: ShareModalProps) {
+export default function ShareModal({ imageBlob, shareUrl, exportText, onClose }: ShareModalProps) {
   const [imageUrl] = useState(() => URL.createObjectURL(imageBlob));
-  const [copied, setCopied] = useState(false);
-  const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedText, setCopiedText] = useState(false);
+  const copiedLinkTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const copiedTextTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     return () => {
       URL.revokeObjectURL(imageUrl);
-      if (copiedTimer.current) clearTimeout(copiedTimer.current);
+      if (copiedLinkTimer.current) clearTimeout(copiedLinkTimer.current);
+      if (copiedTextTimer.current) clearTimeout(copiedTextTimer.current);
     };
   }, [imageUrl]);
 
@@ -39,10 +43,17 @@ export default function ShareModal({ imageBlob, shareUrl, onClose }: ShareModalP
 
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(shareUrl);
-    setCopied(true);
-    if (copiedTimer.current) clearTimeout(copiedTimer.current);
-    copiedTimer.current = setTimeout(() => setCopied(false), 1500);
+    setCopiedLink(true);
+    if (copiedLinkTimer.current) clearTimeout(copiedLinkTimer.current);
+    copiedLinkTimer.current = setTimeout(() => setCopiedLink(false), 1500);
   }, [shareUrl]);
+
+  const handleCopyText = useCallback(() => {
+    navigator.clipboard.writeText(exportText);
+    setCopiedText(true);
+    if (copiedTextTimer.current) clearTimeout(copiedTextTimer.current);
+    copiedTextTimer.current = setTimeout(() => setCopiedText(false), 1500);
+  }, [exportText]);
 
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();
@@ -76,11 +87,28 @@ export default function ShareModal({ imageBlob, shareUrl, onClose }: ShareModalP
             />
             <button
               type="button"
-              className={`${styles.copyBtn} ${copied ? styles.copyBtnCopied : ''}`}
+              className={`${styles.copyBtn} ${copiedLink ? styles.copyBtnCopied : ''}`}
               onClick={handleCopyLink}
             >
-              {copied ? <Check size={14} /> : <LinkSimple size={14} />}
-              <span>{copied ? 'Copied' : 'Copy Link'}</span>
+              {copiedLink ? <Check size={14} /> : <LinkSimple size={14} />}
+              <span>{copiedLink ? 'Copied' : 'Copy Link'}</span>
+            </button>
+          </div>
+          <div className={styles.linkSection}>
+            <textarea
+              className={`${styles.linkInput} ${styles.textArea}`}
+              value={exportText}
+              readOnly
+              rows={3}
+              onFocus={(e) => e.target.select()}
+            />
+            <button
+              type="button"
+              className={`${styles.copyBtn} ${copiedText ? styles.copyBtnCopied : ''}`}
+              onClick={handleCopyText}
+            >
+              {copiedText ? <Check size={14} /> : <TextAlignLeft size={14} />}
+              <span>{copiedText ? 'Copied' : 'Copy Text'}</span>
             </button>
           </div>
         </div>

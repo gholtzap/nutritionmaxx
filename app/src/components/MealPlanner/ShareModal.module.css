@@ -115,6 +115,11 @@
   color: var(--text-primary);
 }
 
+.textArea {
+  resize: none;
+  line-height: 1.5;
+}
+
 .copyBtn {
   display: inline-flex;
   align-items: center;

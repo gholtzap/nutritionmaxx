@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { Check, Trash, Lightning, Export, CircleNotch, Plus } from '@phosphor-icons/react';
+import { useState, useMemo, useCallback } from 'react';
+import { Trash, Lightning, CircleNotch, Plus } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ItemType } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
@@ -59,18 +59,10 @@ export default function MealPlanner() {
   const autoFillLimit = useRateLimit({ action: 'autofill', windowMs: 60_000, maxRequests: 10 });
   const shareLimit = useRateLimit({ action: 'share', windowMs: 60_000, maxRequests: 20 });
 
-  const [copied, setCopied] = useState(false);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
   const [isAddingOne, setIsAddingOne] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-  const [shareModal, setShareModal] = useState<{ blob: Blob; url: string } | null>(null);
-  const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  useEffect(() => {
-    return () => {
-      if (copiedTimer.current) clearTimeout(copiedTimer.current);
-    };
-  }, []);
+  const [shareModal, setShareModal] = useState<{ blob: Blob; url: string; exportText: string } | null>(null);
 
   const fruitMap = useMemo(
     () => new Map(fruits.map((f) => [f.name, f])),
@@ -108,46 +100,35 @@ export default function MealPlanner() {
       url.searchParams.delete('food');
       url.searchParams.delete('compare');
 
-      setShareModal({ blob, url: url.toString() });
+      const groups = new Map<string, string[]>();
+      for (const entry of planEntries) {
+        const fruit = fruitMap.get(entry.name);
+        const type = fruit?.type ?? 'other';
+        const label = TYPE_GROUP_LABELS[type as ItemType] ?? type.toUpperCase();
+        if (!groups.has(label)) groups.set(label, []);
+        const serving = fruit?.serving_label ?? '100g';
+        groups.get(label)!.push(`  ${entry.name} — ${servingsLabel(entry.servingsPerWeek)} (${serving})`);
+      }
+      const lines: string[] = ['WEEKLY MEAL PLAN', ''];
+      for (const [label, items] of groups) {
+        lines.push(label);
+        lines.push(...items);
+        lines.push('');
+      }
+      const tracked = nutrientRows.filter((r) => !r.insufficientData);
+      const metCount = tracked.filter((r) => r.dailyValue > 0 && r.total >= r.dailyValue).length;
+      lines.push(`NUTRIENT COVERAGE (${metCount} of ${tracked.length} at or above 100% DV)`);
+      for (const row of tracked) {
+        const pct = row.dailyValue > 0 ? Math.round((row.total / row.dailyValue) * 100) : 0;
+        const total = row.total < 10 ? row.total.toFixed(1) : Math.round(row.total).toLocaleString();
+        lines.push(`  ${row.label.padEnd(16)}${total} ${row.unit.padEnd(10)}${pct}%`);
+      }
+
+      setShareModal({ blob, url: url.toString(), exportText: lines.join('\n') });
     } finally {
       setIsGeneratingImage(false);
     }
   }, [planEntries, fruitMap, nutrientRows, shareLimit]);
-
-  const handleExport = useCallback(() => {
-    if (planEntries.length === 0) return;
-
-    const groups = new Map<string, string[]>();
-    for (const entry of planEntries) {
-      const fruit = fruitMap.get(entry.name);
-      const type = fruit?.type ?? 'other';
-      const label = TYPE_GROUP_LABELS[type as ItemType] ?? type.toUpperCase();
-      if (!groups.has(label)) groups.set(label, []);
-      const serving = fruit?.serving_label ?? '100g';
-      groups.get(label)!.push(`  ${entry.name} — ${servingsLabel(entry.servingsPerWeek)} (${serving})`);
-    }
-
-    const lines: string[] = ['WEEKLY MEAL PLAN', ''];
-    for (const [label, items] of groups) {
-      lines.push(label);
-      lines.push(...items);
-      lines.push('');
-    }
-
-    const tracked = nutrientRows.filter((r) => !r.insufficientData);
-    const metCount = tracked.filter((r) => r.dailyValue > 0 && r.total >= r.dailyValue).length;
-    lines.push(`NUTRIENT COVERAGE (${metCount} of ${tracked.length} at or above 100% DV)`);
-    for (const row of tracked) {
-      const pct = row.dailyValue > 0 ? Math.round((row.total / row.dailyValue) * 100) : 0;
-      const total = row.total < 10 ? row.total.toFixed(1) : Math.round(row.total).toLocaleString();
-      lines.push(`  ${row.label.padEnd(16)}${total} ${row.unit.padEnd(10)}${pct}%`);
-    }
-
-    navigator.clipboard.writeText(lines.join('\n'));
-    setCopied(true);
-    if (copiedTimer.current) clearTimeout(copiedTimer.current);
-    copiedTimer.current = setTimeout(() => setCopied(false), 1500);
-  }, [planEntries, fruitMap, nutrientRows]);
 
   const handleAddOne = useCallback(async () => {
     setIsAddingOne(true);
@@ -187,14 +168,6 @@ export default function MealPlanner() {
           {planEntries.length > 0 && (
             <>
               <ShareButton onClick={handleShare} isLoading={isGeneratingImage} />
-              <button
-                type="button"
-                className={`${styles.actionButton} ${copied ? styles.actionButtonCopied : ''}`}
-                onClick={handleExport}
-              >
-                {copied ? <Check size={14} /> : <Export size={14} />}
-                <span>{copied ? 'Copied' : 'Export'}</span>
-              </button>
               <button
                 type="button"
                 className={styles.actionButton}
@@ -279,6 +252,7 @@ export default function MealPlanner() {
         <ShareModal
           imageBlob={shareModal.blob}
           shareUrl={shareModal.url}
+          exportText={shareModal.exportText}
           onClose={() => setShareModal(null)}
         />
       )}
