@@ -34,7 +34,7 @@ export default function PlanEntryRow({ entry, fruit, locked }: PlanEntryRowProps
 
   function adjust(delta: number) {
     const next = Math.round((entry.servingsPerWeek + delta) * 10) / 10;
-    if (next >= 0.5 && next <= 100) {
+    if (next >= 0.5 && next <= 1000) {
       setPlanEntryServings(entry.name, next);
     }
   }
@@ -42,7 +42,7 @@ export default function PlanEntryRow({ entry, fruit, locked }: PlanEntryRowProps
   function commitDraft() {
     setEditing(false);
     const parsed = parseFloat(draft);
-    if (!isNaN(parsed) && parsed >= 0.5 && parsed <= 100) {
+    if (!isNaN(parsed) && parsed >= 0.5 && parsed <= 1000) {
       setPlanEntryServings(entry.name, parsed);
     } else {
       setDraft(String(entry.servingsPerWeek));
@@ -74,7 +74,7 @@ export default function PlanEntryRow({ entry, fruit, locked }: PlanEntryRowProps
           onBlur={commitDraft}
           onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
           min={0.5}
-          max={100}
+          max={1000}
           step={0.5}
         />
         <button
