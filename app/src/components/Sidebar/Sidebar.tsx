@@ -1,4 +1,4 @@
-import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo } from '@phosphor-icons/react';
+import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo, Article } from '@phosphor-icons/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
@@ -25,6 +25,7 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
       { id: 'nutrients', label: 'Nutrients', icon: <Pill size={18} weight="regular" /> },
       { id: 'absorption', label: 'Absorption', icon: <ArrowsClockwise size={18} weight="regular" /> },
       { id: 'dietary', label: 'Diet', icon: <SlidersHorizontal size={18} weight="regular" /> },
+      { id: 'research', label: 'Research', icon: <Article size={18} weight="regular" /> },
     ],
   },
   {
@@ -51,7 +52,7 @@ export default function Sidebar() {
   return (
     <aside className={`${styles.sidebar} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
       <div className={styles.logo}>
-        <span className={styles.logoText}>Nutrition</span>
+        <span className={styles.logoText}>Nutritionmaxx</span>
         <div className={styles.logoActions}>
           <a
             href="https://github.com/gholtzap/nutrition-db"
