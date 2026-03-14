@@ -258,16 +258,6 @@ const article: ResearchArticle = {
       { k: 8, rmse: 10.7, label: '+ Beet' },
     ]},
 
-    { type: 'divider' },
-
-    { type: 'heading', value: 'Takeaways' },
-
-    { type: 'callout', tone: 'insight', title: 'Spices dominate', value: 'Chili powder and dried dill appear from K=3 onward. A teaspoon of dried dill weighs 1 gram but moves the needle on iron, calcium, and manganese. Spices win because their nutrients are concentrated into almost nothing.' },
-
-    { type: 'callout', tone: 'insight', title: 'Steep diminishing returns', value: 'The first 3 food choices matter far more than the last 5. Going from 1\u21923 foods cuts RMSE by 60%. Going from 3\u21928 only cuts it by another 52%.' },
-
-    { type: 'callout', tone: 'insight', title: 'Each food fixes one thing', value: 'Cheddar fixes fat. Plantain fixes calories. Mussel/Clam fixes B12. Dill fixes iron. Lard fixes the calorie/fat gap. Beet fixes folate. No food duplicates another\'s job.' },
-
     { type: 'callout', tone: 'caveat', title: 'Caveats', value: 'This is pure nutrient math; no consideration of palatability, cost, or food safety. 13 tsp of chili powder daily is technically possible but not pleasant. Sodium landing under 100% is actually healthy since 2,300mg is an upper limit. The greedy search for K\u22654 finds a local optimum, not necessarily the global one.' },
   ],
 };
