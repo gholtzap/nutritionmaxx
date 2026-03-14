@@ -7,7 +7,7 @@ const article: ResearchArticle = {
   summary: 'Using optimization across 262 foods and 26 nutrients, we found the best possible diet for every food count from 1 to 10. By 8 foods, 25 of 26 nutrients land in range with zero overages.',
   tags: ['optimization', 'nutrient density', 'daily values'],
   content: [
-    { type: 'text', value: 'What if you could only eat one food forever? What about three? We ran an optimization algorithm across our entire 262-food database to find the exact combination of foods and daily servings that hits 100% of every Daily Value \u2014 penalizing both deficiency and excess equally.' },
+    { type: 'text', value: 'What if you could only eat one food forever? What about three? We ran an optimization algorithm across our entire 262-food database to find the exact combination of foods and daily servings that hits 100% of every Daily Value; penalizing both deficiency and excess equally.' },
 
     { type: 'callout', tone: 'method', title: 'Algorithm', value: 'For each food count K, non-negative least squares (NNLS) optimizes daily servings to minimize the Root Mean Squared Error of %DV from 100% across 26 nutrients. K=1 and K=2 are exhaustive. K=3 searches 161,700 combinations from the top 100 foods. K\u22654 uses greedy forward selection with swap-based local search.' },
 
@@ -21,9 +21,9 @@ const article: ResearchArticle = {
       { name: 'Green Bean', servings: '12.71/day (89.0/wk)', detail: '1 cup (110g)' },
     ]},
 
-    { type: 'text', value: '8 of 26 nutrients in range. Green bean nails fiber, B vitamins, and Vitamin C \u2014 but has zero B12, almost no fat, and only 433 calories. No single food comes close to complete.' },
+    { type: 'text', value: '8 of 26 nutrients in range. Green bean nails fiber, B vitamins, and Vitamin C; but has zero B12, almost no fat, and only 433 calories. No single food comes close to complete.' },
 
-    { type: 'bars', title: 'K=1 \u2014 8 of 26 in range', items: [
+    { type: 'bars', title: 'K=1; 8 of 26 in range', items: [
       { label: 'Calories', pct: 21.7 },
       { label: 'Protein', pct: 51.2 },
       { label: 'Fat', pct: 3.9 },
@@ -47,7 +47,7 @@ const article: ResearchArticle = {
 
     { type: 'text', value: '11 of 26 in range. Cheddar fills in fat, Vitamin A, calcium, phosphorus, zinc, and selenium. But carbs crater to 30% and calories are still low. The pattern is already obvious: plant foods and animal foods cover each other\'s blind spots.' },
 
-    { type: 'bars', title: 'K=2 \u2014 11 of 26 in range', items: [
+    { type: 'bars', title: 'K=2; 11 of 26 in range', items: [
       { label: 'Calories', pct: 55.4 },
       { label: 'Fat', pct: 82.9 },
       { label: 'Carbs', pct: 30.4 },
@@ -72,7 +72,7 @@ const article: ResearchArticle = {
 
     { type: 'text', value: '17 of 26 in range. The algorithm drops green bean entirely, swapping in corn for its calorie base. Nobody expected chili powder here. 14 teaspoons a day (just 39g) is loaded with Vitamin A, E, B6, iron, and copper.' },
 
-    { type: 'bars', title: 'K=3 \u2014 17 of 26 in range', items: [
+    { type: 'bars', title: 'K=3; 17 of 26 in range', items: [
       { label: 'Calories', pct: 69.9 },
       { label: 'Protein', pct: 134.5 },
       { label: 'Fat', pct: 85.8 },
@@ -100,7 +100,7 @@ const article: ResearchArticle = {
 
     { type: 'text', value: '20 of 26 in range. Plantain brings calories to 83%, carbs to 83%, and adds potassium and Vitamin C. The remaining gaps: B12 (58%), iron (65%), potassium (75%). Protein, B2, and B5 run slightly over.' },
 
-    { type: 'bars', title: 'K=4 \u2014 20 of 26 in range', items: [
+    { type: 'bars', title: 'K=4; 20 of 26 in range', items: [
       { label: 'Calories', pct: 82.7 },
       { label: 'Protein', pct: 127.9 },
       { label: 'Carbs', pct: 83.2 },
@@ -127,7 +127,7 @@ const article: ResearchArticle = {
 
     { type: 'text', value: '19 of 26 in range. Just one mussel serving every 8 days fixes B12 entirely (58% \u2192 101%). But the optimizer redistributes servings, dropping calories and fat slightly below range. A tradeoff worth making.' },
 
-    { type: 'bars', title: 'K=5 \u2014 19 of 26 in range', items: [
+    { type: 'bars', title: 'K=5; 19 of 26 in range', items: [
       { label: 'Calories', pct: 79.6 },
       { label: 'Protein', pct: 122.7 },
       { label: 'Fat', pct: 77.9 },
@@ -155,7 +155,7 @@ const article: ResearchArticle = {
 
     { type: 'text', value: '20 of 26 in range. Clam swaps in for mussel (better iron numbers), and dried dill enters at just 1g per teaspoon. Iron jumps from 67% to 95%. Calories and fat are still the problem.' },
 
-    { type: 'bars', title: 'K=6 \u2014 20 of 26 in range', items: [
+    { type: 'bars', title: 'K=6; 20 of 26 in range', items: [
       { label: 'Calories', pct: 76.9 },
       { label: 'Protein', pct: 124.5 },
       { label: 'Fat', pct: 75.6 },
@@ -184,7 +184,7 @@ const article: ResearchArticle = {
 
     { type: 'text', value: '23 of 26 in range. Lard is here for the math, not the flavor. It adds calories and fat without extra protein, which is already running high. Calories jump to 86%, fat to 105%. Only carbs (79%), potassium (79%), and B5 (121%) remain out.' },
 
-    { type: 'bars', title: 'K=7 \u2014 23 of 26 in range', items: [
+    { type: 'bars', title: 'K=7; 23 of 26 in range', items: [
       { label: 'Calories', pct: 86.3 },
       { label: 'Protein', pct: 118.8 },
       { label: 'Fat', pct: 105.0 },
@@ -214,7 +214,7 @@ const article: ResearchArticle = {
 
     { type: 'text', value: '25 of 26 in range, zero overages. Beet brings folate from 84% to 101% and pulls most other numbers closer to center. Only carbs at 78% stays out. Adding foods 9 and 10 doesn\'t improve the count. This is the peak.' },
 
-    { type: 'bars', title: 'K=8 \u2014 25 of 26 in range, 0 over', items: [
+    { type: 'bars', title: 'K=8; 25 of 26 in range, 0 over', items: [
       { label: 'Calories', pct: 85.7 },
       { label: 'Protein', pct: 117.6 },
       { label: 'Fat', pct: 105.3 },
@@ -268,7 +268,7 @@ const article: ResearchArticle = {
 
     { type: 'callout', tone: 'insight', title: 'Each food fixes one thing', value: 'Cheddar fixes fat. Plantain fixes calories. Mussel/Clam fixes B12. Dill fixes iron. Lard fixes the calorie/fat gap. Beet fixes folate. No food duplicates another\'s job.' },
 
-    { type: 'callout', tone: 'caveat', title: 'Caveats', value: 'This is pure nutrient math \u2014 no consideration of palatability, cost, or food safety. 13 tsp of chili powder daily is technically possible but not pleasant. Sodium landing under 100% is actually healthy since 2,300mg is an upper limit. The greedy search for K\u22654 finds a local optimum, not necessarily the global one.' },
+    { type: 'callout', tone: 'caveat', title: 'Caveats', value: 'This is pure nutrient math; no consideration of palatability, cost, or food safety. 13 tsp of chili powder daily is technically possible but not pleasant. Sodium landing under 100% is actually healthy since 2,300mg is an upper limit. The greedy search for K\u22654 finds a local optimum, not necessarily the global one.' },
   ],
 };
 
