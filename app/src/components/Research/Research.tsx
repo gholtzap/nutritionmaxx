@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ArrowLeft, CalendarBlank, Tag } from '@phosphor-icons/react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { ArrowLeft, CalendarBlank, Tag, LinkSimple, Check } from '@phosphor-icons/react';
 import articles from '../../data/research-articles';
 import type { ResearchArticle, ContentBlock } from '../../data/research-articles';
 import styles from './Research.module.css';
@@ -121,13 +121,42 @@ function Block({ block }: { block: ContentBlock }) {
   }
 }
 
+function ShareButton({ slug }: { slug: string }) {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    return () => { if (timer.current) clearTimeout(timer.current); };
+  }, []);
+
+  const handleCopy = useCallback(() => {
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.searchParams.set('research', slug);
+    navigator.clipboard.writeText(url.toString());
+    setCopied(true);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setCopied(false), 1500);
+  }, [slug]);
+
+  return (
+    <button type="button" className={styles.shareBtn} onClick={handleCopy}>
+      {copied ? <Check size={13} /> : <LinkSimple size={13} />}
+      <span>{copied ? 'Copied' : 'Share'}</span>
+    </button>
+  );
+}
+
 function ArticleDetail({ article, onBack }: { article: ResearchArticle; onBack: () => void }) {
   return (
     <div className={styles.detail}>
-      <button type="button" className={styles.backButton} onClick={onBack}>
-        <ArrowLeft size={14} weight="bold" />
-        All articles
-      </button>
+      <div className={styles.detailNav}>
+        <button type="button" className={styles.backButton} onClick={onBack}>
+          <ArrowLeft size={14} weight="bold" />
+          All articles
+        </button>
+        <ShareButton slug={article.slug} />
+      </div>
       <article className={styles.article}>
         <header className={styles.articleHeader}>
           <h1 className={styles.articleTitle}>{article.title}</h1>
@@ -155,10 +184,31 @@ function ArticleDetail({ article, onBack }: { article: ResearchArticle; onBack: 
 }
 
 export default function Research() {
-  const [selected, setSelected] = useState<ResearchArticle | null>(null);
+  const [selected, setSelected] = useState<ResearchArticle | null>(() => {
+    const slug = new URLSearchParams(window.location.search).get('research');
+    if (!slug) return null;
+    return articles.find((a) => a.slug === slug) ?? null;
+  });
+
+  const selectArticle = useCallback((article: ResearchArticle) => {
+    setSelected(article);
+    const url = new URL(window.location.href);
+    url.searchParams.set('research', article.slug);
+    url.searchParams.delete('food');
+    url.searchParams.delete('compare');
+    url.searchParams.delete('plan');
+    window.history.replaceState(null, '', url.toString());
+  }, []);
+
+  const clearSelection = useCallback(() => {
+    setSelected(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('research');
+    window.history.replaceState(null, '', url.toString());
+  }, []);
 
   if (selected) {
-    return <ArticleDetail article={selected} onBack={() => setSelected(null)} />;
+    return <ArticleDetail article={selected} onBack={clearSelection} />;
   }
 
   return (
@@ -178,7 +228,7 @@ export default function Research() {
               key={article.slug}
               type="button"
               className={styles.card}
-              onClick={() => setSelected(article)}
+              onClick={() => selectArticle(article)}
             >
               <div className={styles.cardContent}>
                 <h2 className={styles.cardTitle}>{article.title}</h2>

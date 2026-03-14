@@ -99,6 +99,33 @@
   max-width: 780px;
 }
 
+.detailNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.shareBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-family: var(--font-ui);
+  color: var(--text-secondary);
+  padding: 5px 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.shareBtn:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
 .backButton {
   display: inline-flex;
   align-items: center;
@@ -107,7 +134,7 @@
   color: var(--text-secondary);
   font-family: var(--font-ui);
   padding: 6px 0;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   cursor: pointer;
   transition: color 0.15s;
 }
