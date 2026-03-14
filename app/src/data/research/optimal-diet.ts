@@ -38,7 +38,7 @@ const article: ResearchArticle = {
 
     { type: 'divider' },
 
-    { type: 'heading', value: 'K=2: Adding Animal Fat' },
+    { type: 'heading', value: 'K=2: Cheddar Cheese' },
 
     { type: 'foods', calories: '1,108', items: [
       { name: 'Green Bean', servings: '10.38/day (72.7/wk)', detail: '1 cup (110g)' },
@@ -62,7 +62,7 @@ const article: ResearchArticle = {
 
     { type: 'divider' },
 
-    { type: 'heading', value: 'K=3: The Chili Powder Surprise' },
+    { type: 'heading', value: 'K=3: Chili Powder' },
 
     { type: 'foods', calories: '1,398', items: [
       { name: 'Corn', servings: '8.69/day (60.8/wk)', detail: '1 ear (90g)' },
@@ -89,7 +89,7 @@ const article: ResearchArticle = {
 
     { type: 'divider' },
 
-    { type: 'heading', value: 'K=4: Filling the Calorie Gap' },
+    { type: 'heading', value: 'K=4: Plantain' },
 
     { type: 'foods', calories: '1,653', items: [
       { name: 'Corn', servings: '5.79/day (40.6/wk)', detail: '1 ear (90g)' },
