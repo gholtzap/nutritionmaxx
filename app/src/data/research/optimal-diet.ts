@@ -2,12 +2,14 @@ import type { ResearchArticle } from '../research-articles';
 
 const article: ResearchArticle = {
   slug: 'optimal-diet-by-food-count',
-  title: 'The Mathematically Perfect Diet',
+  title: 'The Minimum Viable Diet',
   date: '2026-03-14',
-  summary: 'Using constrained optimization across 262 foods and 26 nutrients, we found the best possible diet for every food count from 1 to 8. By 8 foods, 21 of 26 nutrients land in range at 2,021 calories.',
+  summary: 'Using constrained optimization across 262 foods and 26 nutrients, I found the best possible diet for every food count from 1 to 8. By 8 foods, 21 of 26 nutrients land in range at 2,021 calories.',
   tags: ['optimization', 'nutrient density', 'daily values'],
   content: [
-    { type: 'text', value: 'What if you could only eat one food forever? What about three? We ran a constrained optimization across our entire 262-food database to find the exact combination of foods and daily servings that best covers every Daily Value while staying within 1,800-2,200 calories per day.' },
+    { type: 'callout', tone: 'insight', title: 'TLDR', value: 'If you could only eat one food, it\'s quinoa. Eating only 3 foods (millet, Swiss chard, ricotta) fulfills most of the nutrients we need to survive. At 8 foods (lamb, cornmeal, nectarine, margarine, celery, plantain, dill, parmesan) you hit 21 of 26 nutrients at 2,021 calories.' },
+
+    { type: 'text', value: 'What if you could only eat one food forever? What about three? I ran a constrained optimization across our entire 262-food database to find the exact combination of foods and daily servings that best covers every Daily Value while staying within 1,800-2,200 calories per day.' },
 
     { type: 'callout', tone: 'method', title: 'Algorithm', value: 'For each food count K, constrained least squares (L-BFGS-B) optimizes daily servings using an asymmetric penalty function based on Tolerable Upper Intake Levels. Deficiency below 100% DV is penalized. Excess is only penalized above each nutrient\'s UL (e.g. 250% for iron, 192% for calcium). Sodium and sugars are treated as upper limits where lower is better. Calories are constrained to 1,800-2,200 kcal. Volume caps prevent unrealistic quantities (800g/day for most foods, 50g for spices, 150g for fats). K=1-2 are exhaustive. K=3 searches 161,700 combinations. K>=4 uses greedy forward selection with swap-based local search and 10 random restarts.' },
 
@@ -21,7 +23,7 @@ const article: ResearchArticle = {
       { name: 'Quinoa', servings: '12.60/day (88.2/wk)', detail: '1/4 cup dry (45g)' },
     ]},
 
-    { type: 'text', value: '4 of 26 nutrients in range. The calorie constraint changes everything. Instead of green beans at 433 calories, the algorithm picks quinoa: a complete protein grain that actually hits 2,087 kcal. Fat is the glaring hole at 44%. No single food comes close to complete, but at least this one keeps you alive.' },
+    { type: 'text', value: '4 of 26 nutrients in range. If Calories weren\'t a factor here, green beans would win at 433 calories, but if we take calories into account (making sure you don\'t starve) the algorithm picks quinoa: a complete protein grain that actually hits 2,087 kcal. Fat is the glaring hole at 44%. No single food comes close to complete, but at least this one keeps you alive.' },
 
     { type: 'bars', title: 'K=1; 4 of 26 in range', items: [
       { label: 'Calories', pct: 104.3 },
@@ -87,7 +89,7 @@ const article: ResearchArticle = {
 
     { type: 'divider' },
 
-    { type: 'heading', value: 'K=4: Chili Powder Returns' },
+    { type: 'heading', value: 'K=4: Chili Powder' },
 
     { type: 'foods', calories: '2,186', items: [
       { name: 'Cornmeal', servings: '6.87/day (48.1/wk)', detail: '1/4 cup (30g)' },
@@ -244,6 +246,8 @@ const article: ResearchArticle = {
 
     { type: 'heading', value: 'The Full Progression' },
 
+    { type: 'text', value: 'K is the number of foods. The number next to each bar is the RMSE (root mean square error) of all 26 nutrient percentages from 100% DV. Lower means the diet is closer to perfectly meeting every nutrient target. K=2 spikes because duck eggs push a few nutrients into the thousands of percent; the optimizer doesn\'t penalize that (no upper limit from food), but the RMSE captures the raw deviation.' },
+
     { type: 'progress', items: [
       { k: 1, rmse: 121.6, label: 'Quinoa' },
       { k: 2, rmse: 335.8, label: 'Parsnip, Duck Egg' },
@@ -256,6 +260,7 @@ const article: ResearchArticle = {
     ]},
 
     { type: 'callout', tone: 'caveat', title: 'Caveats', value: 'This is pure nutrient math; no consideration of palatability, cost, or food safety. 18 celery stalks daily is a lot of celery. Sodium landing under 100% is actually healthy since 2,300mg is an upper limit; sugars landing low is similarly a positive. The RMSE at K=2 spikes because duck eggs push B12 to 1,695% and selenium to 525%; the asymmetric penalty doesn\'t penalize this (no UL from food) but the RMSE-from-100% metric captures the raw deviation. K>=4 uses greedy search with 10 random restarts, finding a local optimum.' },
+
   ],
 };
 
