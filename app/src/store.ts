@@ -95,7 +95,7 @@ export const useStore = create<AppState>((set, get) => ({
   loading: false,
   error: null,
 
-  activeView: 'table',
+  activeView: 'home',
   searchQuery: '',
   selectedType: null,
   selectedCategories: new Set(),

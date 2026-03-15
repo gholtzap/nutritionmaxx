@@ -16,6 +16,7 @@ import DietaryPreferences from './components/DietaryPreferences/DietaryPreferenc
 import FixMyDiet from './components/FixMyDiet/FixMyDiet';
 import DailyValueSettings from './components/DailyValueSettings/DailyValueSettings';
 import Research from './components/Research/Research';
+import Homepage from './components/Homepage/Homepage';
 import Spinner from './components/shared/Spinner';
 import styles from './App.module.css';
 
@@ -159,7 +160,13 @@ function App() {
       )}
       {isMobile && (
         <header className={styles.mobileHeader}>
-          <span className={styles.mobileTitle}>Nutrition</span>
+          <button
+            type="button"
+            className={styles.mobileTitle}
+            onClick={() => setActiveView('home')}
+          >
+            Nutrition
+          </button>
           <div className={styles.mobileHeaderRight}>
             <label className={styles.mobileDvToggle}>
               <input
@@ -186,6 +193,7 @@ function App() {
         {error && <div className={styles.status}>{error}</div>}
         {!loading && !error && (
           <>
+            {activeView === 'home' && <Homepage />}
             {activeView === 'fixdiet' && <FixMyDiet />}
             {activeView === 'table' && <DataTable />}
             {activeView === 'comparison' && <Comparison />}

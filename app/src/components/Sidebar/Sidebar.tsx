@@ -52,7 +52,13 @@ export default function Sidebar() {
   return (
     <aside className={`${styles.sidebar} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
       <div className={styles.logo}>
-        <span className={styles.logoText}>Nutritionmaxx</span>
+        <button
+          type="button"
+          className={styles.logoText}
+          onClick={() => setActiveView('home')}
+        >
+          Nutritionmaxx
+        </button>
         <div className={styles.logoActions}>
           <a
             href="https://github.com/gholtzap/nutrition-db"
