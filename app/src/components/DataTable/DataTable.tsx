@@ -159,9 +159,9 @@ export default function DataTable() {
             Eat smarter, not harder.
           </h1>
           <p className={styles.headlineSubtitle}>
-            Find the exact foods that fill your nutrition gaps — backed by real USDA data across {allFruits.length}+ foods.
+            Find the exact foods that fill your nutrition gaps — backed by real data across {allFruits.length}+ foods.
           </p>
-          <div className={styles.trustBadge}>USDA FoodData Central</div>
+          <div className={styles.trustBadge}>USDA FoodData Central &middot; INSA TCA v7.0</div>
         </div>
         <button
           type="button"
