@@ -7,7 +7,7 @@ const article: ResearchArticle = {
   summary: 'Analyzing 371 vegetarian foods across 26 nutrients to find the most practical protein sources, the true caloric cost of plant protein at realistic intake levels, and what separates lacto-ovo vegetarians from vegans nutritionally.',
   tags: ['protein', 'vegetarian', 'nutrient density', 'meal planning'],
   content: [
-    { type: 'callout', tone: 'insight', title: 'TLDR', value: 'Protein is not the problem. Egg whites deliver 21g of protein per 100 calories, beating turkey breast (20.8g) and chicken breast (18.8g). Even at 70g daily -- the amount many adults should target -- the top vegetarian sources cost under 30% of daily calories. The real nutritional risks are vitamin B12 (0.33x meat density), vitamin D (0.20x), and niacin (0.34x). For vegans, these gaps widen: tofu and lentils are strong, but B12 supplementation is non-negotiable.' },
+    { type: 'callout', tone: 'insight', title: 'TLDR', value: 'Protein is not the problem. Egg whites deliver 21g of protein per 100 calories, beating turkey breast (20.8g) and chicken breast (18.8g). Even at 70g daily -- the amount many adults should target -- the top vegetarian sources cost under 30% of daily calories. The real nutritional risks are vitamin B12 (0.33x meat density), vitamin D (0.20x), and niacin (0.34x). For vegans, these gaps widen: tofu and lentils are strong, but vegans need B12 supplements regardless.' },
 
     { type: 'text', value: 'The most common question vegetarians hear: "where do you get your protein?" I ran the numbers across all 371 vegetarian foods in our database (everything except beef, pork, poultry, lamb, and fish) to answer it. But the answer turns out to be less interesting than the follow-up questions: how much protein do you actually need, which sources are practical for daily cooking, and what should vegetarians really be worrying about instead?' },
 
@@ -59,7 +59,7 @@ const article: ResearchArticle = {
       { label: 'Chickpea', pct: 5.4 },
     ]},
 
-    { type: 'text', value: 'Egg whites and Greek yogurt lead on efficiency, but the bottom half of this list is where most vegetarians actually get their protein. Lentils, black beans, and chickpeas are the workhorses of plant-based cooking: cheap, shelf-stable, high in fiber, and versatile enough to appear in every meal. Their protein efficiency per calorie is moderate (5-7g per 100 kcal), but their volume per serving is realistic. One cup of cooked lentils delivers roughly 18g of protein -- over a third of the 50g DV in a single bowl of soup.' },
+    { type: 'text', value: 'Egg whites and Greek yogurt lead on efficiency, but the bottom half of this list is where most vegetarians actually get their protein. Lentils, black beans, and chickpeas are the staples of plant-based cooking: cheap, shelf-stable, high in fiber, and versatile enough to appear in every meal. Their protein efficiency per calorie is moderate (5-7g per 100 kcal), but their volume per serving is realistic. One cup of cooked lentils delivers roughly 18g of protein -- over a third of the 50g DV in a single bowl of soup.' },
 
     { type: 'divider' },
 
@@ -136,7 +136,7 @@ const article: ResearchArticle = {
 
     { type: 'heading', value: 'Lacto-Ovo vs Vegan' },
 
-    { type: 'text', value: 'The nutritional gap between lacto-ovo vegetarians and vegans is larger than the gap between lacto-ovo vegetarians and meat-eaters. Eggs and dairy do enormous work: they provide essentially all the B12, most of the vitamin D, and the two most protein-efficient vegetarian sources (egg whites at 21.0g and Greek yogurt at 17.3g per 100 kcal). Removing them changes the picture entirely.' },
+    { type: 'text', value: 'The nutritional gap between lacto-ovo vegetarians and vegans is larger than the gap between lacto-ovo vegetarians and meat-eaters. Eggs and dairy carry most of the load: they provide essentially all the B12, most of the vitamin D, and the two most protein-efficient vegetarian sources (egg whites at 21.0g and Greek yogurt at 17.3g per 100 kcal). Removing them changes the picture entirely.' },
 
     { type: 'bars', title: 'Calories to hit 50g protein, vegan sources (% of 2,000 kcal day)', items: [
       { label: 'Tofu (Firm)', pct: 21 },
@@ -148,7 +148,7 @@ const article: ResearchArticle = {
 
     { type: 'text', value: 'Protein is still manageable for vegans: tofu at 21% of daily calories for 50g is efficient by any standard. But the practical ceiling drops. A lacto-ovo vegetarian can hit 50g of protein for 239-290 calories (egg whites or Greek yogurt). A vegan needs at least 417 calories from tofu. The real vegan risk, though, is not protein.' },
 
-    { type: 'callout', tone: 'caveat', title: 'The Vegan Gap', value: 'Vitamin B12 is the critical difference. Eggs and dairy are the only meaningful vegetarian sources of B12; remove them and dietary B12 drops to near zero. Nutritional yeast and fortified foods can help, but no whole plant food provides reliable B12. Supplementation is not optional for vegans -- it is medically necessary. Vitamin D follows a similar pattern: the few vegetarian sources (eggs, fortified dairy) are all animal-derived.' },
+    { type: 'callout', tone: 'caveat', title: 'The Vegan Gap', value: 'Vitamin B12 is the critical difference. Eggs and dairy are the only meaningful vegetarian sources of B12; remove them and dietary B12 drops to near zero. Nutritional yeast and fortified foods can help, but no whole plant food provides reliable B12. Vegans need B12 supplements. There is no dietary workaround. Vitamin D follows a similar pattern: the few vegetarian sources (eggs, fortified dairy) are all animal-derived.' },
 
     { type: 'divider' },
 
@@ -169,7 +169,7 @@ const article: ResearchArticle = {
 
     { type: 'callout', tone: 'caveat', title: 'The B12 Problem', value: 'Vitamin B12 is the one nutrient that vegetarians genuinely struggle with. The average vegetarian food contains 0.33x the B12 of the average meat food. Only eggs and dairy provide meaningful B12. For vegans (no eggs or dairy), B12 supplementation is essentially mandatory. Even for lacto-ovo vegetarians, the optimizer leans heavily on eggs and dairy to hit 100% B12.' },
 
-    { type: 'text', value: 'The flip side is just as revealing. Vegetarian foods crush meat on fiber (infinite ratio, meat has essentially zero), manganese (21x), calcium (7.4x), vitamin C (4.2x), folate (3.7x), vitamin E (3.6x), iron (3.3x), and magnesium (2.9x). A well-planned vegetarian diet doesn\'t just match meat on most nutrients; it exceeds it on many. But those iron and zinc advantages come with a significant asterisk.' },
+    { type: 'text', value: 'The flip side is just as revealing. Vegetarian foods crush meat on fiber (infinite ratio, meat has essentially zero), manganese (21x), calcium (7.4x), vitamin C (4.2x), folate (3.7x), vitamin E (3.6x), iron (3.3x), and magnesium (2.9x). A vegetarian diet built on these foods matches or beats meat on most nutrients. But those iron and zinc advantages come with a significant asterisk.' },
 
     { type: 'divider' },
 
@@ -202,7 +202,7 @@ const article: ResearchArticle = {
       { name: 'Whole Wheat Flour', servings: '1/day', detail: '100g' },
     ]},
 
-    { type: 'text', value: 'Two eggs and a cup of Greek yogurt at breakfast delivers roughly 30g of protein. A tofu stir-fry with whole wheat noodles adds another 25g. Lentil soup for dinner with arugula salad and half an avocado covers the remainder, with almonds filling any gap. No single food is doing heroic work; the protein distributes across the day from multiple practical sources. B12 comes from the eggs and yogurt. Iron comes from lentils and tofu, paired naturally with the vitamin C in arugula and any tomato or citrus used in cooking.' },
+    { type: 'text', value: 'Two eggs and a cup of Greek yogurt at breakfast delivers roughly 30g of protein. A tofu stir-fry with whole wheat noodles adds another 25g. Lentil soup for dinner with arugula salad and half an avocado covers the remainder, with almonds filling any gap. Protein comes from every meal, spread across multiple sources. B12 comes from the eggs and yogurt. Iron comes from lentils and tofu, paired naturally with the vitamin C in arugula and any tomato or citrus used in cooking.' },
 
     { type: 'divider' },
 
