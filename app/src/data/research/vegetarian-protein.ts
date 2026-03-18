@@ -4,12 +4,12 @@ const article: ResearchArticle = {
   slug: 'vegetarian-protein',
   title: 'How can Vegetarians optimize their protein intake?',
   date: '2026-03-16',
-  summary: 'Analyzing 371 vegetarian foods across 26 nutrients to find the most practical protein sources, the true caloric cost of plant protein at realistic intake levels, and what separates lacto-ovo vegetarians from vegans nutritionally.',
+  summary: 'Analyzing 371 vegetarian foods across 26 nutrients to find the most practical protein sources, the caloric cost of plant protein, and what separates lacto-ovo vegetarians from vegans.',
   tags: ['protein', 'vegetarian', 'nutrient density', 'meal planning'],
   content: [
-    { type: 'callout', tone: 'insight', title: 'TLDR', value: 'Protein is not the problem. Egg whites deliver 21g of protein per 100 calories, beating turkey breast (20.8g) and chicken breast (18.8g). Even at 70g daily -- the amount many adults should target -- the top vegetarian sources cost under 30% of daily calories. The real nutritional risks are vitamin B12 (0.33x meat density), vitamin D (0.20x), and niacin (0.34x). For vegans, these gaps widen: tofu and lentils are strong, but vegans need B12 supplements regardless.' },
+    { type: 'callout', tone: 'insight', title: 'TLDR', value: 'Protein is not the problem. Egg whites deliver 21g per 100 calories, beating turkey breast (20.8g) and chicken breast (18.8g). Even at 70g daily, the top vegetarian sources cost under 30% of daily calories. The real risks are B12 (0.33x meat density), vitamin D (0.20x), and niacin (0.34x). For vegans, these gaps widen: tofu and lentils are strong, but vegans need B12 supplements regardless.' },
 
-    { type: 'text', value: 'The most common question vegetarians hear: "where do you get your protein?" I ran the numbers across all 371 vegetarian foods in our database (everything except beef, pork, poultry, lamb, and fish) to answer it. But the answer turns out to be less interesting than the follow-up questions: how much protein do you actually need, which sources are practical for daily cooking, and what should vegetarians really be worrying about instead?' },
+    { type: 'text', value: 'The most common question vegetarians hear: "where do you get your protein?" I ran the numbers on all 371 vegetarian foods in our database to answer it. But the answer is less interesting than the follow-ups: how much protein do you actually need, which sources are practical, and what should vegetarians worry about instead?' },
 
     { type: 'stats', items: [
       { value: '371', label: 'Vegetarian Foods' },
@@ -18,13 +18,13 @@ const article: ResearchArticle = {
       { value: '136%', label: 'Protein DV at K=8' },
     ]},
 
-    { type: 'callout', tone: 'method', title: 'Method', value: 'Protein efficiency is measured as grams of protein per 100 calories (not per 100g of food weight). This normalizes for water content: spinach looks protein-rich per calorie but you\'d need 1.7kg to hit 50g. Caloric cost asks: what fraction of a 2,000 calorie day goes to protein from this single source? The optimizer uses the same L-BFGS-B algorithm from the Minimum Viable Diet study, restricted to vegetarian foods only, with pre-filtering to the top 80 foods by single-food loss.' },
+    { type: 'callout', tone: 'method', title: 'Method', value: 'Protein efficiency is measured as grams of protein per 100 calories (not per 100g of food weight). This normalizes for water content: spinach looks protein-rich but you\'d need 1.7kg to hit 50g. Caloric cost: what fraction of a 2,000 calorie day goes to protein from a single source? Same L-BFGS-B algorithm from the Minimum Viable Diet study, restricted to vegetarian foods, pre-filtered to the top 80 by single-food loss.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'The Protein Density Ranking' },
 
-    { type: 'text', value: 'Protein per 100 calories is the metric that matters. Per-weight rankings are misleading because a food that\'s 90% water looks dilute by weight but may be extremely protein-efficient per calorie. Egg whites dominate: 21g of protein per 100 calories, meaning you\'d hit the full 50g daily value in just 239 calories, 12% of a standard day.' },
+    { type: 'text', value: 'Protein per 100 calories is the metric that matters. Per-weight rankings are misleading: a food that\'s 90% water looks dilute by weight but may be highly efficient per calorie. Egg whites dominate at 21g per 100 calories -- the full 50g daily value in just 239 calories, 12% of a standard day.' },
 
     { type: 'bars', title: 'Top 10: Protein per 100 calories (vegetarian)', items: [
       { label: 'Egg White', pct: 21.0 },
@@ -39,13 +39,13 @@ const article: ResearchArticle = {
       { label: 'Turnip Greens', pct: 11.8 },
     ]},
 
-    { type: 'text', value: 'Half the top 10 are vegetables. But protein density per calorie is deceiving for low-calorie foods. Mushrooms deliver 14g of protein per 100 calories, but at 22 calories per 100g, you\'d need 2.3kg of mushrooms to hit 50g of protein. The next section filters for foods you can actually build a diet around.' },
+    { type: 'text', value: 'Half the top 10 are vegetables, but protein density per calorie deceives for low-calorie foods. Mushrooms deliver 14g per 100 calories, but at 22 calories per 100g, you\'d need 2.3kg to hit 50g. The next section filters for foods you can build a diet around.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'Practical Protein Sources' },
 
-    { type: 'text', value: 'Filtering the database for foods that deliver meaningful protein per realistic serving -- enough that you could plausibly eat your way to 50-70g daily without consuming kilograms of leafy greens. These are the foods vegetarians should actually reach for.' },
+    { type: 'text', value: 'Filtering for foods that deliver meaningful protein per realistic serving -- enough to hit 50-70g daily without eating kilograms of greens.' },
 
     { type: 'bars', title: 'Protein per 100 kcal (practical sources only)', items: [
       { label: 'Egg White', pct: 21.0 },
@@ -59,13 +59,13 @@ const article: ResearchArticle = {
       { label: 'Chickpea', pct: 5.4 },
     ]},
 
-    { type: 'text', value: 'Egg whites and Greek yogurt lead on efficiency, but the bottom half of this list is where most vegetarians actually get their protein. Lentils, black beans, and chickpeas are the staples of plant-based cooking: cheap, shelf-stable, high in fiber, and versatile enough to appear in every meal. Their protein efficiency per calorie is moderate (5-7g per 100 kcal), but their volume per serving is realistic. One cup of cooked lentils delivers roughly 18g of protein -- over a third of the 50g DV in a single bowl of soup.' },
+    { type: 'text', value: 'Egg whites and Greek yogurt lead on efficiency, but most vegetarians get their protein from the bottom half. Lentils, black beans, and chickpeas are the staples: cheap, shelf-stable, high in fiber, versatile. Moderate protein per calorie (5-7g per 100 kcal), but realistic serving sizes. One cup of cooked lentils delivers 18g -- over a third of the 50g DV in a bowl of soup.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'How Much Protein Do You Actually Need?' },
 
-    { type: 'text', value: 'The FDA daily value of 50g assumes a sedentary adult at about 68kg (150 lbs), calculated at roughly 0.8g per kg of body weight. For an 80kg (176 lb) person, that formula gives 64g. For an active person at the same weight, many guidelines recommend 1.0-1.2g per kg, or 80-96g. The 50g DV is a regulatory floor, not a target.' },
+    { type: 'text', value: 'The FDA daily value of 50g assumes a sedentary 68kg (150 lb) adult at 0.8g/kg. For an 80kg person, that\'s 64g. Active people at the same weight: 1.0-1.2g/kg, or 80-96g. The 50g DV is a floor, not a target.' },
 
     { type: 'bars', title: 'Calories to hit 50g protein (% of 2,000 kcal day)', items: [
       { label: 'Egg White', pct: 12 },
@@ -80,7 +80,7 @@ const article: ResearchArticle = {
       { label: 'Egg (Whole)', pct: 28 },
     ]},
 
-    { type: 'text', value: 'At 50g, every food in the top 10 costs under 30% of daily calories. But 50g is the floor. Scaling to 70g -- a more realistic target for most adults over 68kg:' },
+    { type: 'text', value: 'At 50g, every top-10 food costs under 30% of daily calories. But 50g is the floor. At 70g -- more realistic for adults over 68kg:' },
 
     { type: 'bars', title: 'Calories to hit 70g protein (% of 2,000 kcal day)', items: [
       { label: 'Egg White', pct: 17 },
@@ -92,13 +92,13 @@ const article: ResearchArticle = {
       { label: 'Lentil', pct: 50 },
     ]},
 
-    { type: 'text', value: 'Even at 70g, the top four sources cost under a third of daily calories. Lentils hit 50%, which is steep from a single source -- but no one eats only lentils. Combining two or three sources (Greek yogurt at breakfast, tofu at dinner, edamame as a snack) covers 70g while leaving most of the caloric budget for everything else.' },
+    { type: 'text', value: 'Even at 70g, the top four sources cost under a third of daily calories. Lentils hit 50%, steep for a single source -- but no one eats only lentils. Greek yogurt at breakfast, tofu at dinner, edamame as a snack covers 70g with most of the caloric budget left over.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'By Food Type' },
 
-    { type: 'text', value: 'Averaging across all foods in each category reveals the protein hierarchy. Eggs lead on efficiency, but legumes offer the best combination of protein density and volume. Nuts and seeds are protein-rich by weight but calorie-dense, pushing their per-calorie efficiency below grains.' },
+    { type: 'text', value: 'Category averages reveal the protein hierarchy. Eggs lead on efficiency, but legumes balance protein density with realistic volume. Nuts and seeds are protein-rich by weight but calorie-dense, landing below grains per calorie.' },
 
     { type: 'bars', title: 'Average protein per 100 kcal by type', items: [
       { label: 'Eggs', pct: 9.2 },
@@ -111,13 +111,13 @@ const article: ResearchArticle = {
       { label: 'Fruit', pct: 1.7 },
     ]},
 
-    { type: 'callout', tone: 'insight', title: 'The Legume Advantage', value: 'Legumes are the protein workhorse of vegetarian diets. Their median caloric cost for 50g protein is 715 calories (36% of daily intake), close to dairy\'s 845 calories. But unlike dairy, legumes bring iron (3.31x meat density), magnesium (2.93x), and folate (3.70x). Tofu leads the category at 417 calories for 50g protein.' },
+    { type: 'callout', tone: 'insight', title: 'The Legume Advantage', value: 'Legumes are the protein workhorse. Median caloric cost for 50g protein: 715 calories (36% of daily intake), close to dairy\'s 845. But unlike dairy, legumes bring iron (3.31x meat density), magnesium (2.93x), and folate (3.70x). Tofu leads at 417 calories for 50g.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'Head-to-Head: Vegetarian vs Common Meats' },
 
-    { type: 'text', value: 'Comparing the best vegetarian sources against the meats people actually eat -- chicken, turkey, and salmon -- rather than obscure lean fish like forkbeard or ling. The results are closer than most people expect.' },
+    { type: 'text', value: 'Comparing the best vegetarian sources against meats people actually eat -- chicken, turkey, salmon -- not obscure lean fish like forkbeard or ling.' },
 
     { type: 'bars', title: 'Protein per 100 kcal: Vegetarian vs common meats', items: [
       { label: 'Egg White', pct: 21.0 },
@@ -130,13 +130,13 @@ const article: ResearchArticle = {
       { label: 'Edamame', pct: 9.8 },
     ]},
 
-    { type: 'text', value: 'Egg whites beat turkey breast. Greek yogurt nearly matches chicken breast. By the time you reach salmon -- the most popular "healthy" fish -- vegetarian sources like tofu and cottage cheese are already ahead. A protein efficiency gap between vegetarian and meat diets exists only at the extreme top of the ranking (lean white fish at 24-25g per 100 kcal). Against the meats people actually eat, vegetarian sources are fully competitive.' },
+    { type: 'text', value: 'Egg whites beat turkey breast. Greek yogurt nearly matches chicken breast. By salmon -- the most popular "healthy" fish -- tofu and cottage cheese are already ahead. The gap only appears at the extreme top (lean white fish at 24-25g per 100 kcal). Against meats people actually eat, vegetarian sources are competitive.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'Lacto-Ovo vs Vegan' },
 
-    { type: 'text', value: 'The nutritional gap between lacto-ovo vegetarians and vegans is larger than the gap between lacto-ovo vegetarians and meat-eaters. Eggs and dairy carry most of the load: they provide essentially all the B12, most of the vitamin D, and the two most protein-efficient vegetarian sources (egg whites at 21.0g and Greek yogurt at 17.3g per 100 kcal). Removing them changes the picture entirely.' },
+    { type: 'text', value: 'The gap between lacto-ovo vegetarians and vegans is larger than between lacto-ovo and meat-eaters. Eggs and dairy carry most of the load: essentially all the B12, most of the vitamin D, and the two most protein-efficient sources (egg whites at 21.0g, Greek yogurt at 17.3g per 100 kcal). Remove them and the picture changes entirely.' },
 
     { type: 'bars', title: 'Calories to hit 50g protein, vegan sources (% of 2,000 kcal day)', items: [
       { label: 'Tofu (Firm)', pct: 21 },
@@ -146,15 +146,15 @@ const article: ResearchArticle = {
       { label: 'Chickpea', pct: 46 },
     ]},
 
-    { type: 'text', value: 'Protein is still manageable for vegans: tofu at 21% of daily calories for 50g is efficient by any standard. But the practical ceiling drops. A lacto-ovo vegetarian can hit 50g of protein for 239-290 calories (egg whites or Greek yogurt). A vegan needs at least 417 calories from tofu. The real vegan risk, though, is not protein.' },
+    { type: 'text', value: 'Protein is still manageable for vegans: tofu at 21% of daily calories for 50g is efficient by any standard. But the ceiling drops. A lacto-ovo vegetarian hits 50g for 239-290 calories. A vegan needs at least 417 from tofu. The real risk is not protein.' },
 
-    { type: 'callout', tone: 'caveat', title: 'The Vegan Gap', value: 'Vitamin B12 is the critical difference. Eggs and dairy are the only meaningful vegetarian sources of B12; remove them and dietary B12 drops to near zero. Nutritional yeast and fortified foods can help, but no whole plant food provides reliable B12. Vegans need B12 supplements. There is no dietary workaround. Vitamin D follows a similar pattern: the few vegetarian sources (eggs, fortified dairy) are all animal-derived.' },
+    { type: 'callout', tone: 'caveat', title: 'The Vegan Gap', value: 'B12 is the critical difference. Eggs and dairy are the only meaningful sources; remove them and dietary B12 drops to near zero. Nutritional yeast and fortified foods help, but no whole plant food provides reliable B12. Vegans need supplements. There is no dietary workaround. Vitamin D follows the same pattern: the few vegetarian sources (eggs, fortified dairy) are all animal-derived.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'The Real Risk: It\'s Not Protein' },
 
-    { type: 'text', value: 'Comparing the average nutrient density of all 371 vegetarian foods against all 173 meat and fish foods reveals the actual nutritional gaps. Protein is fourth on the risk list. The top three are all micronutrients.' },
+    { type: 'text', value: 'Comparing average nutrient density across all 371 vegetarian foods vs. 173 meat and fish foods. Protein is fourth on the risk list. The top three are all micronutrients.' },
 
     { type: 'bars', title: 'Vegetarian avg / Meat avg (lower = bigger gap)', items: [
       { label: 'Vitamin D', pct: 20 },
@@ -167,29 +167,29 @@ const article: ResearchArticle = {
       { label: 'Zinc', pct: 71 },
     ]},
 
-    { type: 'callout', tone: 'caveat', title: 'The B12 Problem', value: 'Vitamin B12 is the one nutrient that vegetarians genuinely struggle with. The average vegetarian food contains 0.33x the B12 of the average meat food. Only eggs and dairy provide meaningful B12. For vegans (no eggs or dairy), B12 supplementation is essentially mandatory. Even for lacto-ovo vegetarians, the optimizer leans heavily on eggs and dairy to hit 100% B12.' },
+    { type: 'callout', tone: 'caveat', title: 'The B12 Problem', value: 'B12 is the one nutrient vegetarians genuinely struggle with. The average vegetarian food has 0.33x the B12 of meat. Only eggs and dairy provide meaningful amounts. For vegans, supplementation is mandatory. Even for lacto-ovo vegetarians, the optimizer leans on eggs and dairy to hit 100% B12.' },
 
-    { type: 'text', value: 'The flip side is just as revealing. Vegetarian foods crush meat on fiber (infinite ratio, meat has essentially zero), manganese (21x), calcium (7.4x), vitamin C (4.2x), folate (3.7x), vitamin E (3.6x), iron (3.3x), and magnesium (2.9x). A vegetarian diet built on these foods matches or beats meat on most nutrients. But those iron and zinc advantages come with a significant asterisk.' },
+    { type: 'text', value: 'The flip side: vegetarian foods crush meat on fiber (infinite ratio -- meat has essentially zero), manganese (21x), calcium (7.4x), vitamin C (4.2x), folate (3.7x), vitamin E (3.6x), iron (3.3x), and magnesium (2.9x). A vegetarian diet matches or beats meat on most nutrients. But those iron and zinc advantages come with an asterisk.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'Bioavailability: What the Numbers Don\'t Show' },
 
-    { type: 'text', value: 'The nutrient density comparisons above use raw USDA values: total milligrams of iron, zinc, or protein per 100 calories. But the body does not absorb all nutrients equally from all sources. Three adjustments matter for vegetarians.' },
+    { type: 'text', value: 'The comparisons above use raw USDA values: total milligrams per 100 calories. But the body doesn\'t absorb all nutrients equally. Three adjustments matter.' },
 
-    { type: 'text', value: 'Iron: Plant foods contain non-heme iron, which absorbs at 2-20% depending on the meal. Meat contains heme iron, which absorbs at 15-35%. The raw data shows vegetarian foods at 3.3x the iron density of meat. After adjusting for typical absorption rates, that advantage shrinks to roughly 1x -- approximate parity, not a threefold lead. Vegetarians are not iron-deficient by default, but they are not iron-rich either.' },
+    { type: 'text', value: 'Iron: Plants contain non-heme iron, which absorbs at 2-20%. Meat contains heme iron, absorbing at 15-35%. The raw 3.3x advantage shrinks to roughly 1x after absorption adjustment -- parity, not a threefold lead. Vegetarians aren\'t iron-deficient by default, but they aren\'t iron-rich either.' },
 
-    { type: 'text', value: 'Zinc: Phytates in legumes, grains, and nuts bind zinc and reduce absorption by 30-40%. The raw data shows vegetarian foods at 0.71x the zinc density of meat. After the phytate adjustment, effective zinc drops closer to 0.45x. This is a genuine gap that the raw numbers obscure.' },
+    { type: 'text', value: 'Zinc: Phytates in legumes, grains, and nuts reduce absorption by 30-40%. The raw 0.71x drops to roughly 0.45x after adjustment -- a genuine gap the raw numbers hide.' },
 
-    { type: 'text', value: 'Protein quality: Not all protein is equal at the amino acid level. Most plant proteins are incomplete -- low in one or more essential amino acids. Soy (tofu, edamame) is the exception, scoring near 1.0 on the PDCAAS scale (equivalent to meat). Legumes score 0.6-0.7, grains 0.4-0.5. But combining grains and legumes in the same day covers all essential amino acids. Rice and beans is not folk wisdom; it is biochemistry.' },
+    { type: 'text', value: 'Protein quality: Not all protein is equal at the amino acid level. Most plant proteins are incomplete -- low in one or more essential amino acids. Soy (tofu, edamame) is the exception, scoring near 1.0 on PDCAAS (equivalent to meat). Legumes score 0.6-0.7, grains 0.4-0.5. Combining them in the same day covers all essential amino acids. Rice and beans is not folk wisdom; it is biochemistry.' },
 
-    { type: 'callout', tone: 'insight', title: 'Practical Pairings', value: 'Three habits close the bioavailability gap. First, eat vitamin C with iron-rich foods: bell pepper, tomato, or citrus alongside a lentil dish boosts non-heme iron absorption 2-6x. Second, soak or sprout beans and grains before cooking to reduce phytates by 20-50%, freeing up zinc and iron. Third, combine grains and legumes (rice and beans, hummus and pita, lentil soup with bread) to create a complete amino acid profile.' },
+    { type: 'callout', tone: 'insight', title: 'Practical Pairings', value: 'Three habits close the gap. Eat vitamin C with iron-rich foods (bell pepper, tomato, citrus alongside lentils) to boost non-heme absorption 2-6x. Soak or sprout beans and grains before cooking to cut phytates 20-50%. Combine grains and legumes (rice and beans, hummus and pita, lentil soup with bread) for a complete amino acid profile.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'A Realistic Day' },
 
-    { type: 'text', value: 'The optimizer produces mathematically optimal but impractical diets (33 cups of arugula). Here is what a realistic lacto-ovo vegetarian day looks like using foods from the database, hitting roughly 75g of protein without unusual quantities of anything.' },
+    { type: 'text', value: 'The optimizer produces mathematically optimal but impractical diets (33 cups of arugula). Here\'s a realistic lacto-ovo vegetarian day from the database: roughly 75g of protein, nothing in unusual quantities.' },
 
     { type: 'foods', calories: '~1,850', items: [
       { name: 'Egg (Scrambled)', servings: '2/day', detail: '1 large (61g)' },
@@ -202,13 +202,13 @@ const article: ResearchArticle = {
       { name: 'Whole Wheat Flour', servings: '1/day', detail: '100g' },
     ]},
 
-    { type: 'text', value: 'Two eggs and a cup of Greek yogurt at breakfast delivers roughly 30g of protein. A tofu stir-fry with whole wheat noodles adds another 25g. Lentil soup for dinner with arugula salad and half an avocado covers the remainder, with almonds filling any gap. Protein comes from every meal, spread across multiple sources. B12 comes from the eggs and yogurt. Iron comes from lentils and tofu, paired naturally with the vitamin C in arugula and any tomato or citrus used in cooking.' },
+    { type: 'text', value: 'Two eggs and Greek yogurt at breakfast: roughly 30g. Tofu stir-fry with whole wheat noodles adds 25g. Lentil soup for dinner with arugula salad and half an avocado covers the rest, almonds filling any gap. B12 comes from eggs and yogurt. Iron from lentils and tofu, paired with vitamin C in arugula and any tomato or citrus in the cooking.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'What the Optimizer Finds' },
 
-    { type: 'text', value: 'Running the same constrained optimization from the Minimum Viable Diet study, restricted to vegetarian foods only. At K=8 foods, the optimizer hits 9 of 26 nutrients in range (RMSE 46.7), compared to 23 of 26 (RMSE 15.9) for the unrestricted diet. The gap comes almost entirely from overshooting: protein (136%), fiber (167%), folate (226%), and magnesium (175%) all land well above 120%. Protein never falls below 100% at any food count -- it is structurally impossible for the optimizer to undershoot it given the foods available.' },
+    { type: 'text', value: 'Same constrained optimization from the Minimum Viable Diet study, restricted to vegetarian foods. At K=8, the optimizer hits 9 of 26 nutrients in range (RMSE 46.7) vs. 23 of 26 (RMSE 15.9) unrestricted. The gap is almost entirely from overshooting: protein (136%), fiber (167%), folate (226%), magnesium (175%) all above 120%. Protein never falls below 100% at any K -- structurally impossible to undershoot given the foods available.' },
 
     { type: 'foods', calories: '1,959', items: [
       { name: 'Coconut', servings: '0.70/day (4.9/wk)', detail: '1 cup shredded (80g)' },
@@ -242,9 +242,9 @@ const article: ResearchArticle = {
       { k: 8, rmse: 46.7, label: 'Coconut, Arugula, Avocado, Barley, Duck Egg, Egg, Almond, Corn' },
     ]},
 
-    { type: 'callout', tone: 'insight', title: 'The Pattern', value: 'Every optimized vegetarian diet follows the same template: a grain (barley or wheat), a leafy green (arugula, always), a fat source (avocado + coconut or almonds), and eggs for B12. No legumes appear in the optimizer\'s top picks despite their high protein density. The algorithm values barley flour and arugula\'s broader micronutrient coverage over legumes\' concentrated protein. Protein is never the bottleneck.' },
+    { type: 'callout', tone: 'insight', title: 'The Pattern', value: 'Every optimized vegetarian diet follows the same template: a grain (barley or wheat), a leafy green (arugula, always), a fat source (avocado + coconut or almonds), and eggs for B12. No legumes appear despite their protein density -- the algorithm prefers barley and arugula\'s broader micronutrient coverage. Protein is never the bottleneck.' },
 
-    { type: 'callout', tone: 'caveat', title: 'Caveats', value: 'This analysis uses USDA nutrient data per 100g, not bioavailability-adjusted values. The bioavailability section above explains why raw numbers overstate iron and zinc for vegetarians and why protein quality varies by source. The optimizer does not model absorption rates, amino acid profiles, or antinutrient interactions. The realistic day section is meant to complement these optimizer results with practical guidance.' },
+    { type: 'callout', tone: 'caveat', title: 'Caveats', value: 'This analysis uses raw USDA nutrient data, not bioavailability-adjusted values. The bioavailability section above covers why raw numbers overstate iron and zinc and why protein quality varies. The optimizer does not model absorption rates, amino acid profiles, or antinutrient interactions. The realistic day section complements these results with practical guidance.' },
   ],
 };
 
