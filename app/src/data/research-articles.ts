@@ -18,9 +18,11 @@ export interface ResearchArticle {
 }
 
 import optimalDiet from './research/optimal-diet';
+import vegetarianProtein from './research/vegetarian-protein';
 
 const articles: ResearchArticle[] = [
   optimalDiet,
+  vegetarianProtein,
 ];
 
 export default articles;
