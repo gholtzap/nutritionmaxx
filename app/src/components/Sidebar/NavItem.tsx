@@ -16,7 +16,7 @@ export default function NavItem({ icon, label, active, onClick }: NavItemProps) 
       type="button"
     >
       <span className={styles.navIcon}>{icon}</span>
-      <span>{label}</span>
+      <span className={styles.navLabel}>{label}</span>
     </button>
   );
 }
