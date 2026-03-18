@@ -7,18 +7,11 @@ const article: ResearchArticle = {
   summary: 'Analyzing 371 vegetarian foods across 26 nutrients to find the most practical protein sources, the caloric cost of plant protein, and what separates lacto-ovo vegetarians from vegans.',
   tags: ['protein', 'vegetarian', 'nutrient density', 'meal planning'],
   content: [
-    { type: 'callout', tone: 'insight', title: 'TLDR', value: 'Protein is not the problem. Egg whites deliver 21g per 100 calories, beating turkey breast (20.8g) and chicken breast (18.8g). Even at 70g daily, the top vegetarian sources cost under 30% of daily calories. The real risks are B12 (0.33x meat density), vitamin D (0.20x), and niacin (0.34x). For vegans, these gaps widen: tofu and lentils are strong, but vegans need B12 supplements regardless.' },
+    { type: 'callout', tone: 'insight', title: 'TLDR', value: 'Vegetarian protein is not optimal, but still easily accessible. Egg whites deliver 21g per 100 calories, beating turkey breast (20.8g) and chicken breast (18.8g). Even at 70g daily, the top vegetarian sources cost under 30% of daily calories. The real risks are B12 (0.33x meat density), vitamin D (0.20x), and niacin (0.34x). For vegans, these gaps widen: tofu and lentils are strong, but vegans need B12 supplements regardless.' },
 
     { type: 'text', value: 'The most common question vegetarians hear: "where do you get your protein?" I ran the numbers on all 371 vegetarian foods in our database to answer it. But the answer is less interesting than the follow-ups: how much protein do you actually need, which sources are practical, and what should vegetarians worry about instead?' },
 
-    { type: 'stats', items: [
-      { value: '371', label: 'Vegetarian Foods' },
-      { value: '21.0g', label: 'Best Protein/100kcal' },
-      { value: '17%', label: 'Daily Cal for 70g Protein' },
-      { value: '136%', label: 'Protein DV at K=8' },
-    ]},
-
-    { type: 'callout', tone: 'method', title: 'Method', value: 'Protein efficiency is measured as grams of protein per 100 calories (not per 100g of food weight). This normalizes for water content: spinach looks protein-rich but you\'d need 1.7kg to hit 50g. Caloric cost: what fraction of a 2,000 calorie day goes to protein from a single source? Same L-BFGS-B algorithm from the Minimum Viable Diet study, restricted to vegetarian foods, pre-filtered to the top 80 by single-food loss.' },
+{ type: 'callout', tone: 'method', title: 'Method', value: 'Protein efficiency is measured as grams of protein per 100 calories (not per 100g of food weight). This normalizes for water content: spinach looks protein-rich but you\'d need 1.7kg to hit 50g. Caloric cost: what fraction of a 2,000 calorie day goes to protein from a single source? Same L-BFGS-B algorithm from the Minimum Viable Diet study, restricted to vegetarian foods, pre-filtered to the top 80 by single-food loss.' },
 
     { type: 'divider' },
 
@@ -111,7 +104,7 @@ const article: ResearchArticle = {
       { label: 'Fruit', pct: 1.7 },
     ]},
 
-    { type: 'callout', tone: 'insight', title: 'The Legume Advantage', value: 'Legumes are the protein workhorse. Median caloric cost for 50g protein: 715 calories (36% of daily intake), close to dairy\'s 845. But unlike dairy, legumes bring iron (3.31x meat density), magnesium (2.93x), and folate (3.70x). Tofu leads at 417 calories for 50g.' },
+    { type: 'callout', tone: 'insight', title: 'Legumes', value: 'Legumes are the protein workhorse. Median caloric cost for 50g protein: 715 calories (36% of daily intake), close to dairy\'s 845. But unlike dairy, legumes bring iron (3.31x meat density), magnesium (2.93x), and folate (3.70x). Tofu leads at 417 calories for 50g.' },
 
     { type: 'divider' },
 
@@ -148,11 +141,11 @@ const article: ResearchArticle = {
 
     { type: 'text', value: 'Protein is still manageable for vegans: tofu at 21% of daily calories for 50g is efficient by any standard. But the ceiling drops. A lacto-ovo vegetarian hits 50g for 239-290 calories. A vegan needs at least 417 from tofu. The real risk is not protein.' },
 
-    { type: 'callout', tone: 'caveat', title: 'The Vegan Gap', value: 'B12 is the critical difference. Eggs and dairy are the only meaningful sources; remove them and dietary B12 drops to near zero. Nutritional yeast and fortified foods help, but no whole plant food provides reliable B12. Vegans need supplements. There is no dietary workaround. Vitamin D follows the same pattern: the few vegetarian sources (eggs, fortified dairy) are all animal-derived.' },
+    { type: 'callout', tone: 'caveat', title: 'B12 and Vitamin D', value: 'B12 is the critical difference. Eggs and dairy are the only meaningful sources; remove them and dietary B12 drops to near zero. Nutritional yeast and fortified foods help, but no whole plant food provides reliable B12. Vegans need supplements. There is no dietary workaround. Vitamin D follows the same pattern: the few vegetarian sources (eggs, fortified dairy) are all animal-derived.' },
 
     { type: 'divider' },
 
-    { type: 'heading', value: 'The Real Risk: It\'s Not Protein' },
+    { type: 'heading', value: 'It\'s Not Protein' },
 
     { type: 'text', value: 'Comparing average nutrient density across all 371 vegetarian foods vs. 173 meat and fish foods. Protein is fourth on the risk list. The top three are all micronutrients.' },
 
@@ -167,7 +160,7 @@ const article: ResearchArticle = {
       { label: 'Zinc', pct: 71 },
     ]},
 
-    { type: 'callout', tone: 'caveat', title: 'The B12 Problem', value: 'B12 is the one nutrient vegetarians genuinely struggle with. The average vegetarian food has 0.33x the B12 of meat. Only eggs and dairy provide meaningful amounts. For vegans, supplementation is mandatory. Even for lacto-ovo vegetarians, the optimizer leans on eggs and dairy to hit 100% B12.' },
+    { type: 'callout', tone: 'caveat', title: 'B12', value: 'B12 is the one nutrient vegetarians genuinely struggle with. The average vegetarian food has 0.33x the B12 of meat. Only eggs and dairy provide meaningful amounts. For vegans, supplementation is mandatory. Even for lacto-ovo vegetarians, the optimizer leans on eggs and dairy to hit 100% B12.' },
 
     { type: 'text', value: 'The flip side: vegetarian foods crush meat on fiber (infinite ratio -- meat has essentially zero), manganese (21x), calcium (7.4x), vitamin C (4.2x), folate (3.7x), vitamin E (3.6x), iron (3.3x), and magnesium (2.9x). A vegetarian diet matches or beats meat on most nutrients. But those iron and zinc advantages come with an asterisk.' },
 
