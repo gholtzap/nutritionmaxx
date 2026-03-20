@@ -7,9 +7,9 @@ const article: ResearchArticle = {
   summary: 'Running a constrained optimizer against 544 foods for five popular dietary patterns -- Standard American, Mediterranean, Keto, Paleo, and Carnivore -- to find which nutrients each one structurally cannot deliver, even with perfect food selection.',
   tags: ['optimization', 'nutrient density', 'dietary patterns', 'daily values'],
   content: [
-    { type: 'callout', tone: 'insight', title: 'TLDR', value: 'Every diet except carnivore can theoretically hit 100% of all daily values with the right food choices. Carnivore has four irrecoverable gaps: fiber (0%), potassium (46%), vitamin C (55%), and vitamin E (79%). Keto can cover everything -- but only by eating 162g of carbs, more than triple the ketogenic threshold. The real finding: the gap between what a diet CAN deliver and what its followers actually eat is where the deficiencies live.' },
+    { type: 'callout', tone: 'insight', title: 'TLDR', value: 'Every diet except carnivore can theoretically hit 100% of all daily values with the right food choices. Carnivore has four unfixable gaps: fiber (0%), potassium (46%), vitamin C (55%), and vitamin E (79%). Keto can cover everything -- but only by eating 162g of carbs, more than triple the ketogenic threshold. The bigger story: the gap between what a diet CAN deliver and what its followers actually eat is where the deficiencies live.' },
 
-    { type: 'text', value: 'People are tribal about what they eat. Keto advocates, carnivore adherents, and Mediterranean loyalists all have studies and anecdotes. But there is a question most diet debates skip: given the foods your diet allows, what is the best possible nutritional outcome? Not what you actually eat -- what you could eat if you picked perfectly. The gaps that remain even with perfect selection are structural. They are built into the rules of the diet itself, and no amount of meal planning can fix them.' },
+    { type: 'text', value: 'People are tribal about what they eat. Keto advocates, carnivore adherents, and Mediterranean loyalists all have studies and anecdotes. But there is a question most diet debates skip: given the foods your diet allows, what is the best possible nutritional outcome? Not what you actually eat -- what you could eat if you picked perfectly. The gaps that remain even with perfect selection are structural. They are baked into the rules of the diet itself, and meal planning cannot fix them.' },
 
     { type: 'stats', items: [
       { value: '544', label: 'Foods in Database' },
@@ -67,9 +67,9 @@ const article: ResearchArticle = {
       { label: 'Potassium', pct: 100 },
     ]},
 
-    { type: 'text', value: 'Zero structural gaps. Even without fish, legumes, or nuts, the SAD food pool can hit every daily value. The optimizer picks barley flour (carbs, B vitamins, fiber, iron), ricotta (calcium, B12, protein), leeks (vitamin C, folate, manganese), parsnips (fiber, potassium), and strawberry tree fruit (vitamin E, vitamin C). This looks nothing like an actual American diet. The problem with the SAD is not the food pool -- it is the food choices. Nobody eating a "standard American diet" is consuming 2.5 leeks and 175g of barley flour daily.' },
+    { type: 'text', value: 'Zero structural gaps. Even without fish, legumes, or nuts, the SAD food pool can hit every daily value -- barley flour for carbs and fiber, ricotta for calcium and B12, leeks for vitamin C and folate, parsnips for potassium. But this looks nothing like an actual American diet. Nobody is eating 2.5 leeks and 175g of barley flour daily.' },
 
-    { type: 'callout', tone: 'insight', title: 'The SAD Paradox', value: 'The Standard American Diet has an optimizer loss of 0.04 -- virtually zero, and nearly tied with Mediterranean (0.03). The pool of foods available to a typical American is nutritionally complete. The crisis is entirely in selection, not availability. Every nutrient Americans are deficient in (potassium, fiber, vitamin D) is available in foods they already have access to but do not eat.' },
+    { type: 'callout', tone: 'insight', title: 'The SAD Paradox', value: 'The Standard American Diet has an optimizer loss of 0.04 -- virtually zero, nearly tied with Mediterranean (0.03). Every nutrient Americans are commonly deficient in (potassium, fiber, vitamin D) is available in foods they already have access to but do not eat. The pool works. The choices are the problem.' },
 
     { type: 'divider' },
 
@@ -88,15 +88,15 @@ const article: ResearchArticle = {
       { name: 'Cornmeal', servings: '3.89/day', detail: '1/4 cup (30g)' },
     ]},
 
-    { type: 'text', value: 'Zero structural gaps. With the full 544-food database, the optimizer finds complete coverage: plantain and cornmeal for carbs and potassium, oregano for manganese and vitamin E, collard greens for calcium and vitamin A, brisket for protein and B12, egg yolks for selenium and B vitamins, and strawberry tree fruit for vitamin C. 19 of 26 nutrients land within 80-120% of their daily value.' },
+    { type: 'text', value: 'Zero structural gaps. 19 of 26 nutrients land within 80-120% of their daily value. The optimizer spreads coverage across every food category: starchy fruit, grains, spices, leafy greens, meat, dairy, and eggs.' },
 
-    { type: 'callout', tone: 'insight', title: 'Why Mediterranean Wins', value: 'The Mediterranean diet\'s advantage is not any single food category -- it is that nothing is excluded. The optimizer uses grains, spices, starchy fruit, leafy greens, beef, dairy, and eggs. Remove any one category (as keto removes grains, paleo removes dairy, carnivore removes plants) and the loss score jumps. Dietary diversity is the mechanism, not any superfood.' },
+    { type: 'callout', tone: 'insight', title: 'Why Mediterranean Wins', value: 'The Mediterranean diet\'s advantage is not any single food category -- it is that nothing is excluded. Remove any one category (as keto removes grains, paleo removes dairy, carnivore removes plants) and the loss score jumps. Dietary diversity does the work, not any single superfood.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'Ketogenic Diet' },
 
-    { type: 'text', value: 'Keto rules: no grains, no legumes, no fruit except berries, no starchy vegetables, no peanuts. Foods with more than 10g carbs per serving are excluded. Additionally, the optimizer is penalized for total carbs above 50g (18% DV). 338 foods in the pool.' },
+    { type: 'text', value: 'Keto rules: no grains, no legumes, no fruit except berries, no starchy vegetables, no peanuts. Foods with more than 10g carbs per serving are excluded. The optimizer is penalized for total carbs above 50g (18% DV). 338 foods in the pool.' },
 
     { type: 'foods', calories: '1,800', items: [
       { name: 'Butter (Salted)', servings: '4.53/day', detail: '1 tbsp (14g)' },
@@ -123,9 +123,9 @@ const article: ResearchArticle = {
       { label: 'Magnesium', pct: 126 },
     ]},
 
-    { type: 'text', value: 'The optimizer cheated. Despite a heavy penalty on carbs, it landed at 59% DV -- 162 grams of carbohydrates, more than triple the ketogenic threshold of 50g. Where did the carbs come from? 25 shallots (250g), 22 scallions (337g), 334g of wild blackberries, and shiitake mushrooms. The optimizer decided that missing vitamin C, folate, and potassium was worse than breaking the carb limit. It chose the lesser penalty.' },
+    { type: 'text', value: 'The optimizer cheated. Despite a heavy carb penalty, it landed at 162g of carbohydrates -- more than triple the 50g ketogenic threshold. The carbs came from 25 shallots, 22 scallions, 334g of wild blackberries, and shiitake mushrooms. It decided that missing vitamin C, folate, and potassium was worse than breaking the carb limit.' },
 
-    { type: 'callout', tone: 'caveat', title: 'The Keto Tradeoff', value: 'This is the central finding for keto: the diet cannot simultaneously stay under 50g of carbs AND cover essential micronutrients from whole foods alone. The optimizer -- which has access to every keto-legal food and can pick perfect quantities -- still breaks the carb budget. In practice, keto dieters who do stay under 50g are almost certainly missing vitamin C, folate, potassium, and fiber unless they supplement or eat very large volumes of leafy greens daily.' },
+    { type: 'callout', tone: 'caveat', title: 'The Keto Tradeoff', value: 'The central finding for keto: the diet cannot simultaneously stay under 50g of carbs and cover essential micronutrients from whole foods alone. Even with perfect selection across 338 foods, the optimizer breaks the carb budget. Keto dieters who stay under 50g are almost certainly missing vitamin C, folate, potassium, and fiber unless they supplement.' },
 
     { type: 'divider' },
 
@@ -159,9 +159,9 @@ const article: ResearchArticle = {
       { label: 'Potassium', pct: 133 },
     ]},
 
-    { type: 'text', value: 'Zero structural gaps. Despite excluding grains, dairy, and legumes -- three entire food groups -- the optimizer found complete coverage. Plantain replaces grains as the carb base (2.86 medium plantains daily, 512g). Paprika at 12 teaspoons daily (27g) delivers vitamin A, vitamin E, and iron. Arugula at 10 cups daily covers calcium and folate without dairy. Chia seed handles omega-3 and fiber. Lamb shank and ribs provide B12, zinc, and selenium.' },
+    { type: 'text', value: 'Zero structural gaps. Despite excluding three food groups, the optimizer found complete coverage -- plantain replaces grains for carbs, arugula replaces dairy for calcium, and paprika at 12 teaspoons daily covers vitamin A, vitamin E, and iron.' },
 
-    { type: 'callout', tone: 'insight', title: 'Paleo\'s Hidden Strength', value: 'Paleo scores nearly as well as Mediterranean on the optimizer (loss 0.06 vs 0.03) while excluding three food groups. The reason: paleo\'s allowed foods include the entire vegetable, fruit, nut, fish, and animal kingdom. Grains, legumes, and dairy are nutritionally redundant when you have access to plantains (carbs), arugula (calcium), nuts (fat), and eggs (B12). The optimizer does not miss them. But like SAD, the gap between optimal paleo and actual paleo (chicken breast, sweet potato, broccoli) is enormous.' },
+    { type: 'callout', tone: 'insight', title: 'Paleo\'s Hidden Strength', value: 'Paleo scores nearly as well as Mediterranean (loss 0.06 vs 0.03) while excluding grains, legumes, and dairy. Those groups are nutritionally redundant when you have the full vegetable, fruit, nut, fish, and animal kingdom. But like SAD, the gap between optimal paleo and actual paleo (chicken breast, sweet potato, broccoli) is enormous.' },
 
     { type: 'divider' },
 
@@ -195,9 +195,9 @@ const article: ResearchArticle = {
       { label: 'Vitamin B12', pct: 2473 },
     ]},
 
-    { type: 'text', value: 'Four irrecoverable structural gaps. Even with 228 animal foods and a mathematical optimizer selecting the perfect combination, the carnivore diet cannot reach 80% DV for fiber, potassium, vitamin C, or vitamin E. Fiber is absolute zero -- no animal food contains it. The optimizer picks mussels (manganese at 479% DV, iron, B12), mutton kidney (organ meat for folate and vitamin A), 6 egg yolks daily for micronutrients, lard for calories, and salmon for omega-3. It still falls short on four nutrients.' },
+    { type: 'text', value: 'Four unfixable gaps. Even with 228 animal foods and perfect optimization, the carnivore diet cannot reach 80% DV for fiber, potassium, vitamin C, or vitamin E. Fiber is absolute zero -- no animal food contains it. The optimizer leans on organ meats, shellfish, and egg yolks for maximum micronutrient density and still falls short.' },
 
-    { type: 'callout', tone: 'caveat', title: 'The Carnivore Gaps Are Not Debatable', value: 'Carnivore advocates often argue that nutrient requirements change on an all-meat diet, or that animal-sourced nutrients are more bioavailable. The bioavailability argument has merit for iron and zinc (heme vs non-heme) but does not apply here. Fiber does not exist in meat. Vitamin C is present in organ meats and shellfish at trace levels (the optimizer found 55% DV as the theoretical maximum from animal sources). Potassium at 46% means chronic under-intake of a mineral the FDA already considers under-consumed in the general population. Vitamin E at 79% has no high-concentration animal source. These are not marginal shortfalls -- they are structural impossibilities.' },
+    { type: 'callout', tone: 'caveat', title: 'The Carnivore Gaps Are Not Debatable', value: 'Carnivore advocates often argue that nutrient requirements change on an all-meat diet, or that animal-sourced nutrients are more bioavailable. The bioavailability argument has merit for iron and zinc (heme vs non-heme) but does not apply to these four gaps. Fiber does not exist in meat. Vitamin C exists in organ meats at trace levels -- 55% DV is the theoretical ceiling. Potassium at 46% means chronic under-intake of a mineral the FDA already considers under-consumed. These gaps cannot be closed by food selection alone.' },
 
     { type: 'divider' },
 
@@ -213,19 +213,17 @@ const article: ResearchArticle = {
       { label: 'Carnivore', pct: 15 },
     ]},
 
-    { type: 'text', value: 'The number represents how many real nutrients (excluding sodium, sugars, vitamin D, vitamin K) fall below 80% DV even with optimal selection. SAD, Mediterranean, and Paleo all reach zero structural gaps. Keto reaches zero only by breaking its own carb rule. Carnivore has four nutrients that no amount of food selection can fix.' },
+    { type: 'text', value: 'Nutrients (excluding sodium, sugars, vitamin D, vitamin K) below 80% DV even with optimal selection. Keto reaches zero only by breaking its own carb rule. Carnivore has four that no amount of food selection can fix.' },
 
-    { type: 'callout', tone: 'insight', title: 'The Diversity Gradient', value: 'The pattern across all five diets is clear: the more food categories you exclude, the harder the optimizer works and the worse the result. Mediterranean (exclude nothing): loss 0.03. SAD (exclude fish, legumes, nuts): loss 0.04. Paleo (exclude grains, legumes, dairy): loss 0.06. Carnivore (exclude all plants): loss 979. Keto (exclude grains, legumes, most fruit, starchy vegetables, plus carb cap): loss 1,293. Nutritional coverage is a direct function of dietary diversity. Every exclusion has a cost.' },
+    { type: 'callout', tone: 'insight', title: 'The Diversity Gradient', value: 'Line up the diets by how much they exclude and the optimizer loss tracks almost perfectly: Mediterranean 0.03, SAD 0.04, Paleo 0.06, Carnivore 979, Keto 1,293. Nutritional coverage tracks directly with dietary diversity.' },
 
     { type: 'divider' },
 
     { type: 'heading', value: 'What This Means In Practice' },
 
-    { type: 'text', value: 'The optimizer results represent a ceiling -- the best you could possibly do. Nobody eats optimally. The real-world gap between the optimizer\'s picks and what people actually eat is where deficiencies live.' },
+    { type: 'text', value: 'The optimizer represents a ceiling -- the best you could possibly do. Nobody eats optimally. SAD followers have access to barley flour and leeks but eat white bread and cheese. Keto followers have access to wild blackberries and flaxseed but eat bacon and steak. Paleo followers have access to plantains and paprika but eat chicken breast and sweet potato. The math says "your diet could work." People say "I\'ll have the bacon."' },
 
-    { type: 'text', value: 'SAD followers have access to barley flour, leeks, and strawberry tree fruit but eat white bread, ground beef, and cheese. Keto followers have access to wild blackberries, shiitake mushrooms, and flaxseed but eat bacon, butter, and steak. Paleo followers have access to plantains, paprika, and arugula but eat chicken breast and sweet potato. In every diet, the optimizer picks foods that the diet\'s typical adherents do not eat. The structural analysis says "your diet could work." The behavioral reality says "it doesn\'t."' },
-
-    { type: 'text', value: 'For carnivore, even the ceiling is broken. If you eat only animal products, supplementation for fiber, vitamin C, potassium, and vitamin E is not optional. It is a mathematical requirement. The optimizer tried 228 foods in every possible combination and could not close the gap.' },
+    { type: 'text', value: 'For carnivore, even the ceiling is broken. Supplementation for fiber, vitamin C, potassium, and vitamin E is not optional -- it is a mathematical requirement.' },
 
     { type: 'callout', tone: 'caveat', title: 'Caveats', value: 'This analysis uses USDA nutrient data per 100g from our 544-food database. Bioavailability is not modeled: heme iron (meat) absorbs better than non-heme iron (plants), and phytates in grains/legumes reduce zinc absorption. The optimizer does not model amino acid completeness, omega-3/6 ratios, or antinutrient interactions. "Standard American Diet" is approximated by food-type restrictions, not actual consumption data. Keto is modeled with a carb penalty, not a hard ceiling, which is why the optimizer lands at 162g carbs instead of under 50g. Vitamin D and Vitamin K are excluded from scoring due to sparse data in the USDA database.' },
   ],
