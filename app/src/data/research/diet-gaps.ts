@@ -11,13 +11,6 @@ const article: ResearchArticle = {
 
     { type: 'text', value: 'People are tribal about what they eat. Keto advocates, carnivore adherents, and Mediterranean loyalists all have studies and anecdotes. But there is a question most diet debates skip: given the foods your diet allows, what is the best possible nutritional outcome? Not what you actually eat -- what you could eat if you picked perfectly. The gaps that remain even with perfect selection are structural. They are baked into the rules of the diet itself, and meal planning cannot fix them.' },
 
-    { type: 'stats', items: [
-      { value: '544', label: 'Foods in Database' },
-      { value: '26', label: 'Nutrients Tracked' },
-      { value: '5', label: 'Diets Analyzed' },
-      { value: '0%', label: 'Carnivore Fiber' },
-    ]},
-
     { type: 'callout', tone: 'method', title: 'Method', value: 'For each diet, I defined the allowed food pool by the diet\'s actual rules (e.g., keto excludes grains, legumes, and fruits; paleo excludes grains, legumes, and dairy; carnivore excludes all plants). I then ran the same L-BFGS-B constrained optimizer from the Minimum Viable Diet study, selecting 8 foods and optimizing daily servings to hit 100% of every daily value within 1,800-2,200 calories. The optimizer represents the best-case scenario: if you ate perfectly within your diet\'s rules, what would you still be missing? Volume caps prevent unrealistic quantities (800g/day for most foods, 50g for spices). Vitamin D and K are excluded from scoring due to sparse data.' },
 
     { type: 'divider' },
