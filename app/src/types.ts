@@ -144,7 +144,7 @@ export interface SortConfig {
   direction: SortDirection;
 }
 
-export type ViewId = 'home' | 'fixdiet' | 'table' | 'comparison' | 'categories' | 'nutrients' | 'absorption' | 'planner' | 'dietary' | 'research' | 'settings';
+export type ViewId = 'home' | 'fixdiet' | 'table' | 'comparison' | 'categories' | 'nutrients' | 'absorption' | 'planner' | 'dietary' | 'research' | 'fastfood' | 'settings';
 
 export type NutrientGroup = 'macro' | 'vitamin' | 'mineral';
 

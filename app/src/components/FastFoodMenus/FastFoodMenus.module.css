@@ -1,0 +1,317 @@
+.container {
+  padding: 20px 24px;
+  max-width: 900px;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.restaurantTabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.restaurantTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.restaurantTab:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.restaurantTabActive {
+  composes: restaurantTab;
+  color: var(--text-primary);
+  border-color: var(--accent);
+  background: rgba(99, 179, 237, 0.08);
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.categoryTabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.categoryTab {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.categoryTab:hover {
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+}
+
+.categoryTabActive {
+  composes: categoryTab;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border-color: var(--border-primary);
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.itemCard {
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  font-family: var(--font-ui);
+}
+
+.itemCard:hover {
+  background: var(--bg-elevated);
+}
+
+.itemCardExpanded {
+  composes: itemCard;
+  border-color: var(--border-accent);
+  cursor: default;
+}
+
+.itemCardExpanded:hover {
+  background: var(--bg-secondary);
+}
+
+.itemHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.itemName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.itemMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.itemCal {
+  font-size: 13px;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  color: var(--text-data);
+}
+
+.itemServing {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.itemBody {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.nutrientGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 6px;
+}
+
+.nutrientCell {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+}
+
+.nutrientLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.nutrientValue {
+  font-size: 11px;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  color: var(--text-data);
+}
+
+.estimatedTag {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--accent);
+  background: rgba(99, 179, 237, 0.1);
+  padding: 1px 5px;
+  border-radius: 9999px;
+  margin-left: 6px;
+}
+
+.dvSection {
+  margin-top: 2px;
+}
+
+.dvBarRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 22px;
+}
+
+.dvLabel {
+  width: 80px;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.dvTrack {
+  flex: 1;
+  height: 10px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.dvFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease-out;
+}
+
+.dvFillOk {
+  background: #10b981;
+}
+
+.dvFillWarn {
+  background: #f59e0b;
+}
+
+.dvFillOver {
+  background: #ef4444;
+}
+
+.dvPct {
+  width: 40px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  text-align: right;
+}
+
+.dvPctOk {
+  color: #10b981;
+}
+
+.dvPctWarn {
+  color: #f59e0b;
+}
+
+.dvPctOver {
+  color: #ef4444;
+}
+
+.note {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  padding: 8px 0 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.empty {
+  padding: 40px 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 12px;
+    max-width: none;
+  }
+
+  .nutrientGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .itemHeader {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .dvLabel {
+    width: 60px;
+    font-size: 10px;
+  }
+}

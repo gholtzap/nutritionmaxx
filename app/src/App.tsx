@@ -16,6 +16,7 @@ import DietaryPreferences from './components/DietaryPreferences/DietaryPreferenc
 import FixMyDiet from './components/FixMyDiet/FixMyDiet';
 import DailyValueSettings from './components/DailyValueSettings/DailyValueSettings';
 import Research from './components/Research/Research';
+import FastFoodMenus from './components/FastFoodMenus/FastFoodMenus';
 import Homepage from './components/Homepage/Homepage';
 import Spinner from './components/shared/Spinner';
 import styles from './App.module.css';
@@ -203,6 +204,7 @@ function App() {
             {activeView === 'planner' && <MealPlanner />}
             {activeView === 'dietary' && <DietaryPreferences />}
             {activeView === 'research' && <Research />}
+            {activeView === 'fastfood' && <FastFoodMenus />}
             {activeView === 'settings' && <DailyValueSettings />}
           </>
         )}
