@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { CaretDown, CaretUp } from '@phosphor-icons/react';
 import { NUTRIENT_META } from '../../utils/nutrition-meta';
 import styles from './FastFoodMenus.module.css';
@@ -11,11 +11,39 @@ interface MenuItem {
   nutrients: Record<string, number | null>;
 }
 
-interface Restaurant {
+interface StandardRestaurant {
   name: string;
   logo_color: string;
   categories: string[];
   items: MenuItem[];
+}
+
+interface BuilderIngredient {
+  name: string;
+  category: string;
+  serving_size_g: number;
+  serving_label: string;
+  nutrients: Record<string, number | null>;
+}
+
+interface PopularCombo {
+  name: string;
+  ingredients: string[];
+}
+
+interface BuilderRestaurant {
+  name: string;
+  logo_color: string;
+  type: 'builder';
+  ingredient_categories: string[];
+  ingredients: BuilderIngredient[];
+  popular: PopularCombo[];
+}
+
+type Restaurant = StandardRestaurant | BuilderRestaurant;
+
+function isBuilder(r: Restaurant): r is BuilderRestaurant {
+  return (r as BuilderRestaurant).type === 'builder';
 }
 
 const PUBLISHED_KEYS = [
@@ -148,6 +176,163 @@ function ItemDetail({ item }: { item: MenuItem }) {
   );
 }
 
+function BuilderView({ restaurant }: { restaurant: BuilderRestaurant }) {
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [showDetail, setShowDetail] = useState(false);
+
+  const toggle = (name: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  };
+
+  const applyCombo = (combo: PopularCombo) => {
+    setSelected(new Set(combo.ingredients));
+    setShowDetail(false);
+  };
+
+  const clearAll = () => {
+    setSelected(new Set());
+    setShowDetail(false);
+  };
+
+  const combinedNutrients = useMemo(() => {
+    const totals: Record<string, number | null> = {};
+    for (const ing of restaurant.ingredients) {
+      if (!selected.has(ing.name)) continue;
+      for (const [key, val] of Object.entries(ing.nutrients)) {
+        if (val !== null) {
+          totals[key] = (totals[key] ?? 0) + val;
+        }
+      }
+    }
+    return totals;
+  }, [selected, restaurant.ingredients]);
+
+  const totalCal = Math.round(combinedNutrients.calories_kcal ?? 0);
+  const totalProtein = Math.round(combinedNutrients.protein_g ?? 0);
+  const totalFat = Math.round(combinedNutrients.fat_g ?? 0);
+  const totalCarbs = Math.round(combinedNutrients.carbs_g ?? 0);
+
+  const combinedItem: MenuItem = {
+    name: 'Custom Order',
+    category: '',
+    serving_size_g: 0,
+    serving_label: '',
+    nutrients: combinedNutrients,
+  };
+
+  const activeComboName = restaurant.popular.find(
+    (c) =>
+      c.ingredients.length === selected.size &&
+      c.ingredients.every((i) => selected.has(i))
+  )?.name ?? null;
+
+  return (
+    <div className={styles.builderContainer}>
+      <div className={styles.builderPopular}>
+        <div className={styles.sectionLabel}>Popular Orders</div>
+        <div className={styles.popularRow}>
+          {restaurant.popular.map((combo) => (
+            <button
+              key={combo.name}
+              type="button"
+              className={
+                activeComboName === combo.name
+                  ? styles.popularBtnActive
+                  : styles.popularBtn
+              }
+              onClick={() => applyCombo(combo)}
+            >
+              {combo.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {selected.size > 0 && (
+        <div className={styles.builderTotal}>
+          <div className={styles.builderTotalHeader}>
+            <div className={styles.builderTotalLeft}>
+              <span className={styles.builderTotalTitle}>Your Order</span>
+              <span className={styles.builderTotalCal}>{totalCal} kcal</span>
+            </div>
+            <div className={styles.builderTotalRight}>
+              <span className={styles.builderMacro}>{totalProtein}g protein</span>
+              <span className={styles.builderMacroDot} />
+              <span className={styles.builderMacro}>{totalFat}g fat</span>
+              <span className={styles.builderMacroDot} />
+              <span className={styles.builderMacro}>{totalCarbs}g carbs</span>
+            </div>
+          </div>
+          <div className={styles.builderTotalActions}>
+            <button
+              type="button"
+              className={styles.builderToggleDetail}
+              onClick={() => setShowDetail((v) => !v)}
+            >
+              {showDetail ? 'Hide details' : 'Full nutrition'}
+              {showDetail ? (
+                <CaretUp size={12} weight="bold" />
+              ) : (
+                <CaretDown size={12} weight="bold" />
+              )}
+            </button>
+            <button
+              type="button"
+              className={styles.builderClear}
+              onClick={clearAll}
+            >
+              Clear
+            </button>
+          </div>
+          {showDetail && <ItemDetail item={combinedItem} />}
+        </div>
+      )}
+
+      {restaurant.ingredient_categories.map((cat) => {
+        const catIngredients = restaurant.ingredients.filter(
+          (i) => i.category === cat
+        );
+        if (catIngredients.length === 0) return null;
+        return (
+          <div key={cat} className={styles.builderCategory}>
+            <div className={styles.builderCategoryLabel}>{cat}</div>
+            <div className={styles.ingredientRow}>
+              {catIngredients.map((ing) => (
+                <button
+                  key={ing.name}
+                  type="button"
+                  className={
+                    selected.has(ing.name)
+                      ? styles.ingredientChipActive
+                      : styles.ingredientChip
+                  }
+                  onClick={() => toggle(ing.name)}
+                >
+                  <span className={styles.ingredientName}>{ing.name}</span>
+                  <span className={styles.ingredientCal}>
+                    {ing.nutrients.calories_kcal} cal
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+
+      {selected.size === 0 && (
+        <div className={styles.builderEmpty}>
+          Select a popular order above or build your own by choosing ingredients below
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function FastFoodMenus() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [activeRestaurant, setActiveRestaurant] = useState(0);
@@ -172,11 +357,6 @@ export default function FastFoodMenus() {
   }
 
   const restaurant = restaurants[activeRestaurant];
-  const categories = ['All', ...restaurant.categories];
-  const items =
-    activeCategory === 'All'
-      ? restaurant.items
-      : restaurant.items.filter((it) => it.category === activeCategory);
 
   return (
     <div className={styles.container}>
@@ -205,52 +385,61 @@ export default function FastFoodMenus() {
         ))}
       </div>
 
-      <div className={styles.categoryTabs}>
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            type="button"
-            className={cat === activeCategory ? styles.categoryTabActive : styles.categoryTab}
-            onClick={() => {
-              setActiveCategory(cat);
-              setExpandedItem(null);
-            }}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
+      {isBuilder(restaurant) ? (
+        <BuilderView restaurant={restaurant} />
+      ) : (
+        <>
+          <div className={styles.categoryTabs}>
+            {['All', ...restaurant.categories].map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                className={cat === activeCategory ? styles.categoryTabActive : styles.categoryTab}
+                onClick={() => {
+                  setActiveCategory(cat);
+                  setExpandedItem(null);
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
 
-      <div className={styles.itemsList}>
-        {items.map((item) => {
-          const isExpanded = expandedItem === `${restaurant.name}:${item.name}`;
-          const key = `${restaurant.name}:${item.name}`;
-          return (
-            <button
-              key={key}
-              type="button"
-              className={isExpanded ? styles.itemCardExpanded : styles.itemCard}
-              onClick={() => setExpandedItem(isExpanded ? null : key)}
-            >
-              <div className={styles.itemHeader}>
-                <span className={styles.itemName}>{item.name}</span>
-                <div className={styles.itemMeta}>
-                  <span className={styles.itemCal}>
-                    {item.nutrients.calories_kcal ?? '--'} kcal
-                  </span>
-                  <span className={styles.itemServing}>{item.serving_label}</span>
-                  {isExpanded ? (
-                    <CaretUp size={14} weight="bold" color="var(--text-tertiary)" />
-                  ) : (
-                    <CaretDown size={14} weight="bold" color="var(--text-tertiary)" />
-                  )}
-                </div>
-              </div>
-              {isExpanded && <ItemDetail item={item} />}
-            </button>
-          );
-        })}
-      </div>
+          <div className={styles.itemsList}>
+            {(activeCategory === 'All'
+              ? restaurant.items
+              : restaurant.items.filter((it) => it.category === activeCategory)
+            ).map((item) => {
+              const isExpanded = expandedItem === `${restaurant.name}:${item.name}`;
+              const key = `${restaurant.name}:${item.name}`;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  className={isExpanded ? styles.itemCardExpanded : styles.itemCard}
+                  onClick={() => setExpandedItem(isExpanded ? null : key)}
+                >
+                  <div className={styles.itemHeader}>
+                    <span className={styles.itemName}>{item.name}</span>
+                    <div className={styles.itemMeta}>
+                      <span className={styles.itemCal}>
+                        {item.nutrients.calories_kcal ?? '--'} kcal
+                      </span>
+                      <span className={styles.itemServing}>{item.serving_label}</span>
+                      {isExpanded ? (
+                        <CaretUp size={14} weight="bold" color="var(--text-tertiary)" />
+                      ) : (
+                        <CaretDown size={14} weight="bold" color="var(--text-tertiary)" />
+                      )}
+                    </div>
+                  </div>
+                  {isExpanded && <ItemDetail item={item} />}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -295,6 +295,207 @@
   color: var(--text-secondary);
 }
 
+.builderContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.builderPopular {
+  margin-bottom: 4px;
+}
+
+.popularRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.popularBtn {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.popularBtn:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.popularBtnActive {
+  composes: popularBtn;
+  color: var(--text-primary);
+  border-color: var(--accent);
+  background: rgba(99, 179, 237, 0.08);
+}
+
+.builderTotal {
+  padding: 14px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+}
+
+.builderTotalHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.builderTotalLeft {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.builderTotalTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.builderTotalCal {
+  font-size: 14px;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  font-weight: 600;
+  color: var(--text-data);
+}
+
+.builderTotalRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.builderMacro {
+  font-size: 12px;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  color: var(--text-secondary);
+}
+
+.builderMacroDot {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.builderTotalActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.builderToggleDetail {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.builderToggleDetail:hover {
+  text-decoration: underline;
+}
+
+.builderClear {
+  font-size: 11px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.builderClear:hover {
+  color: var(--text-secondary);
+}
+
+.builderCategory {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.builderCategoryLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ingredientRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ingredientChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-family: var(--font-ui);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.ingredientChip:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-accent);
+}
+
+.ingredientChipActive {
+  composes: ingredientChip;
+  border-color: var(--accent);
+  background: rgba(99, 179, 237, 0.08);
+}
+
+.ingredientName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ingredientCal {
+  font-size: 11px;
+  font-family: var(--font-data);
+  font-feature-settings: 'tnum';
+  color: var(--text-tertiary);
+}
+
+.builderEmpty {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
 @media (max-width: 767px) {
   .container {
     padding: 12px;
@@ -313,5 +514,18 @@
   .dvLabel {
     width: 60px;
     font-size: 10px;
+  }
+
+  .builderTotalHeader {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ingredientChip {
+    padding: 6px 10px;
+  }
+
+  .ingredientName {
+    font-size: 12px;
   }
 }
