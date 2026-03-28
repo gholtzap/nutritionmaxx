@@ -5,7 +5,10 @@ import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import type { NutrientFruit } from '../../types';
 import styles from './Comparison.module.css';
 
-const SLOT_COLORS = ['var(--compare-a)', 'var(--compare-b)', 'var(--compare-c)'];
+const SLOT_COLORS = [
+  'var(--compare-a)', 'var(--compare-b)', 'var(--compare-c)',
+  'var(--compare-d)', 'var(--compare-e)', 'var(--compare-f)',
+];
 
 export default function FruitSelector() {
   const fruits = useDietaryFruits();
@@ -67,7 +70,7 @@ export default function FruitSelector() {
           </span>
         ))}
       </div>
-      {comparisonFruits.length < 3 && (
+      {comparisonFruits.length < 6 && (
         <div className={styles.searchContainer} ref={containerRef}>
           <div className={styles.selectorSearch}>
             <MagnifyingGlass size={14} className={styles.selectorSearchIcon} />

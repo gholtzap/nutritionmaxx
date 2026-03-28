@@ -92,7 +92,7 @@ function App() {
         const matched = names
           .map((n) => fruits.find((f) => f.name.toLowerCase() === n.toLowerCase()))
           .filter((f): f is typeof fruits[number] => f != null)
-          .slice(0, 3);
+          .slice(0, 6);
         if (matched.length > 0) {
           setComparisonFruits(matched);
           setActiveView('comparison');

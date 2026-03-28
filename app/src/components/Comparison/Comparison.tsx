@@ -32,7 +32,7 @@ export default function Comparison() {
       <div className={styles.header}>
         <div>
           <h2 className={styles.title}>Compare</h2>
-          <p className={styles.subtitle}>Select up to 3 items to compare their nutritional values</p>
+          <p className={styles.subtitle}>Select up to 6 items to compare their nutritional values</p>
         </div>
         {comparisonFruits.length >= 2 && (
           <button

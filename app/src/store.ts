@@ -403,7 +403,7 @@ export const useStore = create<AppState>((set, get) => ({
           ),
         };
       }
-      if (state.comparisonFruits.length >= 3) return state;
+      if (state.comparisonFruits.length >= 6) return state;
       return { comparisonFruits: [...state.comparisonFruits, fruit] };
     }),
 
