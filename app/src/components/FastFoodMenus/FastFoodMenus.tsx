@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
-import { CaretDown, CaretUp } from '@phosphor-icons/react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { CaretDown, CaretUp, ShareNetwork, Check } from '@phosphor-icons/react';
 import { NUTRIENT_META } from '../../utils/nutrition-meta';
 import styles from './FastFoodMenus.module.css';
 
@@ -176,9 +176,23 @@ function ItemDetail({ item }: { item: MenuItem }) {
   );
 }
 
-function BuilderView({ restaurant }: { restaurant: BuilderRestaurant }) {
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+function BuilderView({ restaurant, initialItems }: { restaurant: BuilderRestaurant; initialItems?: string[] }) {
+  const [selected, setSelected] = useState<Set<string>>(() => {
+    if (!initialItems || initialItems.length === 0) return new Set();
+    const lookup = new Map(restaurant.ingredients.map((i) => [i.name.toLowerCase(), i.name]));
+    return new Set(
+      initialItems.map((n) => lookup.get(n.toLowerCase())).filter((n): n is string => n != null)
+    );
+  });
   const [showDetail, setShowDetail] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimer.current) clearTimeout(copiedTimer.current);
+    };
+  }, []);
 
   const toggle = (name: string) => {
     setSelected((prev) => {
@@ -197,6 +211,19 @@ function BuilderView({ restaurant }: { restaurant: BuilderRestaurant }) {
   const clearAll = () => {
     setSelected(new Set());
     setShowDetail(false);
+  };
+
+  const handleShare = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('ff', `${restaurant.name}:${Array.from(selected).join(',')}`);
+    url.searchParams.delete('food');
+    url.searchParams.delete('compare');
+    url.searchParams.delete('plan');
+    url.searchParams.delete('research');
+    navigator.clipboard.writeText(url.toString());
+    setCopied(true);
+    if (copiedTimer.current) clearTimeout(copiedTimer.current);
+    copiedTimer.current = setTimeout(() => setCopied(false), 1500);
   };
 
   const combinedNutrients = useMemo(() => {
@@ -288,6 +315,14 @@ function BuilderView({ restaurant }: { restaurant: BuilderRestaurant }) {
             >
               Clear
             </button>
+            <button
+              type="button"
+              className={copied ? styles.shareBtnCopied : styles.shareBtn}
+              onClick={handleShare}
+            >
+              {copied ? <Check size={12} weight="bold" /> : <ShareNetwork size={12} weight="bold" />}
+              {copied ? 'Copied' : 'Share'}
+            </button>
           </div>
           {showDetail && <ItemDetail item={combinedItem} />}
         </div>
@@ -338,6 +373,15 @@ export default function FastFoodMenus() {
   const [activeRestaurant, setActiveRestaurant] = useState(0);
   const [activeCategory, setActiveCategory] = useState('All');
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const [initialBuilderItems, setInitialBuilderItems] = useState<string[]>([]);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimer.current) clearTimeout(copiedTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     fetch('/fast-food.json')
@@ -347,6 +391,44 @@ export default function FastFoodMenus() {
       })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (restaurants.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const ffParam = params.get('ff');
+    if (!ffParam) return;
+
+    const colonIdx = ffParam.indexOf(':');
+    if (colonIdx === -1) return;
+
+    const rName = ffParam.slice(0, colonIdx).trim();
+    const itemNames = ffParam.slice(colonIdx + 1).split(',').map((n) => n.trim()).filter(Boolean);
+    const rIdx = restaurants.findIndex((r) => r.name.toLowerCase() === rName.toLowerCase());
+    if (rIdx === -1) return;
+
+    setActiveRestaurant(rIdx);
+    const r = restaurants[rIdx];
+    if (isBuilder(r)) {
+      setInitialBuilderItems(itemNames);
+    } else if (itemNames.length > 0) {
+      const match = r.items.find((it) => it.name.toLowerCase() === itemNames[0].toLowerCase());
+      if (match) setExpandedItem(`${r.name}:${match.name}`);
+    }
+  }, [restaurants]);
+
+  const handleShareItem = (rName: string, itemName: string) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('ff', `${rName}:${itemName}`);
+    url.searchParams.delete('food');
+    url.searchParams.delete('compare');
+    url.searchParams.delete('plan');
+    url.searchParams.delete('research');
+    navigator.clipboard.writeText(url.toString());
+    const key = `${rName}:${itemName}`;
+    setCopiedKey(key);
+    if (copiedTimer.current) clearTimeout(copiedTimer.current);
+    copiedTimer.current = setTimeout(() => setCopiedKey(null), 1500);
+  };
 
   if (restaurants.length === 0) {
     return (
@@ -377,6 +459,7 @@ export default function FastFoodMenus() {
               setActiveRestaurant(i);
               setActiveCategory('All');
               setExpandedItem(null);
+              setInitialBuilderItems([]);
             }}
           >
             <span className={styles.dot} style={{ background: r.logo_color }} />
@@ -386,7 +469,7 @@ export default function FastFoodMenus() {
       </div>
 
       {isBuilder(restaurant) ? (
-        <BuilderView restaurant={restaurant} />
+        <BuilderView restaurant={restaurant} initialItems={initialBuilderItems} />
       ) : (
         <>
           <div className={styles.categoryTabs}>
@@ -412,14 +495,17 @@ export default function FastFoodMenus() {
             ).map((item) => {
               const isExpanded = expandedItem === `${restaurant.name}:${item.name}`;
               const key = `${restaurant.name}:${item.name}`;
+              const isCopied = copiedKey === key;
               return (
-                <button
+                <div
                   key={key}
-                  type="button"
                   className={isExpanded ? styles.itemCardExpanded : styles.itemCard}
-                  onClick={() => setExpandedItem(isExpanded ? null : key)}
+                  onClick={isExpanded ? undefined : () => setExpandedItem(key)}
                 >
-                  <div className={styles.itemHeader}>
+                  <div
+                    className={styles.itemHeader}
+                    onClick={isExpanded ? () => setExpandedItem(null) : undefined}
+                  >
                     <span className={styles.itemName}>{item.name}</span>
                     <div className={styles.itemMeta}>
                       <span className={styles.itemCal}>
@@ -433,8 +519,22 @@ export default function FastFoodMenus() {
                       )}
                     </div>
                   </div>
-                  {isExpanded && <ItemDetail item={item} />}
-                </button>
+                  {isExpanded && (
+                    <>
+                      <div className={styles.itemActions}>
+                        <button
+                          type="button"
+                          className={isCopied ? styles.shareBtnCopied : styles.shareBtn}
+                          onClick={() => handleShareItem(restaurant.name, item.name)}
+                        >
+                          {isCopied ? <Check size={12} weight="bold" /> : <ShareNetwork size={12} weight="bold" />}
+                          {isCopied ? 'Copied' : 'Share'}
+                        </button>
+                      </div>
+                      <ItemDetail item={item} />
+                    </>
+                  )}
+                </div>
               );
             })}
           </div>

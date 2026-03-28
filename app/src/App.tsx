@@ -52,6 +52,13 @@ function App() {
     if (fruits.length === 0) return;
     const params = new URLSearchParams(window.location.search);
 
+    const ffParam = params.get('ff');
+    if (ffParam) {
+      setActiveView('fastfood');
+      urlInitialized.current = true;
+      return;
+    }
+
     const researchParam = params.get('research');
     if (researchParam) {
       setActiveView('research');
@@ -115,25 +122,35 @@ function App() {
       url.searchParams.delete('food');
       url.searchParams.delete('compare');
       url.searchParams.delete('research');
+      url.searchParams.delete('ff');
     } else if (activeView === 'comparison' && comparisonFruits.length > 0) {
       url.searchParams.set('compare', comparisonFruits.map((f) => f.name).join(','));
       url.searchParams.delete('food');
       url.searchParams.delete('plan');
       url.searchParams.delete('research');
+      url.searchParams.delete('ff');
     } else if (activeView === 'research') {
       url.searchParams.delete('food');
       url.searchParams.delete('compare');
       url.searchParams.delete('plan');
+      url.searchParams.delete('ff');
+    } else if (activeView === 'fastfood') {
+      url.searchParams.delete('food');
+      url.searchParams.delete('compare');
+      url.searchParams.delete('plan');
+      url.searchParams.delete('research');
     } else if (selectedFruit) {
       url.searchParams.set('food', selectedFruit.name);
       url.searchParams.delete('compare');
       url.searchParams.delete('plan');
       url.searchParams.delete('research');
+      url.searchParams.delete('ff');
     } else {
       url.searchParams.delete('food');
       url.searchParams.delete('compare');
       url.searchParams.delete('plan');
       url.searchParams.delete('research');
+      url.searchParams.delete('ff');
     }
     window.history.replaceState(null, '', url.toString());
   }, [selectedFruit, comparisonFruits, activeView, planEntries]);
