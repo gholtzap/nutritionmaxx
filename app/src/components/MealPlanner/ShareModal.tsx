@@ -2,6 +2,18 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { X, DownloadSimple, Check, LinkSimple, CircleNotch, TextAlignLeft } from '@phosphor-icons/react';
 import styles from './ShareModal.module.css';
 
+function fallbackCopy(text: string) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textarea);
+}
+
 interface ShareModalProps {
   imageBlob: Blob;
   shareUrl: string;
@@ -41,19 +53,28 @@ export default function ShareModal({ imageBlob, shareUrl, exportText, onClose }:
     document.body.removeChild(a);
   }, [imageUrl]);
 
+  const copyToClipboard = useCallback((text: string) => {
+    if (navigator.clipboard?.writeText) {
+      return navigator.clipboard.writeText(text).catch(() => {
+        fallbackCopy(text);
+      });
+    }
+    fallbackCopy(text);
+  }, []);
+
   const handleCopyLink = useCallback(() => {
-    navigator.clipboard.writeText(shareUrl);
+    copyToClipboard(shareUrl);
     setCopiedLink(true);
     if (copiedLinkTimer.current) clearTimeout(copiedLinkTimer.current);
     copiedLinkTimer.current = setTimeout(() => setCopiedLink(false), 1500);
-  }, [shareUrl]);
+  }, [shareUrl, copyToClipboard]);
 
   const handleCopyText = useCallback(() => {
-    navigator.clipboard.writeText(exportText);
+    copyToClipboard(exportText);
     setCopiedText(true);
     if (copiedTextTimer.current) clearTimeout(copiedTextTimer.current);
     copiedTextTimer.current = setTimeout(() => setCopiedText(false), 1500);
-  }, [exportText]);
+  }, [exportText, copyToClipboard]);
 
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();
