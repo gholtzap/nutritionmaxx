@@ -1,387 +1,381 @@
-.wrapper {
-  padding: 32px 32px 64px;
-  overflow-x: hidden;
+.page {
+  padding: 32px 32px 96px;
 }
 
-.carousel {
+.hero,
+.statusBanner,
+.startCard,
+.toolCard {
   position: relative;
-  width: 100%;
-  height: 340px;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(22, 25, 34, 0.96), rgba(14, 17, 24, 0.98));
+  box-shadow: 0 18px 40px rgba(3, 7, 18, 0.24);
 }
 
-.slide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  padding: 40px 48px;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-  pointer-events: none;
-  cursor: pointer;
+.statusBanner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  border-radius: 18px;
   text-align: left;
 }
 
-.slideActive {
-  opacity: 1;
-  pointer-events: auto;
+.hero {
+  overflow: hidden;
+  padding: 40px;
+  border-radius: 24px;
 }
 
-.slideGradient {
+.hero::before,
+.statusBanner::before,
+.startCard::before,
+.toolCard::before {
+  content: '';
   position: absolute;
   inset: 0;
-  z-index: 0;
+  background: radial-gradient(circle at top right, rgb(var(--feature-accent, 103 232 249) / 0.14), transparent 28%);
+  pointer-events: none;
 }
 
-.slideIconWrap {
-  position: absolute;
-  bottom: 24px;
-  right: 48px;
-  opacity: 0.06;
-  z-index: 0;
-  color: var(--text-primary);
+.heroKicker,
+.sectionEyebrow,
+.cardEyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.7);
 }
 
-.slideContent {
+.heroKicker,
+.heroTitle,
+.heroCopy,
+.heroActions,
+.heroStats,
+.statusContent,
+.statusCta,
+.cardTop,
+.cardTitle,
+.cardDesc,
+.cardLink,
+.toolContent {
   position: relative;
   z-index: 1;
-  max-width: 480px;
 }
 
-.slideTag {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 12px;
+.heroTitle {
+  max-width: 10ch;
+  margin-top: 14px;
+  font-size: clamp(2.8rem, 6vw, 4.8rem);
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+  color: #f8fbff;
 }
 
-.slideTitle {
-  font-size: 28px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.02em;
-  margin-bottom: 8px;
+.heroCopy {
+  max-width: 620px;
+  margin-top: 18px;
+  font-size: 17px;
+  line-height: 1.65;
+  color: rgba(226, 232, 240, 0.78);
 }
 
-.slideDesc {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.65);
-  line-height: 1.6;
-  margin-bottom: 20px;
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
 }
 
-.slideCta {
+.primaryAction,
+.secondaryAction {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #fff;
-  padding: 8px 20px;
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  transition: background 0.2s;
-}
-
-.slide:hover .slideCta {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.dots {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 8px;
-  z-index: 2;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
-  cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
-}
-
-.dot:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.dotActive {
-  background: rgba(255, 255, 255, 0.85);
-  transform: scale(1.25);
-}
-
-.section {
-  margin-bottom: 40px;
-}
-
-.sectionHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.sectionLabel {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-}
-
-.scrollArrows {
-  display: flex;
-  gap: 4px;
-}
-
-.scrollArrow {
-  display: flex;
-  align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-primary);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
   font-size: 14px;
+  font-weight: 600;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    border-color 0.18s ease;
 }
 
-.scrollArrow:hover {
-  background: var(--bg-elevated);
+.primaryAction {
+  color: #06101d;
+  background: #f8fafc;
+}
+
+.secondaryAction {
   color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.featured {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 12px;
-  height: 320px;
-  margin-bottom: 40px;
+.primaryAction:hover,
+.secondaryAction:hover,
+.statusBanner:hover,
+.startCard:hover,
+.toolCard:hover {
+  transform: translateY(-1px);
 }
 
-.featuredWide {
-  grid-row: 1 / -1;
+.secondaryAction:hover {
+  background: rgba(255, 255, 255, 0.07);
 }
 
-.card {
-  position: relative;
+.heroStats {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  padding: 20px;
-  border-radius: 10px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
 }
 
-.card:hover {
-  transform: scale(1.02);
-  border-color: var(--border-accent);
+.statPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.cardGlow {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  border-radius: inherit;
+.statValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f8fbff;
 }
 
-.card:hover .cardGlow {
-  opacity: 1;
-}
-
-.cardBgIcon {
-  position: absolute;
-  bottom: -8px;
-  right: -4px;
-  opacity: 0.04;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  color: var(--text-primary);
-}
-
-.card:hover .cardBgIcon {
-  opacity: 0.08;
+.statLabel {
+  font-size: 12px;
+  color: rgba(226, 232, 240, 0.68);
 }
 
 .cardIcon {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: var(--radius-md);
-  background: var(--bg-elevated);
-  margin-bottom: 12px;
   flex-shrink: 0;
+  border-radius: 12px;
+  color: rgb(var(--feature-accent, 103 232 249));
+  background: rgb(var(--feature-accent, 103 232 249) / 0.12);
+  border: 1px solid rgb(var(--feature-accent, 103 232 249) / 0.2);
+}
+
+.statusContent {
+  min-width: 0;
+}
+
+.statusTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f8fbff;
+}
+
+.statusDesc {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.statusCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f8fbff;
+}
+
+.section {
+  margin-top: 28px;
+}
+
+.sectionHeader {
+  margin-bottom: 14px;
+}
+
+.sectionTitle {
+  margin-top: 6px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  color: #f8fbff;
+}
+
+.startGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.startCard {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 220px;
+  padding: 22px;
+  border-radius: 20px;
+  text-align: left;
+}
+
+.startCardFeatured {
+  border-color: rgb(var(--feature-accent) / 0.28);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
 }
 
 .cardTitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-top: 18px;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  color: #f8fbff;
 }
 
 .cardDesc {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  line-height: 1.5;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(226, 232, 240, 0.76);
 }
 
-.featuredWide .cardIcon {
-  width: 44px;
-  height: 44px;
-}
-
-.featuredWide .cardTitle {
-  font-size: 18px;
-}
-
-.featuredWide .cardDesc {
+.cardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 20px;
   font-size: 13px;
-  max-width: 300px;
+  font-weight: 600;
+  color: #f8fbff;
 }
 
-.rail {
-  display: flex;
+.toolGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  padding-bottom: 4px;
 }
 
-.rail::-webkit-scrollbar {
-  display: none;
-}
-
-.railCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+.toolCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 18px;
   text-align: left;
-  min-width: 220px;
-  max-width: 220px;
-  height: 180px;
-  padding: 18px;
-  border-radius: 10px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  cursor: pointer;
-  overflow: hidden;
-  flex-shrink: 0;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.railCard:hover {
-  transform: scale(1.04);
-  border-color: var(--border-accent);
+.toolContent {
+  min-width: 0;
 }
 
-.railCard:hover .cardGlow {
-  opacity: 1;
+.toolLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f8fbff;
 }
 
-.railCard:hover .cardBgIcon {
-  opacity: 0.08;
+.toolDesc {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(226, 232, 240, 0.68);
 }
 
-.railCard .cardIcon {
-  width: 32px;
-  height: 32px;
-  margin-bottom: 10px;
-}
+@media (max-width: 1023px) {
+  .startGrid {
+    grid-template-columns: 1fr;
+  }
 
-.railCard .cardTitle {
-  font-size: 13px;
-}
-
-.railCard .cardDesc {
-  font-size: 11px;
+  .toolGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 767px) {
-  .wrapper {
-    padding: 20px 16px 96px;
+  .page {
+    padding: 20px 16px 104px;
   }
 
-  .carousel {
-    height: 260px;
-    border-radius: 10px;
-    margin-bottom: 28px;
+  .hero {
+    padding: 26px 22px;
+    border-radius: 20px;
   }
 
-  .slide {
-    padding: 24px;
+  .statusBanner {
+    grid-template-columns: auto 1fr;
+    padding: 14px 16px;
   }
 
-  .slideIconWrap {
-    right: 24px;
+  .statusCta {
+    display: none;
   }
 
-  .slideTitle {
-    font-size: 22px;
+  .heroTitle {
+    max-width: none;
+    font-size: clamp(2.35rem, 13vw, 3.8rem);
   }
 
-  .slideDesc {
-    font-size: 13px;
-    margin-bottom: 16px;
-  }
-
-  .featured {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    height: auto;
-  }
-
-  .featuredWide {
-    grid-row: auto;
-    min-height: 180px;
-  }
-
-  .card {
-    min-height: 140px;
-  }
-
-  .featuredWide .cardTitle {
+  .heroCopy {
     font-size: 15px;
   }
 
-  .railCard {
-    min-width: 180px;
-    max-width: 180px;
-    height: 160px;
+  .heroActions {
+    flex-direction: column;
   }
 
-  .scrollArrows {
+  .primaryAction,
+  .secondaryAction {
+    width: 100%;
+  }
+
+  .startCard,
+  .toolCard {
+    border-radius: 16px;
+  }
+
+  .startCard {
+    min-height: 0;
+    padding: 18px;
+  }
+
+  .toolCard {
+    grid-template-columns: auto 1fr;
+  }
+
+  .toolCard > :last-child {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryAction,
+  .secondaryAction,
+  .statusBanner,
+  .startCard,
+  .toolCard {
+    transition: none;
   }
 }

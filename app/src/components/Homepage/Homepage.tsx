@@ -1,305 +1,312 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import type { CSSProperties } from 'react';
 import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import {
-  Table,
-  GitDiff,
-  SquaresFour,
-  Pill,
   ArrowsClockwise,
+  Article,
+  ArrowRight,
+  GitDiff,
+  Hamburger,
+  Heartbeat,
+  Pill,
   Scales,
   SlidersHorizontal,
-  Heartbeat,
-  Article,
-  CaretRight,
-  CaretLeft,
+  Table,
 } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
+import { countExcluded, DIETARY_OPTIONS } from '../../utils/dietary';
 import styles from './Homepage.module.css';
 
-interface Feature {
+interface StartCard {
   id: ViewId;
   label: string;
-  tag: string;
+  eyebrow: string;
   desc: string;
+  cta: string;
+  accent: string;
   Icon: PhosphorIcon;
-  color: string;
+  featured?: boolean;
 }
 
-const HERO_SLIDES: Feature[] = [
-  {
-    id: 'fixdiet',
-    label: 'Fix My Diet',
-    tag: 'Personalized',
-    desc: 'Analyze your current diet, identify nutritional gaps, and get targeted food suggestions to fill them.',
-    Icon: Heartbeat,
-    color: '#ef4444',
-  },
+const START_HERE: StartCard[] = [
   {
     id: 'table',
-    label: 'Nutrition Explorer',
-    tag: 'Database',
-    desc: 'Search and filter hundreds of foods across 29 nutrients. Sort, compare, and discover the most nutrient-dense options.',
+    label: 'Explore the database',
+    eyebrow: 'Search',
+    desc: 'Browse the full food dataset by nutrient, category, or food name when you want to inspect options directly.',
+    cta: 'Explore foods',
+    accent: '103 232 249',
     Icon: Table,
-    color: '#63b3ed',
   },
+  {
+    id: 'fixdiet',
+    label: 'Fix your diet',
+    eyebrow: 'Recommended',
+    desc: 'Start with a guided intake and get targeted food suggestions based on likely nutrient gaps.',
+    cta: 'Start diagnosis',
+    accent: '248 113 113',
+    Icon: Heartbeat,
+    featured: true,
+  },
+  {
+    id: 'comparison',
+    label: 'Compare foods',
+    eyebrow: 'Validate tradeoffs',
+    desc: 'Put foods side by side when you want to see exactly which option solves the problem better.',
+    cta: 'Open comparison',
+    accent: '96 165 250',
+    Icon: GitDiff,
+  },
+];
+
+const MORE_TOOLS: StartCard[] = [
   {
     id: 'planner',
     label: 'Meal Planner',
-    tag: 'Weekly Planning',
-    desc: 'Build a weekly meal plan, track cumulative nutrition, and optimize your meals around your goals.',
+    eyebrow: 'Plan',
+    desc: 'Turn good choices into a weekly pattern and check whether your plan holds up across the full week.',
+    cta: 'Open planner',
+    accent: '52 211 153',
     Icon: Scales,
-    color: '#10b981',
-  },
-];
-
-const FEATURED: Feature[] = [
-  {
-    id: 'comparison',
-    label: 'Compare Foods',
-    tag: '',
-    desc: 'Place up to three foods side by side and see exactly where each one wins or falls short.',
-    Icon: GitDiff,
-    color: '#a78bfa',
-  },
-  {
-    id: 'categories',
-    label: 'Categories',
-    tag: '',
-    desc: 'Average nutrient profiles across food groups.',
-    Icon: SquaresFour,
-    color: '#f59e0b',
-  },
-  {
-    id: 'nutrients',
-    label: 'Nutrient Guide',
-    tag: '',
-    desc: 'What each nutrient does and where to find it.',
-    Icon: Pill,
-    color: '#34d399',
-  },
-];
-
-const DISCOVER: Feature[] = [
-  {
-    id: 'absorption',
-    label: 'Absorption',
-    tag: '',
-    desc: 'Which nutrients enhance or block each other when eaten together.',
-    Icon: ArrowsClockwise,
-    color: '#14b8a6',
   },
   {
     id: 'dietary',
     label: 'Dietary Preferences',
-    tag: '',
-    desc: 'Filter by vegan, halal, low-sodium, and other restrictions.',
+    eyebrow: 'Filter',
+    desc: 'Apply dietary constraints before you search or compare.',
+    cta: 'Set filters',
+    accent: '251 146 60',
     Icon: SlidersHorizontal,
-    color: '#f97316',
+  },
+  {
+    id: 'nutrients',
+    label: 'Nutrient Guide',
+    eyebrow: 'Learn',
+    desc: 'Review what each nutrient does and where it comes from.',
+    cta: 'Open guide',
+    accent: '74 222 128',
+    Icon: Pill,
   },
   {
     id: 'research',
     label: 'Research',
-    tag: '',
-    desc: 'Data-driven articles on optimal diets and food science.',
+    eyebrow: 'Context',
+    desc: 'Read the app’s short research-backed articles and experiments.',
+    cta: 'Read articles',
+    accent: '196 181 253',
     Icon: Article,
-    color: '#8b5cf6',
   },
   {
-    id: 'fixdiet',
-    label: 'Fix My Diet',
-    tag: '',
-    desc: 'Find nutritional gaps and get targeted suggestions.',
-    Icon: Heartbeat,
-    color: '#ef4444',
+    id: 'absorption',
+    label: 'Absorption',
+    eyebrow: 'Interactions',
+    desc: 'See which nutrients help or block each other.',
+    cta: 'View interactions',
+    accent: '45 212 191',
+    Icon: ArrowsClockwise,
   },
   {
-    id: 'planner',
-    label: 'Meal Planner',
-    tag: '',
-    desc: 'Build and optimize a weekly meal plan.',
-    Icon: Scales,
-    color: '#10b981',
+    id: 'fastfood',
+    label: 'Fast Food Menus',
+    eyebrow: 'Fallback',
+    desc: 'Compare restaurant options when convenience matters.',
+    cta: 'See menus',
+    accent: '244 114 182',
+    Icon: Hamburger,
   },
 ];
 
-function HeroCarousel() {
-  const [active, setActive] = useState(0);
-  const setActiveView = useStore((s) => s.setActiveView);
-  const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
-
-  const resetTimer = useCallback(() => {
-    clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setActive((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 6000);
-  }, []);
-
-  useEffect(() => {
-    resetTimer();
-    return () => clearInterval(timerRef.current);
-  }, [resetTimer]);
-
-  const goTo = (i: number) => {
-    setActive(i);
-    resetTimer();
-  };
-
-  return (
-    <div className={styles.carousel}>
-      {HERO_SLIDES.map((slide, i) => {
-        const SlideIcon = slide.Icon;
-        return (
-          <button
-            key={slide.id}
-            type="button"
-            className={`${styles.slide} ${i === active ? styles.slideActive : ''}`}
-            onClick={() => setActiveView(slide.id)}
-          >
-            <div
-              className={styles.slideGradient}
-              style={{
-                background: `linear-gradient(135deg, ${slide.color}22 0%, ${slide.color}08 40%, var(--bg-primary) 100%)`,
-              }}
-            />
-            <div className={styles.slideIconWrap}>
-              <SlideIcon size={240} weight="regular" />
-            </div>
-            <div className={styles.slideContent}>
-              <span className={styles.slideTag}>{slide.tag}</span>
-              <div className={styles.slideTitle}>{slide.label}</div>
-              <div className={styles.slideDesc}>{slide.desc}</div>
-              <span className={styles.slideCta}>
-                Launch
-                <CaretRight size={14} weight="bold" />
-              </span>
-            </div>
-          </button>
-        );
-      })}
-      <div className={styles.dots}>
-        {HERO_SLIDES.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            className={`${styles.dot} ${i === active ? styles.dotActive : ''}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              goTo(i);
-            }}
-            aria-label={`Go to slide ${i + 1}`}
-          />
-        ))}
-      </div>
-    </div>
-  );
+interface StatusCard {
+  id: ViewId;
+  title: string;
+  desc: string;
+  cta: string;
+  accent: string;
+  Icon: PhosphorIcon;
 }
 
-function FeaturedCard({ feature, wide }: { feature: Feature; wide?: boolean }) {
-  const setActiveView = useStore((s) => s.setActiveView);
-  const Ic = feature.Icon;
+function formatCount(value: number) {
+  return new Intl.NumberFormat('en-US').format(value);
+}
+
+function accentStyle(accent: string) {
+  return { '--feature-accent': accent } as CSSProperties;
+}
+
+function summarizePreferences(labels: string[]) {
+  if (labels.length <= 2) return labels.join(' + ');
+  return `${labels.slice(0, 2).join(' + ')} +${labels.length - 2}`;
+}
+
+function StartHereCard({
+  card,
+  onOpen,
+}: {
+  card: StartCard;
+  onOpen: (view: ViewId) => void;
+}) {
+  const Icon = card.Icon;
+  const className = card.featured
+    ? `${styles.startCard} ${styles.startCardFeatured}`
+    : styles.startCard;
 
   return (
     <button
       type="button"
-      className={`${styles.card} ${wide ? styles.featuredWide : ''}`}
-      onClick={() => setActiveView(feature.id)}
+      className={className}
+      style={accentStyle(card.accent)}
+      onClick={() => onOpen(card.id)}
     >
-      <div
-        className={styles.cardGlow}
-        style={{
-          background: `radial-gradient(ellipse at 30% 80%, ${feature.color}15 0%, transparent 70%)`,
-        }}
-      />
-      <div className={styles.cardBgIcon}>
-        <Ic size={wide ? 120 : 80} weight="regular" />
+      <div className={styles.cardTop}>
+        <span className={styles.cardEyebrow}>{card.eyebrow}</span>
+        <span className={styles.cardIcon}>
+          <Icon size={18} weight="regular" />
+        </span>
       </div>
-      <div className={styles.cardIcon} style={{ color: feature.color }}>
-        <Ic size={wide ? 22 : 18} weight="regular" />
-      </div>
-      <div className={styles.cardTitle}>{feature.label}</div>
-      <div className={styles.cardDesc}>{feature.desc}</div>
+      <div className={styles.cardTitle}>{card.label}</div>
+      <p className={styles.cardDesc}>{card.desc}</p>
+      <span className={styles.cardLink}>
+        {card.cta}
+        <ArrowRight size={14} weight="bold" />
+      </span>
     </button>
   );
 }
 
-function RailCard({ feature }: { feature: Feature }) {
-  const setActiveView = useStore((s) => s.setActiveView);
-  const Ic = feature.Icon;
+function ToolCard({
+  card,
+  onOpen,
+}: {
+  card: StartCard;
+  onOpen: (view: ViewId) => void;
+}) {
+  const Icon = card.Icon;
 
   return (
     <button
       type="button"
-      className={styles.railCard}
-      onClick={() => setActiveView(feature.id)}
+      className={styles.toolCard}
+      style={accentStyle(card.accent)}
+      onClick={() => onOpen(card.id)}
     >
-      <div
-        className={styles.cardGlow}
-        style={{
-          background: `radial-gradient(ellipse at 30% 80%, ${feature.color}12 0%, transparent 70%)`,
-        }}
-      />
-      <div className={styles.cardBgIcon}>
-        <Ic size={64} weight="regular" />
+      <span className={styles.cardIcon}>
+        <Icon size={16} weight="regular" />
+      </span>
+      <div className={styles.toolContent}>
+        <div className={styles.toolLabel}>{card.label}</div>
+        <div className={styles.toolDesc}>{card.desc}</div>
       </div>
-      <div className={styles.cardIcon} style={{ color: feature.color }}>
-        <Ic size={16} weight="regular" />
-      </div>
-      <div className={styles.cardTitle}>{feature.label}</div>
-      <div className={styles.cardDesc}>{feature.desc}</div>
+      <ArrowRight size={14} weight="bold" />
     </button>
-  );
-}
-
-function ScrollRail({ label, items }: { label: string; items: Feature[] }) {
-  const railRef = useRef<HTMLDivElement>(null);
-
-  const scroll = (dir: number) => {
-    railRef.current?.scrollBy({ left: dir * 240, behavior: 'smooth' });
-  };
-
-  return (
-    <div className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <span className={styles.sectionLabel}>{label}</span>
-        <div className={styles.scrollArrows}>
-          <button
-            type="button"
-            className={styles.scrollArrow}
-            onClick={() => scroll(-1)}
-            aria-label="Scroll left"
-          >
-            <CaretLeft size={14} weight="bold" />
-          </button>
-          <button
-            type="button"
-            className={styles.scrollArrow}
-            onClick={() => scroll(1)}
-            aria-label="Scroll right"
-          >
-            <CaretRight size={14} weight="bold" />
-          </button>
-        </div>
-      </div>
-      <div className={styles.rail} ref={railRef}>
-        {items.map((f) => (
-          <RailCard key={f.id} feature={f} />
-        ))}
-      </div>
-    </div>
   );
 }
 
 export default function Homepage() {
+  const setActiveView = useStore((state) => state.setActiveView);
+  const fruits = useStore((state) => state.fruits);
+  const comparisonFruits = useStore((state) => state.comparisonFruits);
+  const planEntries = useStore((state) => state.planEntries);
+  const dietaryPreferences = useStore((state) => state.dietaryPreferences);
+
+  const activePreferenceLabels = DIETARY_OPTIONS.filter(
+    (option) => dietaryPreferences[option.key]
+  ).map((option) => option.label);
+  const availableFoods = fruits.length - countExcluded(fruits, dietaryPreferences);
+
+  let statusCard: StatusCard | null = null;
+
+  if (planEntries.length > 0) {
+    statusCard = {
+      id: 'planner',
+      title: `${planEntries.length} foods are already in your weekly plan`,
+      desc: 'Resume the planner and keep refining servings and coverage.',
+      cta: 'Resume planner',
+      accent: '52 211 153',
+      Icon: Scales,
+    };
+  } else if (comparisonFruits.length > 0) {
+    statusCard = {
+      id: 'comparison',
+      title: `${comparisonFruits.length} foods are queued for comparison`,
+      desc: 'Finish the decision while the current candidates are still selected.',
+      cta: 'Resume comparison',
+      accent: '96 165 250',
+      Icon: GitDiff,
+    };
+  } else if (activePreferenceLabels.length > 0) {
+    statusCard = {
+      id: 'dietary',
+      title: `${formatCount(availableFoods)} foods match your current filters`,
+      desc: `Active filters: ${summarizePreferences(activePreferenceLabels)}.`,
+      cta: 'Review filters',
+      accent: '251 146 60',
+      Icon: SlidersHorizontal,
+    };
+  }
+
+  const StatusIcon = statusCard?.Icon;
+
   return (
-    <div className={styles.wrapper}>
-      <HeroCarousel />
-      <div className={styles.featured}>
-        <FeaturedCard feature={FEATURED[0]} wide />
-        <FeaturedCard feature={FEATURED[1]} />
-        <FeaturedCard feature={FEATURED[2]} />
-      </div>
-      <ScrollRail label="Discover" items={DISCOVER} />
+    <div className={styles.page}>
+      {statusCard && StatusIcon && (
+        <button
+          type="button"
+          className={styles.statusBanner}
+          style={accentStyle(statusCard.accent)}
+          onClick={() => setActiveView(statusCard.id)}
+        >
+          <span className={styles.cardIcon}>
+            <StatusIcon size={16} weight="regular" />
+          </span>
+          <div className={styles.statusContent}>
+            <div className={styles.statusTitle}>{statusCard.title}</div>
+            <div className={styles.statusDesc}>{statusCard.desc}</div>
+          </div>
+          <span className={styles.statusCta}>
+            {statusCard.cta}
+            <ArrowRight size={14} weight="bold" />
+          </span>
+        </button>
+      )}
+
+      <section className={styles.hero}>
+        <h1 className={styles.heroTitle}>Find what to eat next.</h1>
+        <p className={styles.heroCopy}>
+          Identify nutrient gaps, compare real foods, and turn good options into a practical weekly plan.
+        </p>
+        <div className={styles.heroActions}>
+          <button
+            type="button"
+            className={styles.primaryAction}
+            onClick={() => setActiveView('table')}
+          >
+            Explore the database
+            <ArrowRight size={15} weight="bold" />
+          </button>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionEyebrow}>Start here</div>
+        </div>
+        <div className={styles.startGrid}>
+          {START_HERE.map((card) => (
+            <StartHereCard key={card.id} card={card} onOpen={setActiveView} />
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionEyebrow}>Explore more</div>
+        </div>
+        <div className={styles.toolGrid}>
+          {MORE_TOOLS.map((card) => (
+            <ToolCard key={card.id} card={card} onOpen={setActiveView} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
