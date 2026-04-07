@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Trash, Lightning, CircleNotch, Plus } from '@phosphor-icons/react';
+import { Trash, Lightning, CircleNotch, Plus, Copy, Check } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ItemType } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
@@ -62,6 +62,7 @@ export default function MealPlanner() {
   const [isAutoFilling, setIsAutoFilling] = useState(false);
   const [isAddingOne, setIsAddingOne] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [copiedLLM, setCopiedLLM] = useState(false);
   const [shareModal, setShareModal] = useState<{ blob: Blob; url: string; exportText: string } | null>(null);
 
   const fruitMap = useMemo(
@@ -73,6 +74,53 @@ export default function MealPlanner() {
     () => computePlanDailyTotals(planEntries, fruits, dvMap),
     [planEntries, fruits, dvMap]
   );
+
+  const buildPlanText = useCallback(() => {
+    const groups = new Map<string, string[]>();
+    for (const entry of planEntries) {
+      const fruit = fruitMap.get(entry.name);
+      const type = fruit?.type ?? 'other';
+      const label = TYPE_GROUP_LABELS[type as ItemType] ?? type.toUpperCase();
+      if (!groups.has(label)) groups.set(label, []);
+      const serving = fruit?.serving_label ?? '100g';
+      groups.get(label)!.push(`  ${entry.name} - ${servingsLabel(entry.servingsPerWeek)} (${serving})`);
+    }
+    const lines: string[] = ['WEEKLY MEAL PLAN', ''];
+    for (const [label, items] of groups) {
+      lines.push(label);
+      lines.push(...items);
+      lines.push('');
+    }
+    const tracked = nutrientRows.filter((r) => !r.insufficientData);
+    const metCount = tracked.filter((r) => r.dailyValue > 0 && r.total >= r.dailyValue).length;
+    lines.push(`NUTRIENT COVERAGE (${metCount} of ${tracked.length} at or above 100% DV)`);
+    for (const row of tracked) {
+      const pct = row.dailyValue > 0 ? Math.round((row.total / row.dailyValue) * 100) : 0;
+      const total = row.total < 10 ? row.total.toFixed(1) : Math.round(row.total).toLocaleString();
+      lines.push(`  ${row.label.padEnd(16)}${total} ${row.unit.padEnd(10)}${pct}%`);
+    }
+    return lines.join('\n');
+  }, [planEntries, fruitMap, nutrientRows]);
+
+  const handleCopyForLLM = useCallback(() => {
+    if (planEntries.length === 0) return;
+    const text = buildPlanText();
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+    setCopiedLLM(true);
+    setTimeout(() => setCopiedLLM(false), 1500);
+  }, [planEntries, buildPlanText]);
 
   const handleShare = useCallback(async () => {
     if (planEntries.length === 0) return;
@@ -100,35 +148,11 @@ export default function MealPlanner() {
       url.searchParams.delete('food');
       url.searchParams.delete('compare');
 
-      const groups = new Map<string, string[]>();
-      for (const entry of planEntries) {
-        const fruit = fruitMap.get(entry.name);
-        const type = fruit?.type ?? 'other';
-        const label = TYPE_GROUP_LABELS[type as ItemType] ?? type.toUpperCase();
-        if (!groups.has(label)) groups.set(label, []);
-        const serving = fruit?.serving_label ?? '100g';
-        groups.get(label)!.push(`  ${entry.name} — ${servingsLabel(entry.servingsPerWeek)} (${serving})`);
-      }
-      const lines: string[] = ['WEEKLY MEAL PLAN', ''];
-      for (const [label, items] of groups) {
-        lines.push(label);
-        lines.push(...items);
-        lines.push('');
-      }
-      const tracked = nutrientRows.filter((r) => !r.insufficientData);
-      const metCount = tracked.filter((r) => r.dailyValue > 0 && r.total >= r.dailyValue).length;
-      lines.push(`NUTRIENT COVERAGE (${metCount} of ${tracked.length} at or above 100% DV)`);
-      for (const row of tracked) {
-        const pct = row.dailyValue > 0 ? Math.round((row.total / row.dailyValue) * 100) : 0;
-        const total = row.total < 10 ? row.total.toFixed(1) : Math.round(row.total).toLocaleString();
-        lines.push(`  ${row.label.padEnd(16)}${total} ${row.unit.padEnd(10)}${pct}%`);
-      }
-
-      setShareModal({ blob, url: url.toString(), exportText: lines.join('\n') });
+      setShareModal({ blob, url: url.toString(), exportText: buildPlanText() });
     } finally {
       setIsGeneratingImage(false);
     }
-  }, [planEntries, fruitMap, nutrientRows, shareLimit]);
+  }, [planEntries, fruitMap, nutrientRows, shareLimit, buildPlanText]);
 
   const handleAddOne = useCallback(async () => {
     setIsAddingOne(true);
@@ -168,6 +192,14 @@ export default function MealPlanner() {
           {planEntries.length > 0 && (
             <>
               <ShareButton onClick={handleShare} isLoading={isGeneratingImage} />
+              <button
+                type="button"
+                className={`${styles.actionButton} ${copiedLLM ? styles.actionButtonCopied : ''}`}
+                onClick={handleCopyForLLM}
+              >
+                {copiedLLM ? <Check size={14} /> : <Copy size={14} />}
+                <span>{copiedLLM ? 'Copied' : 'Copy for LLM'}</span>
+              </button>
               <button
                 type="button"
                 className={styles.actionButton}
