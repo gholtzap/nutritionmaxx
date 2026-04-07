@@ -1,4 +1,5 @@
-import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo, Article, Hamburger } from '@phosphor-icons/react';
+import { useState } from 'react';
+import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo, Article, Hamburger, DotsThree } from '@phosphor-icons/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
@@ -37,6 +38,11 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   },
 ];
 
+const MOBILE_PRIMARY_IDS: ViewId[] = ['fixdiet', 'table', 'comparison', 'fastfood'];
+const ALL_NAV_ITEMS = NAV_SECTIONS.flatMap(s => s.items);
+const MOBILE_PRIMARY = MOBILE_PRIMARY_IDS.map(id => ALL_NAV_ITEMS.find(item => item.id === id)!);
+const MOBILE_SECONDARY = ALL_NAV_ITEMS.filter(item => !MOBILE_PRIMARY_IDS.includes(item.id));
+
 export default function Sidebar() {
   const activeView = useStore((s) => s.activeView);
   const setActiveView = useStore((s) => s.setActiveView);
@@ -49,8 +55,11 @@ export default function Sidebar() {
   const fruits = useStore((s) => s.fruits);
   const dietaryPreferences = useStore((s) => s.dietaryPreferences);
   const excluded = countExcluded(fruits, dietaryPreferences);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const isSecondaryActive = MOBILE_SECONDARY.some(item => item.id === activeView);
 
   return (
+    <>
     <aside className={`${styles.sidebar} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}>
       <div className={styles.logo}>
         <button
@@ -131,6 +140,45 @@ export default function Sidebar() {
             : `${fruits.length} items / 29 nutrients`}
         </span>
       </div>
+      <div className={styles.mobileNav}>
+        {MOBILE_PRIMARY.map(item => (
+          <button
+            key={item.id}
+            className={`${styles.mobileNavItem} ${activeView === item.id ? styles.mobileNavItemActive : ''}`}
+            onClick={() => { setActiveView(item.id); setMoreOpen(false); }}
+            type="button"
+          >
+            <span className={styles.mobileNavIcon}>{item.icon}</span>
+            <span className={styles.mobileNavLabel}>{item.label}</span>
+          </button>
+        ))}
+        <button
+          className={`${styles.mobileNavItem} ${moreOpen || isSecondaryActive ? styles.mobileNavItemActive : ''}`}
+          onClick={() => setMoreOpen(!moreOpen)}
+          type="button"
+        >
+          <span className={styles.mobileNavIcon}><DotsThree size={18} weight="bold" /></span>
+          <span className={styles.mobileNavLabel}>More</span>
+        </button>
+      </div>
     </aside>
+    {moreOpen && (
+      <div className={styles.moreOverlay} onClick={() => setMoreOpen(false)}>
+        <div className={styles.moreSheet} onClick={e => e.stopPropagation()}>
+          {MOBILE_SECONDARY.map(item => (
+            <button
+              key={item.id}
+              className={`${styles.moreSheetItem} ${activeView === item.id ? styles.moreSheetItemActive : ''}`}
+              onClick={() => { setActiveView(item.id); setMoreOpen(false); }}
+              type="button"
+            >
+              <span className={styles.moreSheetIcon}>{item.icon}</span>
+              <span className={styles.moreSheetLabel}>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+    </>
   );
 }
