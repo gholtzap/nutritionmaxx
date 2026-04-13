@@ -3,6 +3,7 @@ import { X, ShareNetwork, Check } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import { useScoreFunction } from '../../utils/use-nutrient-density-score';
 import { usePersonalizedScoreFunction } from '../../utils/use-personalized-score';
+import { getHistamineWarning } from '../../utils/dietary';
 import Badge from '../shared/Badge';
 import MacroChart from './MacroChart';
 import NutrientList from './NutrientList';
@@ -14,6 +15,7 @@ export default function FruitDetail() {
   const selectedFruit = useStore((s) => s.selectedFruit);
   const setSelectedFruit = useStore((s) => s.setSelectedFruit);
   const showPerServing = useStore((s) => s.showPerServing);
+  const histamineSensitivity = useStore((s) => s.histamineSensitivity);
   const getScore = useScoreFunction();
   const getPersonalizedScore = usePersonalizedScoreFunction();
   const [copied, setCopied] = useState(false);
@@ -55,6 +57,7 @@ export default function FruitDetail() {
 
   const score = selectedFruit ? getScore(selectedFruit) : null;
   const personalizedScore = selectedFruit && getPersonalizedScore ? getPersonalizedScore(selectedFruit) : null;
+  const histamineWarning = selectedFruit ? getHistamineWarning(selectedFruit, histamineSensitivity) : null;
 
   return (
     <div className={`${styles.panel} ${selectedFruit ? styles.panelOpen : ''}`}>
@@ -71,6 +74,15 @@ export default function FruitDetail() {
                 )}
                 {personalizedScore !== null && (
                   <span className={styles.personalizedScoreLabel}>My Score {personalizedScore.toFixed(1)}</span>
+                )}
+                {histamineWarning && (
+                  <span className={`${styles.histamineBadge} ${histamineWarning.severity === 'high' ? styles.histamineHigh : styles.histamineModerate}`}>
+                    {histamineWarning.type === 'liberator'
+                      ? 'Histamine Liberator'
+                      : histamineWarning.type === 'dao_inhibitor'
+                        ? 'DAO Inhibitor'
+                        : 'High Histamine'}
+                  </span>
                 )}
               </div>
             </div>

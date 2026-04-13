@@ -3,6 +3,7 @@ import { useStore } from '../../store';
 import { NUTRIENT_META, NUTRIENT_MAP, hasDailyValue } from '../../utils/nutrition-meta';
 import { formatNutrientDisplay, toDailyValuePercent, getItemDisplayValue } from '../../utils/format';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
+import { getHistamineWarning } from '../../utils/dietary';
 import type { EffectiveDailyValues } from '../../utils/daily-values';
 import styles from './Comparison.module.css';
 
@@ -48,7 +49,9 @@ interface ComparisonGridProps {
 export default function ComparisonGrid({ fruits }: ComparisonGridProps) {
   const showDV = useStore((s) => s.showDailyValue);
   const showPerServing = useStore((s) => s.showPerServing);
+  const histamineSensitivity = useStore((s) => s.histamineSensitivity);
   const dvMap = useEffectiveDailyValues();
+  const showHistamine = histamineSensitivity !== 'off';
 
   const grouped = GROUP_ORDER.map((group) => ({
     group,
@@ -86,6 +89,54 @@ export default function ComparisonGrid({ fruits }: ComparisonGridProps) {
               dvMap={dvMap}
             />
           ))}
+          {showHistamine && (
+            <>
+              <tr>
+                <td className={styles.groupRow} colSpan={fruits.length + 1}>
+                  Histamine
+                </td>
+              </tr>
+              <tr>
+                <td className={styles.nutrientCell}>
+                  <span className={styles.nutrientName}>Level</span>
+                </td>
+                {fruits.map((f) => {
+                  const warning = getHistamineWarning(f, histamineSensitivity);
+                  return (
+                    <td key={f.name} className={styles.valueCell}>
+                      <span className={styles.valueText}>
+                        {warning
+                          ? warning.severity === 'high'
+                            ? 'High'
+                            : 'Moderate'
+                          : 'Low'}
+                      </span>
+                    </td>
+                  );
+                })}
+              </tr>
+              <tr>
+                <td className={styles.nutrientCell}>
+                  <span className={styles.nutrientName}>Type</span>
+                </td>
+                {fruits.map((f) => {
+                  const warning = getHistamineWarning(f, histamineSensitivity);
+                  const typeLabel = warning
+                    ? warning.type === 'liberator'
+                      ? 'Liberator'
+                      : warning.type === 'dao_inhibitor'
+                        ? 'DAO Inhibitor'
+                        : 'Contains'
+                    : '--';
+                  return (
+                    <td key={f.name} className={`${styles.valueCell} ${!warning ? styles.valueNull : ''}`}>
+                      <span className={styles.valueText}>{typeLabel}</span>
+                    </td>
+                  );
+                })}
+              </tr>
+            </>
+          )}
         </tbody>
       </table>
     </div>

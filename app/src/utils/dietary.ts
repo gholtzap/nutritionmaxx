@@ -1,4 +1,4 @@
-import type { NutrientFruit } from '../types';
+import type { NutrientFruit, HistamineSensitivity, HistamineLevel, HistamineType } from '../types';
 
 export type DietaryPreference =
   | 'vegetarian'
@@ -109,3 +109,31 @@ export const DIETARY_OPTIONS: DietaryOption[] = [
   { key: 'dairy_free', label: 'Dairy Free', group: 'allergy', description: 'Excludes milk, cheese, yogurt, butter' },
   { key: 'egg_free', label: 'Egg Free', group: 'allergy', description: 'Excludes all egg products' },
 ];
+
+export interface HistamineWarning {
+  level: HistamineLevel;
+  type: HistamineType;
+  severity: 'moderate' | 'high';
+}
+
+const SENSITIVITY_THRESHOLD: Record<Exclude<HistamineSensitivity, 'off'>, number> = {
+  mild: 2,
+  moderate: 1,
+  strict: 1,
+};
+
+export function getHistamineWarning(
+  item: NutrientFruit,
+  sensitivity: HistamineSensitivity
+): HistamineWarning | null {
+  if (sensitivity === 'off') return null;
+  const level = item.histamine_level;
+  if (level === null || level === 0) return null;
+  const threshold = SENSITIVITY_THRESHOLD[sensitivity];
+  if (level < threshold) return null;
+  return {
+    level,
+    type: item.histamine_type || '',
+    severity: level >= 2 ? 'high' : 'moderate',
+  };
+}

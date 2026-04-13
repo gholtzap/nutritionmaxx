@@ -1,5 +1,5 @@
 import Papa from 'papaparse';
-import type { NutrientFruit, ItemCategory, ItemType } from '../types';
+import type { NutrientFruit, ItemCategory, ItemType, HistamineLevel, HistamineType } from '../types';
 
 const VALID_CATEGORIES = new Set([
   'Pome', 'Citrus', 'Berry', 'Stone', 'Tropical', 'Melon', 'Grape',
@@ -73,6 +73,11 @@ export async function loadFruits(): Promise<NutrientFruit[]> {
           if (!VALID_CATEGORIES.has(category)) continue;
           if (type && !VALID_TYPES.has(type)) continue;
 
+          const rawLevel = parseNumeric(row.histamine_level);
+          const histamineLevel: HistamineLevel = (rawLevel === 0 || rawLevel === 1 || rawLevel === 2) ? rawLevel : null;
+          const rawType = row.histamine_type?.trim() || '';
+          const histamineType: HistamineType = (rawType === 'high' || rawType === 'liberator' || rawType === 'dao_inhibitor') ? rawType : '';
+
           const fruit: Record<string, unknown> = {
             name,
             type: (type || 'fruit') as ItemType,
@@ -81,6 +86,8 @@ export async function loadFruits(): Promise<NutrientFruit[]> {
             serving_size_g: parseNumeric(row.serving_size_g),
             serving_label: row.serving_label?.trim() || null,
             cost_index: parseNumeric(row.cost_index),
+            histamine_level: histamineLevel,
+            histamine_type: histamineType,
           };
 
           for (const field of NUMERIC_FIELDS) {

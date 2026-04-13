@@ -3,6 +3,7 @@ import { MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import { DIETARY_OPTIONS, countExcluded, countExcludedByRule } from '../../utils/dietary';
 import type { DietaryPreference } from '../../utils/dietary';
+import type { HistamineSensitivity } from '../../types';
 import styles from './DietaryPreferences.module.css';
 
 export default function DietaryPreferences() {
@@ -14,6 +15,8 @@ export default function DietaryPreferences() {
   const blockFood = useStore((s) => s.blockFood);
   const unblockFood = useStore((s) => s.unblockFood);
   const clearBlockedFoods = useStore((s) => s.clearBlockedFoods);
+  const histamineSensitivity = useStore((s) => s.histamineSensitivity);
+  const setHistamineSensitivity = useStore((s) => s.setHistamineSensitivity);
 
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -33,7 +36,7 @@ export default function DietaryPreferences() {
   }, [fruits]);
 
   const hasAnyPreference = Object.values(preferences).some(Boolean);
-  const hasAny = hasAnyPreference || blockedFoods.size > 0;
+  const hasAny = hasAnyPreference || blockedFoods.size > 0 || histamineSensitivity !== 'off';
   const totalHidden = totalExcluded + blockedFoods.size;
 
   const diets = DIETARY_OPTIONS.filter((o) => o.group === 'diet');
@@ -66,6 +69,7 @@ export default function DietaryPreferences() {
   function handleClearAll() {
     clear();
     clearBlockedFoods();
+    setHistamineSensitivity('off');
   }
 
   const sortedBlocked = useMemo(
@@ -126,6 +130,33 @@ export default function DietaryPreferences() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>Intolerances</h3>
+        <div className={styles.row}>
+          <div className={styles.rowInfo}>
+            <div className={styles.rowLabel}>Histamine Sensitivity</div>
+            <div className={styles.rowDescription}>Show warning badges on foods that may trigger histamine intolerance</div>
+          </div>
+          <select
+            className={styles.sensitivitySelect}
+            value={histamineSensitivity}
+            onChange={(e) => setHistamineSensitivity(e.target.value as HistamineSensitivity)}
+          >
+            <option value="off">Off</option>
+            <option value="mild">Mild</option>
+            <option value="moderate">Moderate</option>
+            <option value="strict">Strict</option>
+          </select>
+        </div>
+        {histamineSensitivity !== 'off' && (
+          <div className={styles.sensitivityHint}>
+            {histamineSensitivity === 'mild'
+              ? 'Flagging incompatible foods only (level 2)'
+              : 'Flagging moderate and incompatible foods (level 1+)'}
+          </div>
+        )}
       </div>
 
       <div className={styles.section}>

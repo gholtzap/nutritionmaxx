@@ -130,12 +130,18 @@ export interface Fruit {
   serving_size_g: number | null;
   serving_label: string | null;
   cost_index: number | null;
+  histamine_level: HistamineLevel;
+  histamine_type: HistamineType;
   [key: string]: string | ItemType | ItemCategory | number | null;
 }
 
 export type NutrientFruit = Fruit & {
   [K in NutrientKey]: number | null;
 };
+
+export type HistamineLevel = 0 | 1 | 2 | null;
+export type HistamineType = '' | 'high' | 'liberator' | 'dao_inhibitor';
+export type HistamineSensitivity = 'off' | 'mild' | 'moderate' | 'strict';
 
 export type SortDirection = 'asc' | 'desc';
 

@@ -2,6 +2,7 @@ import type { NutrientFruit, NutrientKey } from '../../types';
 import { useStore } from '../../store';
 import { formatNutrientDisplay, getItemDisplayValue } from '../../utils/format';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
+import type { HistamineWarning } from '../../utils/dietary';
 import Badge from '../shared/Badge';
 import styles from './DataTable.module.css';
 
@@ -11,6 +12,8 @@ interface TableRowProps {
   score: number | null;
   personalizedScore: number | null;
   showPersonalizedScore: boolean;
+  showHistamine: boolean;
+  histamineWarning: HistamineWarning | null;
   isCompared: boolean;
   onSelect: () => void;
   onToggleCompare: () => void;
@@ -23,6 +26,8 @@ export default function TableRow({
   score,
   personalizedScore,
   showPersonalizedScore,
+  showHistamine,
+  histamineWarning,
   isCompared,
   onSelect,
   onToggleCompare,
@@ -58,6 +63,15 @@ export default function TableRow({
       {showPersonalizedScore && (
         <td className={`${styles.td} ${styles.tdNumeric} ${personalizedScore === null ? styles.tdNull : styles.tdPersonalized}`}>
           {personalizedScore !== null ? personalizedScore.toFixed(1) : '--'}
+        </td>
+      )}
+      {showHistamine && (
+        <td className={`${styles.td} ${styles.tdNumeric}`}>
+          {histamineWarning && (
+            <span className={histamineWarning.severity === 'high' ? styles.histamineDotHigh : styles.histamineDotModerate}>
+              {histamineWarning.severity === 'high' ? 'High' : 'Mod'}
+            </span>
+          )}
         </td>
       )}
       {visibleKeys.map((key) => {

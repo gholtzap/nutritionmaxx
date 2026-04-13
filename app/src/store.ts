@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType, PlanEntry, PersonalizationSettings, HealthGoal, ActivityLevel, LifeStage, DietaryPattern } from './types';
+import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType, PlanEntry, PersonalizationSettings, HealthGoal, ActivityLevel, LifeStage, DietaryPattern, HistamineSensitivity } from './types';
 import { DEFAULT_VISIBLE_COLUMNS } from './utils/nutrition-meta';
 import { DEFAULT_SCORE_NUTRIENTS } from './utils/score-defaults';
 import { loadFruits } from './utils/parse-csv';
@@ -42,6 +42,9 @@ interface AppState {
   dietaryPreferences: DietaryPreferences;
   toggleDietaryPreference: (key: DietaryPreference) => void;
   clearDietaryPreferences: () => void;
+
+  histamineSensitivity: HistamineSensitivity;
+  setHistamineSensitivity: (level: HistamineSensitivity) => void;
 
   blockedFoods: Set<string>;
   blockFood: (name: string) => void;
@@ -208,6 +211,19 @@ export const useStore = create<AppState>((set, get) => ({
   clearDietaryPreferences: () => {
     localStorage.removeItem('dietaryPreferences');
     set({ dietaryPreferences: { ...DEFAULT_PREFERENCES } });
+  },
+
+  histamineSensitivity: (() => {
+    try {
+      const stored = localStorage.getItem('histamineSensitivity');
+      if (stored && ['off', 'mild', 'moderate', 'strict'].includes(stored)) return stored as HistamineSensitivity;
+    } catch {}
+    return 'off' as HistamineSensitivity;
+  })(),
+
+  setHistamineSensitivity: (level) => {
+    localStorage.setItem('histamineSensitivity', level);
+    set({ histamineSensitivity: level });
   },
 
   blockedFoods: (() => {

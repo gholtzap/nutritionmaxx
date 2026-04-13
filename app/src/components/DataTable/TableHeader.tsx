@@ -8,9 +8,10 @@ interface TableHeaderProps {
   visibleKeys: NutrientKey[];
   showCheckbox: boolean;
   showPersonalizedScore: boolean;
+  showHistamine: boolean;
 }
 
-export default function TableHeader({ visibleKeys, showCheckbox, showPersonalizedScore }: TableHeaderProps) {
+export default function TableHeader({ visibleKeys, showCheckbox, showPersonalizedScore, showHistamine }: TableHeaderProps) {
   const sort = useStore((s) => s.sort);
   const setSort = useStore((s) => s.setSort);
   const showDV = useStore((s) => s.showDailyValue);
@@ -69,6 +70,17 @@ export default function TableHeader({ visibleKeys, showCheckbox, showPersonalize
             <span className={styles.thContent}>
               My Score
               {renderSortIcon('personalizedScore')}
+            </span>
+          </th>
+        )}
+        {showHistamine && (
+          <th
+            className={`${styles.th} ${styles.thNumeric}`}
+            onClick={() => handleSort('histamine_level')}
+          >
+            <span className={styles.thContent}>
+              Histamine
+              {renderSortIcon('histamine_level')}
             </span>
           </th>
         )}

@@ -440,6 +440,26 @@
   text-decoration-color: var(--accent);
 }
 
+.histamineDotHigh {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.histamineDotModerate {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+}
+
 .empty {
   display: flex;
   align-items: center;

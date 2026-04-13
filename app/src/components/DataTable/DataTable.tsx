@@ -7,6 +7,7 @@ import { NUTRIENT_META } from '../../utils/nutrition-meta';
 import { getItemDisplayValue } from '../../utils/format';
 import { useScoreFunction } from '../../utils/use-nutrient-density-score';
 import { usePersonalizedScoreFunction } from '../../utils/use-personalized-score';
+import { getHistamineWarning } from '../../utils/dietary';
 import SearchBar from './SearchBar';
 import TypeFilter from './TypeFilter';
 import CategoryFilter from './CategoryFilter';
@@ -29,9 +30,11 @@ export default function DataTable() {
   const toggleComparisonFruit = useStore((s) => s.toggleComparisonFruit);
   const showPerServing = useStore((s) => s.showPerServing);
 
+  const histamineSensitivity = useStore((s) => s.histamineSensitivity);
   const getScore = useScoreFunction();
   const getPersonalizedScore = usePersonalizedScoreFunction();
   const showPersonalizedScore = getPersonalizedScore !== null;
+  const showHistamine = histamineSensitivity !== 'off';
 
   const visibleKeys = useMemo(
     () =>
@@ -193,7 +196,7 @@ export default function DataTable() {
       </div>
       <div className={styles.tableWrapper}>
         <table className={styles.table}>
-          <TableHeader visibleKeys={visibleKeys} showCheckbox={true} showPersonalizedScore={showPersonalizedScore} />
+          <TableHeader visibleKeys={visibleKeys} showCheckbox={true} showPersonalizedScore={showPersonalizedScore} showHistamine={showHistamine} />
           <tbody>
             {sorted.map((fruit) => (
               <TableRow
@@ -203,6 +206,8 @@ export default function DataTable() {
                 score={scoreMap.get(fruit.name) ?? null}
                 personalizedScore={personalizedScoreMap.get(fruit.name) ?? null}
                 showPersonalizedScore={showPersonalizedScore}
+                showHistamine={showHistamine}
+                histamineWarning={showHistamine ? getHistamineWarning(fruit, histamineSensitivity) : null}
                 isCompared={comparisonNames.has(fruit.name)}
                 onSelect={() => setSelectedFruit(fruit)}
                 onToggleCompare={() => toggleComparisonFruit(fruit)}

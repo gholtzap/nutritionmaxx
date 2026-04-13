@@ -232,6 +232,30 @@
   background: var(--bg-elevated);
 }
 
+.sensitivitySelect {
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.sensitivitySelect:hover {
+  border-color: var(--border-accent);
+}
+
+.sensitivityHint {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  padding: 4px 12px;
+  margin-top: -4px;
+}
+
 .clearButton {
   display: inline-flex;
   align-items: center;
