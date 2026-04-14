@@ -564,6 +564,98 @@
   line-height: 1.5;
 }
 
+.histamineHigh {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.histamineModerate {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+}
+
+.histamineSummary {
+  border-top: 1px solid var(--border-primary);
+  padding: 16px 0;
+  margin-bottom: 0;
+}
+
+.histamineSummaryHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.histamineSummaryTitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.histamineRatingBadge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.histamineRatingLow {
+  color: hsl(142, 60%, 35%);
+  background: hsla(142, 60%, 45%, 0.1);
+}
+
+.histamineRatingModerate {
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+}
+
+.histamineRatingHigh {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.histamineSummaryNote {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.histamineFlaggedList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.histamineFlaggedItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+}
+
+.histamineFlaggedName {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.histamineFlaggedType {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
 
 @media (max-width: 767px) {
   .container {

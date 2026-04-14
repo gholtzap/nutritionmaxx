@@ -2,6 +2,7 @@ import { LockSimple, LockSimpleOpen, Minus, Plus, Prohibit, X } from '@phosphor-
 import { useEffect, useState } from 'react';
 import { useStore } from '../../store';
 import type { NutrientFruit, PlanEntry } from '../../types';
+import { getHistamineWarning } from '../../utils/dietary';
 import Badge from '../shared/Badge';
 import styles from './MealPlanner.module.css';
 
@@ -23,6 +24,8 @@ export default function PlanEntryRow({ entry, fruit, locked }: PlanEntryRowProps
   const removePlanEntry = useStore((s) => s.removePlanEntry);
   const togglePlanEntryLock = useStore((s) => s.togglePlanEntryLock);
   const blockFood = useStore((s) => s.blockFood);
+  const histamineSensitivity = useStore((s) => s.histamineSensitivity);
+  const histamineWarning = fruit ? getHistamineWarning(fruit, histamineSensitivity) : null;
 
   const servingLabel = fruit?.serving_label ?? '100g';
   const [draft, setDraft] = useState(String(entry.servingsPerWeek));
@@ -54,6 +57,11 @@ export default function PlanEntryRow({ entry, fruit, locked }: PlanEntryRowProps
       <div className={styles.entryInfo}>
         <span className={styles.entryName}>{entry.name}</span>
         {fruit && <Badge category={fruit.category} />}
+        {histamineWarning && (
+          <span className={histamineWarning.severity === 'high' ? styles.histamineHigh : styles.histamineModerate}>
+            {histamineWarning.severity === 'high' ? 'High' : 'Mod'}
+          </span>
+        )}
         <span className={styles.entryServing}>{servingLabel}</span>
       </div>
       <div className={styles.entryControls}>

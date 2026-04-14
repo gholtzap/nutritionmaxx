@@ -12,6 +12,7 @@ import ShareModal, { ShareButton } from './ShareModal';
 import PlanFoodSelector from './PlanFoodSelector';
 import PlanEntryRow, { servingsLabel } from './PlanEntryRow';
 import NutrientCoverage from './NutrientCoverage';
+import HistamineSummary from './HistamineSummary';
 import RateLimitNotice from '../shared/RateLimitNotice';
 import styles from './MealPlanner.module.css';
 
@@ -274,6 +275,10 @@ export default function MealPlanner() {
         <div className={styles.empty}>
           Add foods above or use Auto-fill to generate a plan.
         </div>
+      )}
+
+      {planEntries.length > 0 && (
+        <HistamineSummary planEntries={planEntries} fruitMap={fruitMap} />
       )}
 
       {planEntries.length > 0 && (
