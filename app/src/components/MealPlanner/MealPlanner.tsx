@@ -55,6 +55,7 @@ export default function MealPlanner() {
   const budgetTolerance = useStore((s) => s.budgetTolerance);
   const setBudgetTolerance = useStore((s) => s.setBudgetTolerance);
   const lockedNutrients = useStore((s) => s.lockedNutrients);
+  const histamineSensitivity = useStore((s) => s.histamineSensitivity);
   const dvMap = useEffectiveDailyValues();
 
   const autoFillLimit = useRateLimit({ action: 'autofill', windowMs: 60_000, maxRequests: 10 });
@@ -160,12 +161,12 @@ export default function MealPlanner() {
     try {
       const allowed = await autoFillLimit.checkLimit();
       if (!allowed) return;
-      const entry = generateAddOne(fruits, planEntries, dvMap, budgetTolerance, lockedNutrients);
+      const entry = generateAddOne(fruits, planEntries, dvMap, budgetTolerance, lockedNutrients, histamineSensitivity);
       if (entry) setPlanEntries([...planEntries, entry]);
     } finally {
       setIsAddingOne(false);
     }
-  }, [fruits, planEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance, lockedNutrients]);
+  }, [fruits, planEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance, lockedNutrients, histamineSensitivity]);
 
   const handleAutoFill = useCallback(async () => {
     setIsAutoFilling(true);
@@ -173,12 +174,12 @@ export default function MealPlanner() {
       const allowed = await autoFillLimit.checkLimit();
       if (!allowed) return;
       const locked = planEntries.filter((e) => lockedPlanEntries.has(e.name));
-      const plan = generateAutoFillPlan(fruits, locked, 10, dvMap, budgetTolerance, lockedNutrients);
+      const plan = generateAutoFillPlan(fruits, locked, 10, dvMap, budgetTolerance, lockedNutrients, histamineSensitivity);
       setPlanEntries(plan);
     } finally {
       setIsAutoFilling(false);
     }
-  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance, lockedNutrients]);
+  }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance, lockedNutrients, histamineSensitivity]);
 
   return (
     <div className={styles.container}>

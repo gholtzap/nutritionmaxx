@@ -1,7 +1,8 @@
-import type { NutrientFruit, NutrientKey, PlanEntry, ItemType, ItemCategory } from '../types';
+import type { NutrientFruit, NutrientKey, PlanEntry, ItemType, ItemCategory, HistamineSensitivity } from '../types';
 import { NUTRIENT_META } from './nutrition-meta';
 import type { NutrientMeta } from './nutrition-meta';
 import type { EffectiveDailyValues } from './daily-values';
+import { getHistamineWarning } from './dietary';
 
 export interface PlanNutrientRow {
   key: NutrientKey;
@@ -118,12 +119,19 @@ interface ScoredCandidate {
 
 const LOCKED_NUTRIENT_BOOST = 3;
 
+const HISTAMINE_NERF: Record<Exclude<HistamineSensitivity, 'off'>, Record<'high' | 'moderate', number>> = {
+  mild: { high: 0.5, moderate: 1.0 },
+  moderate: { high: 0.25, moderate: 0.5 },
+  strict: { high: 0.1, moderate: 0.25 },
+};
+
 function scoreCandidate(
   fruit: NutrientFruit,
   totals: Map<NutrientKey, number>,
   insufficient: Set<NutrientKey>,
   dvMap?: EffectiveDailyValues,
-  lockedNutrients?: Set<NutrientKey>
+  lockedNutrients?: Set<NutrientKey>,
+  histamineSensitivity: HistamineSensitivity = 'off'
 ): ScoredCandidate | null {
   const servingG = fruit.serving_size_g ?? 100;
   const perNutrientServings: number[] = [];
@@ -179,6 +187,13 @@ function scoreCandidate(
   const nullPenalty =
     sufficientCount > 0 ? 1 - (nullCount / sufficientCount) * 0.5 : 1;
   score *= nullPenalty;
+
+  if (histamineSensitivity !== 'off') {
+    const warning = getHistamineWarning(fruit, histamineSensitivity);
+    if (warning) {
+      score *= HISTAMINE_NERF[histamineSensitivity][warning.severity];
+    }
+  }
 
   if (score <= 0) return null;
 
@@ -429,7 +444,8 @@ export function generateAddOne(
   currentEntries: PlanEntry[],
   dvMap?: EffectiveDailyValues,
   budgetTolerance = 10,
-  lockedNutrients?: Set<NutrientKey>
+  lockedNutrients?: Set<NutrientKey>,
+  histamineSensitivity: HistamineSensitivity = 'off'
 ): PlanEntry | null {
   const pool = fruits.filter(
     (f) => f.type !== 'spice' && (f.cost_index === null || (f.cost_index as number) <= budgetTolerance)
@@ -466,7 +482,7 @@ export function generateAddOne(
   const scored: ScoredCandidate[] = [];
   for (const fruit of pool) {
     if (used.has(fruit.name)) continue;
-    const result = scoreCandidate(fruit, totals, insufficient, dvMap, lockedNutrients);
+    const result = scoreCandidate(fruit, totals, insufficient, dvMap, lockedNutrients, histamineSensitivity);
     if (!result) continue;
     const count = typeCounts.get(fruit.type) ?? 0;
     result.score *= DIVERSITY_DECAY ** count;
@@ -486,7 +502,8 @@ export function generateAutoFillPlan(
   maxEntries = 15,
   dvMap?: EffectiveDailyValues,
   budgetTolerance = 10,
-  lockedNutrients?: Set<NutrientKey>
+  lockedNutrients?: Set<NutrientKey>,
+  histamineSensitivity: HistamineSensitivity = 'off'
 ): PlanEntry[] {
   const pool = fruits.filter(
     (f) => f.type !== 'spice' && (f.cost_index === null || (f.cost_index as number) <= budgetTolerance)
@@ -524,7 +541,7 @@ export function generateAutoFillPlan(
 
     for (const fruit of pool) {
       if (used.has(fruit.name)) continue;
-      const result = scoreCandidate(fruit, totals, insufficient, dvMap, lockedNutrients);
+      const result = scoreCandidate(fruit, totals, insufficient, dvMap, lockedNutrients, histamineSensitivity);
       if (!result) continue;
       const count = typeCounts.get(fruit.type) ?? 0;
       result.score *= DIVERSITY_DECAY ** count;
