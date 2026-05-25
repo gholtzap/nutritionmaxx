@@ -3,14 +3,16 @@ import { Trash, Lightning, CircleNotch, Plus, Copy, Check } from '@phosphor-icon
 import { useStore } from '../../store';
 import type { ItemType } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
-import { computePlanDailyTotals, generateAutoFillPlan, generateAddOne } from '../../utils/plan-calculator';
+import { computePlanDailyTotals, findFoodReplacements, generateAutoFillPlan, generateAddOne } from '../../utils/plan-calculator';
+import type { FoodReplacement } from '../../utils/plan-calculator';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import { useRateLimit } from '../../utils/use-rate-limit.ts';
 import { generateShareImage } from '../../utils/generate-share-image';
 import type { ShareFood } from '../../utils/generate-share-image';
+import { servingsLabel } from '../../utils/servings';
 import ShareModal, { ShareButton } from './ShareModal';
 import PlanFoodSelector from './PlanFoodSelector';
-import PlanEntryRow, { servingsLabel } from './PlanEntryRow';
+import PlanEntryRow from './PlanEntryRow';
 import NutrientCoverage from './NutrientCoverage';
 import HistamineSummary from './HistamineSummary';
 import RateLimitNotice from '../shared/RateLimitNotice';
@@ -52,6 +54,7 @@ export default function MealPlanner() {
   const lockedPlanEntries = useStore((s) => s.lockedPlanEntries);
   const clearPlan = useStore((s) => s.clearPlan);
   const setPlanEntries = useStore((s) => s.setPlanEntries);
+  const togglePlanEntryLock = useStore((s) => s.togglePlanEntryLock);
   const budgetTolerance = useStore((s) => s.budgetTolerance);
   const setBudgetTolerance = useStore((s) => s.setBudgetTolerance);
   const lockedNutrients = useStore((s) => s.lockedNutrients);
@@ -76,6 +79,25 @@ export default function MealPlanner() {
     () => computePlanDailyTotals(planEntries, fruits, dvMap),
     [planEntries, fruits, dvMap]
   );
+
+  const replacementsByFood = useMemo(() => {
+    const map = new Map<string, FoodReplacement[]>();
+    for (const entry of planEntries) {
+      const fruit = fruitMap.get(entry.name);
+      if (!fruit) continue;
+      map.set(
+        entry.name,
+        findFoodReplacements(
+          fruit,
+          fruits,
+          planEntries,
+          budgetTolerance,
+          histamineSensitivity
+        )
+      );
+    }
+    return map;
+  }, [planEntries, fruitMap, fruits, budgetTolerance, histamineSensitivity]);
 
   const buildPlanText = useCallback(() => {
     const groups = new Map<string, string[]>();
@@ -167,6 +189,19 @@ export default function MealPlanner() {
       setIsAddingOne(false);
     }
   }, [fruits, planEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance, lockedNutrients, histamineSensitivity]);
+
+  const handleReplaceEntry = useCallback((fromName: string, toName: string) => {
+    if (fromName === toName) return;
+    setPlanEntries(
+      planEntries.map((entry) =>
+        entry.name === fromName ? { ...entry, name: toName } : entry
+      )
+    );
+    if (lockedPlanEntries.has(fromName)) {
+      togglePlanEntryLock(fromName);
+      togglePlanEntryLock(toName);
+    }
+  }, [planEntries, setPlanEntries, lockedPlanEntries, togglePlanEntryLock]);
 
   const handleAutoFill = useCallback(async () => {
     setIsAutoFilling(true);
@@ -267,6 +302,8 @@ export default function MealPlanner() {
               entry={entry}
               fruit={fruitMap.get(entry.name)}
               locked={lockedPlanEntries.has(entry.name)}
+              replacements={replacementsByFood.get(entry.name) ?? []}
+              onReplace={handleReplaceEntry}
             />
           ))}
         </div>

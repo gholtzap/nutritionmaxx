@@ -4,6 +4,8 @@ For this project stack: TypeScript/Next.js frontend, Python scripts for data pip
 
 You are writing production software for contractors serving large healthcare and government organizations. This software directly impacts real human patients and public safety.
 
+Food replacement suggestions belong inside the planner as inline swaps that preserve similar nutritional value, not as a separate tool.
+
 Prioritize correctness, clarity, and safety over speed or brevity.
 - Avoid assumptions; state them explicitly.
 - Prefer simple, well-tested patterns over clever solutions.

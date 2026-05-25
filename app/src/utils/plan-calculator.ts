@@ -16,6 +16,12 @@ export interface PlanNutrientRow {
   note?: string;
 }
 
+export interface FoodReplacement {
+  food: NutrientFruit;
+  matchPct: number;
+  topNutrients: { key: NutrientKey; label: string }[];
+}
+
 const PLAN_NUTRIENTS: NutrientMeta[] = NUTRIENT_META.filter(
   (m) => m.dailyValue !== null
 );
@@ -373,6 +379,109 @@ function nutrientDensity(fruit: NutrientFruit, key: NutrientKey): number {
   const raw = fruit[key] as number | null;
   if (raw === null || raw <= 0) return 0;
   return raw * ((fruit.serving_size_g ?? 100) / 100);
+}
+
+function nutrientVectorValue(fruit: NutrientFruit, meta: NutrientMeta): number | null {
+  const raw = fruit[meta.key] as number | null;
+  if (raw === null) return null;
+  const servingG = fruit.serving_size_g ?? 100;
+  const value = raw * (servingG / 100);
+  if (meta.dailyValue && meta.dailyValue > 0) return value / meta.dailyValue;
+  return value;
+}
+
+function replacementWeight(key: NutrientKey): number {
+  if (key === 'calories_kcal') return 1.4;
+  if (key === 'protein_g' || key === 'fiber_g') return 1.25;
+  if (key === 'fat_g' || key === 'carbs_g') return 0.85;
+  if (key === 'sugars_g' || key === 'sodium_mg') return 0.7;
+  return 1;
+}
+
+export function findFoodReplacements(
+  target: NutrientFruit,
+  foods: NutrientFruit[],
+  currentEntries: PlanEntry[],
+  budgetTolerance = 10,
+  histamineSensitivity: HistamineSensitivity = 'off',
+  limit = 5
+): FoodReplacement[] {
+  const used = new Set(currentEntries.map((e) => e.name));
+  used.delete(target.name);
+  const targetValues = new Map<NutrientKey, number>();
+
+  for (const meta of PLAN_NUTRIENTS) {
+    const value = nutrientVectorValue(target, meta);
+    if (value !== null) targetValues.set(meta.key, value);
+  }
+
+  const targetSignal = [...targetValues.values()].some((value) => value > 0);
+  if (!targetSignal) return [];
+
+  const candidates: { item: FoodReplacement; score: number }[] = [];
+
+  for (const food of foods) {
+    if (food.name === target.name || used.has(food.name) || food.type === 'spice') continue;
+    if (food.cost_index !== null && (food.cost_index as number) > budgetTolerance) continue;
+
+    let weightedDiff = 0;
+    let totalWeight = 0;
+    let missingWeight = 0;
+    const overlap: { key: NutrientKey; label: string; score: number }[] = [];
+
+    for (const meta of PLAN_NUTRIENTS) {
+      const targetValue = targetValues.get(meta.key);
+      if (targetValue === undefined) continue;
+      const candidateValue = nutrientVectorValue(food, meta);
+      const weight = replacementWeight(meta.key);
+
+      if (candidateValue === null) {
+        missingWeight += weight;
+        totalWeight += weight;
+        continue;
+      }
+
+      const baseline = Math.max(0.015, targetValue, candidateValue);
+      const diff = Math.abs(candidateValue - targetValue) / baseline;
+      weightedDiff += Math.min(diff, 2) * weight;
+      totalWeight += weight;
+
+      if (targetValue > 0.015 && candidateValue > 0.015) {
+        overlap.push({
+          key: meta.key,
+          label: meta.label,
+          score: Math.min(targetValue, candidateValue) * weight,
+        });
+      }
+    }
+
+    if (totalWeight === 0) continue;
+
+    const missingPenalty = missingWeight / totalWeight;
+    let score = Math.max(0, 1 - (weightedDiff / totalWeight) - (missingPenalty * 0.35));
+
+    if (food.type === target.type) score += 0.08;
+    if (food.category === target.category) score += 0.05;
+
+    if (histamineSensitivity !== 'off' && getHistamineWarning(food, histamineSensitivity)) {
+      score *= 0.75;
+    }
+
+    if (score <= 0) continue;
+
+    overlap.sort((a, b) => b.score - a.score);
+    candidates.push({
+      score,
+      item: {
+        food,
+        matchPct: Math.max(1, Math.min(99, Math.round(score * 100))),
+        topNutrients: overlap.slice(0, 3).map(({ key, label }) => ({ key, label })),
+      },
+    });
+  }
+
+  candidates.sort((a, b) => b.score - a.score);
+  return candidates.slice(0, limit).map((candidate) => candidate.item);
 }
 
 function boostLockedNutrients(
