@@ -19,6 +19,8 @@ const SYNCED_KEYS: (keyof StorePreferenceFields)[] = [
   'visibleColumns',
   'showDailyValue',
   'showPerServing',
+  'currentDietAuditEntries',
+  'savedDietAudits',
 ];
 
 function pickPrefs(state: Record<string, unknown>): StorePreferenceFields {

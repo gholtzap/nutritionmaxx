@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo, Article, Hamburger, DotsThree } from '@phosphor-icons/react';
+import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo, Article, Hamburger, DotsThree, ClipboardText } from '@phosphor-icons/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
@@ -14,6 +14,7 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
     label: 'Create',
     items: [
       { id: 'fixdiet', label: 'Fix My Diet', icon: <Heartbeat size={18} weight="regular" /> },
+      { id: 'audit', label: 'Diet Audit', icon: <ClipboardText size={18} weight="regular" /> },
       { id: 'planner', label: 'Planner', icon: <Scales size={18} weight="regular" /> },
     ],
   },
@@ -38,7 +39,7 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   },
 ];
 
-const MOBILE_PRIMARY_IDS: ViewId[] = ['fixdiet', 'table', 'comparison', 'fastfood'];
+const MOBILE_PRIMARY_IDS: ViewId[] = ['fixdiet', 'audit', 'table', 'fastfood'];
 const ALL_NAV_ITEMS = NAV_SECTIONS.flatMap(s => s.items);
 const MOBILE_PRIMARY = MOBILE_PRIMARY_IDS.map(id => ALL_NAV_ITEMS.find(item => item.id === id)!);
 const MOBILE_SECONDARY = ALL_NAV_ITEMS.filter(item => !MOBILE_PRIMARY_IDS.includes(item.id));

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType, PlanEntry, PersonalizationSettings, HealthGoal, ActivityLevel, LifeStage, DietaryPattern, HistamineSensitivity } from './types';
+import type { NutrientFruit, NutrientKey, ItemCategory, SortConfig, ViewId, ItemType, PlanEntry, SavedDietAudit, PersonalizationSettings, HealthGoal, ActivityLevel, LifeStage, DietaryPattern, HistamineSensitivity } from './types';
 import { DEFAULT_VISIBLE_COLUMNS } from './utils/nutrition-meta';
 import { DEFAULT_SCORE_NUTRIENTS } from './utils/score-defaults';
 import { loadFruits } from './utils/parse-csv';
@@ -28,6 +28,8 @@ interface AppState {
 
   planEntries: PlanEntry[];
   lockedPlanEntries: Set<string>;
+  currentDietAuditEntries: PlanEntry[];
+  savedDietAudits: SavedDietAudit[];
   budgetTolerance: number;
   setBudgetTolerance: (value: number) => void;
   lockedNutrients: Set<NutrientKey>;
@@ -89,6 +91,14 @@ interface AppState {
   togglePlanEntryLock: (name: string) => void;
   clearPlan: () => void;
   setPlanEntries: (entries: PlanEntry[]) => void;
+  addDietAuditEntry: (name: string) => void;
+  removeDietAuditEntry: (name: string) => void;
+  setDietAuditEntryServings: (name: string, servingsPerWeek: number) => void;
+  clearDietAuditEntries: () => void;
+  setDietAuditEntries: (entries: PlanEntry[]) => void;
+  saveDietAudit: (audit: Omit<SavedDietAudit, 'id' | 'createdAt'>) => void;
+  deleteSavedDietAudit: (id: string) => void;
+  loadSavedDietAudit: (id: string) => void;
 
   _loadPreferences: (prefs: StorePreferenceFields) => void;
 }
@@ -112,6 +122,24 @@ export const useStore = create<AppState>((set, get) => ({
 
   planEntries: [],
   lockedPlanEntries: new Set(),
+  currentDietAuditEntries: (() => {
+    try {
+      const stored = localStorage.getItem('currentDietAuditEntries');
+      if (stored) return JSON.parse(stored) as PlanEntry[];
+    } catch {
+      return [];
+    }
+    return [];
+  })(),
+  savedDietAudits: (() => {
+    try {
+      const stored = localStorage.getItem('savedDietAudits');
+      if (stored) return JSON.parse(stored) as SavedDietAudit[];
+    } catch {
+      return [];
+    }
+    return [];
+  })(),
 
   budgetTolerance: (() => {
     try {
@@ -477,6 +505,71 @@ export const useStore = create<AppState>((set, get) => ({
 
   setPlanEntries: (entries) => set({ planEntries: entries }),
 
+  addDietAuditEntry: (name) =>
+    set((state) => {
+      if (state.currentDietAuditEntries.some((e) => e.name === name)) return state;
+      const next = [...state.currentDietAuditEntries, { name, servingsPerWeek: 7 }];
+      localStorage.setItem('currentDietAuditEntries', JSON.stringify(next));
+      return { currentDietAuditEntries: next };
+    }),
+
+  removeDietAuditEntry: (name) =>
+    set((state) => {
+      const next = state.currentDietAuditEntries.filter((e) => e.name !== name);
+      localStorage.setItem('currentDietAuditEntries', JSON.stringify(next));
+      return { currentDietAuditEntries: next };
+    }),
+
+  setDietAuditEntryServings: (name, servingsPerWeek) =>
+    set((state) => {
+      const next = state.currentDietAuditEntries.map((e) =>
+        e.name === name ? { ...e, servingsPerWeek } : e
+      );
+      localStorage.setItem('currentDietAuditEntries', JSON.stringify(next));
+      return { currentDietAuditEntries: next };
+    }),
+
+  clearDietAuditEntries: () => {
+    localStorage.removeItem('currentDietAuditEntries');
+    set({ currentDietAuditEntries: [] });
+  },
+
+  setDietAuditEntries: (entries) => {
+    localStorage.setItem('currentDietAuditEntries', JSON.stringify(entries));
+    set({ currentDietAuditEntries: entries });
+  },
+
+  saveDietAudit: (audit) =>
+    set((state) => {
+      const saved: SavedDietAudit = {
+        ...audit,
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        createdAt: new Date().toISOString(),
+      };
+      const next = [saved, ...state.savedDietAudits].slice(0, 12);
+      localStorage.setItem('savedDietAudits', JSON.stringify(next));
+      return { savedDietAudits: next };
+    }),
+
+  deleteSavedDietAudit: (id) =>
+    set((state) => {
+      const next = state.savedDietAudits.filter((audit) => audit.id !== id);
+      localStorage.setItem('savedDietAudits', JSON.stringify(next));
+      return { savedDietAudits: next };
+    }),
+
+  loadSavedDietAudit: (id) =>
+    set((state) => {
+      const audit = state.savedDietAudits.find((item) => item.id === id);
+      if (!audit) return state;
+      localStorage.setItem('currentDietAuditEntries', JSON.stringify(audit.baselineEntries));
+      return {
+        currentDietAuditEntries: audit.baselineEntries,
+        activeView: 'audit',
+        selectedFruit: null,
+      };
+    }),
+
   _loadPreferences: (prefs) => {
     localStorage.setItem('dietaryPreferences', JSON.stringify(prefs.dietaryPreferences));
     localStorage.setItem('blockedFoods', JSON.stringify([...prefs.blockedFoods]));
@@ -490,6 +583,8 @@ export const useStore = create<AppState>((set, get) => ({
     localStorage.setItem('lockedNutrients', JSON.stringify([...prefs.lockedNutrients]));
     localStorage.setItem('scoreNutrients', JSON.stringify([...prefs.scoreNutrients]));
     localStorage.setItem('personalization', JSON.stringify(prefs.personalization));
+    localStorage.setItem('currentDietAuditEntries', JSON.stringify(prefs.currentDietAuditEntries));
+    localStorage.setItem('savedDietAudits', JSON.stringify(prefs.savedDietAudits));
 
     set({
       dietaryPreferences: prefs.dietaryPreferences,
@@ -503,6 +598,8 @@ export const useStore = create<AppState>((set, get) => ({
       showDailyValue: prefs.showDailyValue,
       showPerServing: prefs.showPerServing,
       personalization: prefs.personalization,
+      currentDietAuditEntries: prefs.currentDietAuditEntries,
+      savedDietAudits: prefs.savedDietAudits,
     });
   },
 }));

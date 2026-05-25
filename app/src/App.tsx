@@ -12,6 +12,7 @@ import CategoryOverview from './components/CategoryOverview/CategoryOverview';
 import NutrientGuide from './components/NutrientGuide/NutrientGuide';
 import Absorption from './components/Absorption/Absorption';
 import MealPlanner from './components/MealPlanner/MealPlanner';
+import CurrentDietAudit from './components/CurrentDietAudit/CurrentDietAudit';
 import DietaryPreferences from './components/DietaryPreferences/DietaryPreferences';
 import FixMyDiet from './components/FixMyDiet/FixMyDiet';
 import DailyValueSettings from './components/DailyValueSettings/DailyValueSettings';
@@ -219,6 +220,7 @@ function App() {
             {activeView === 'nutrients' && <NutrientGuide />}
             {activeView === 'absorption' && <Absorption />}
             {activeView === 'planner' && <MealPlanner />}
+            {activeView === 'audit' && <CurrentDietAudit />}
             {activeView === 'dietary' && <DietaryPreferences />}
             {activeView === 'research' && <Research />}
             {activeView === 'fastfood' && <FastFoodMenus />}

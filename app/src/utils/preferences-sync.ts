@@ -1,4 +1,4 @@
-import type { NutrientKey, PersonalizationSettings } from '../types';
+import type { NutrientKey, PersonalizationSettings, PlanEntry, SavedDietAudit } from '../types';
 import type { DietaryPreferences } from './dietary';
 import type { UserProfile } from './daily-values';
 import { DEFAULT_SCORE_NUTRIENTS } from './score-defaults';
@@ -16,6 +16,8 @@ export interface SyncedPreferences {
   showDailyValue: boolean;
   showPerServing: boolean;
   personalization?: PersonalizationSettings;
+  currentDietAuditEntries?: PlanEntry[];
+  savedDietAudits?: SavedDietAudit[];
 }
 
 export interface StorePreferenceFields {
@@ -30,6 +32,8 @@ export interface StorePreferenceFields {
   showDailyValue: boolean;
   showPerServing: boolean;
   personalization: PersonalizationSettings;
+  currentDietAuditEntries: PlanEntry[];
+  savedDietAudits: SavedDietAudit[];
 }
 
 export function serializePreferences(state: StorePreferenceFields): SyncedPreferences {
@@ -45,6 +49,8 @@ export function serializePreferences(state: StorePreferenceFields): SyncedPrefer
     showDailyValue: state.showDailyValue,
     showPerServing: state.showPerServing,
     personalization: state.personalization,
+    currentDietAuditEntries: state.currentDietAuditEntries,
+    savedDietAudits: state.savedDietAudits,
   };
 }
 
@@ -61,6 +67,8 @@ export function deserializePreferences(json: SyncedPreferences): StorePreference
     showDailyValue: json.showDailyValue,
     showPerServing: json.showPerServing,
     personalization: json.personalization ?? { ...DEFAULT_PERSONALIZATION },
+    currentDietAuditEntries: json.currentDietAuditEntries ?? [],
+    savedDietAudits: json.savedDietAudits ?? [],
   };
 }
 

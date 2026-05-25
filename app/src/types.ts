@@ -150,13 +150,23 @@ export interface SortConfig {
   direction: SortDirection;
 }
 
-export type ViewId = 'home' | 'fixdiet' | 'table' | 'comparison' | 'categories' | 'nutrients' | 'absorption' | 'planner' | 'dietary' | 'research' | 'fastfood' | 'settings';
+export type ViewId = 'home' | 'fixdiet' | 'audit' | 'table' | 'comparison' | 'categories' | 'nutrients' | 'absorption' | 'planner' | 'dietary' | 'research' | 'fastfood' | 'settings';
 
 export type NutrientGroup = 'macro' | 'vitamin' | 'mineral';
 
 export interface PlanEntry {
   name: string;
   servingsPerWeek: number;
+}
+
+export interface SavedDietAudit {
+  id: string;
+  name: string;
+  createdAt: string;
+  baselineEntries: PlanEntry[];
+  fixedEntries: PlanEntry[];
+  gapKeys: NutrientKey[];
+  confidence: number;
 }
 
 export type HealthGoal = 'heart' | 'bone' | 'energy' | 'immune' | 'digestive';

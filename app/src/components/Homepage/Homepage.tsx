@@ -4,6 +4,7 @@ import {
   ArrowsClockwise,
   Article,
   ArrowRight,
+  ClipboardText,
   GitDiff,
   Hamburger,
   Heartbeat,
@@ -47,6 +48,15 @@ const START_HERE: StartCard[] = [
     accent: '248 113 113',
     Icon: Heartbeat,
     featured: true,
+  },
+  {
+    id: 'audit',
+    label: 'Audit current diet',
+    eyebrow: 'Behavior-based',
+    desc: 'Enter a normal week of eating to find nutrient gaps, excesses, missing data, and practical fixes.',
+    cta: 'Start audit',
+    accent: '251 191 36',
+    Icon: ClipboardText,
   },
   {
     id: 'comparison',
