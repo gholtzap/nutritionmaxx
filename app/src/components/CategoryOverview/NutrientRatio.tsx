@@ -32,6 +32,30 @@ interface NutrientRatioProps {
 
 const DEFAULT_NUMERATOR: NutrientKey = 'protein_g';
 const DEFAULT_DENOMINATOR: NutrientKey = 'calories_kcal';
+const DEFAULT_GROUPING = 'items';
+const GROUPING_OPTIONS = [
+  { label: 'Foods', value: 'items' },
+  { label: 'Categories', value: 'categories' },
+  { label: 'Types', value: 'types' },
+] as const;
+const TYPE_LABELS: Record<ItemType, string> = {
+  fruit: 'Fruits',
+  vegetable: 'Vegetables',
+  spice: 'Spices',
+  nut_seed: 'Nuts & Seeds',
+  legume: 'Legumes',
+  grain: 'Grains',
+  fish_seafood: 'Fish & Seafood',
+  poultry: 'Poultry',
+  beef: 'Beef',
+  pork: 'Pork',
+  fat_oil: 'Fats & Oils',
+  dairy: 'Dairy',
+  egg: 'Eggs',
+  lamb: 'Lamb',
+};
+
+type RatioGrouping = (typeof GROUPING_OPTIONS)[number]['value'];
 
 function isNutrientKey(value: string | null): value is NutrientKey {
   return value !== null && NUTRIENT_MAP.has(value as NutrientKey);
@@ -41,10 +65,15 @@ function isItemType(value: string): value is ItemType {
   return TYPE_OPTIONS.some((option) => option.value === value);
 }
 
+function isRatioGrouping(value: string | null): value is RatioGrouping {
+  return value !== null && GROUPING_OPTIONS.some((option) => option.value === value);
+}
+
 export default function NutrientRatio({ standalone = false }: NutrientRatioProps) {
   const fruits = useDietaryFruits();
   const [numerator, setNumerator] = useState<NutrientKey>(DEFAULT_NUMERATOR);
   const [denominator, setDenominator] = useState<NutrientKey>(DEFAULT_DENOMINATOR);
+  const [grouping, setGrouping] = useState<RatioGrouping>(DEFAULT_GROUPING);
   const [excludedTypes, setExcludedTypes] = useState<Set<ItemType>>(new Set());
   const [excludedCategories, setExcludedCategories] = useState<Set<ItemCategory>>(new Set());
   const urlInitialized = useRef(false);
@@ -56,6 +85,7 @@ export default function NutrientRatio({ standalone = false }: NutrientRatioProps
     const params = new URLSearchParams(window.location.search);
     const numeratorParam = params.get('ratio_num');
     const denominatorParam = params.get('ratio_den');
+    const groupingParam = params.get('ratio_group');
     const excludedTypeParams = (params.get('ratio_types') ?? '')
       .split(',')
       .map((value) => value.trim())
@@ -67,6 +97,7 @@ export default function NutrientRatio({ standalone = false }: NutrientRatioProps
 
     setNumerator(isNutrientKey(numeratorParam) ? numeratorParam : DEFAULT_NUMERATOR);
     setDenominator(isNutrientKey(denominatorParam) ? denominatorParam : DEFAULT_DENOMINATOR);
+    setGrouping(isRatioGrouping(groupingParam) ? groupingParam : DEFAULT_GROUPING);
     setExcludedTypes(new Set(excludedTypeParams));
     setExcludedCategories(new Set(excludedCategoryParams));
     urlInitialized.current = true;
@@ -85,6 +116,11 @@ export default function NutrientRatio({ standalone = false }: NutrientRatioProps
     } else {
       url.searchParams.set('ratio_den', denominator);
     }
+    if (grouping === DEFAULT_GROUPING) {
+      url.searchParams.delete('ratio_group');
+    } else {
+      url.searchParams.set('ratio_group', grouping);
+    }
     if (excludedTypes.size === 0) {
       url.searchParams.delete('ratio_types');
     } else {
@@ -96,7 +132,7 @@ export default function NutrientRatio({ standalone = false }: NutrientRatioProps
       url.searchParams.set('ratio_cats', [...excludedCategories].join(','));
     }
     window.history.replaceState(null, '', url.toString());
-  }, [numerator, denominator, excludedTypes, excludedCategories]);
+  }, [numerator, denominator, grouping, excludedTypes, excludedCategories]);
 
   const typeFiltered = useMemo(
     () => fruits.filter((f) => !excludedTypes.has(f.type)),
@@ -117,14 +153,48 @@ export default function NutrientRatio({ standalone = false }: NutrientRatioProps
   );
 
   const ranked = useMemo(() => {
-    const entries: RatioEntry[] = filteredItems.map((item) => {
-      const numVal = item[numerator] as number | null;
-      const denVal = item[denominator] as number | null;
-      if (numVal === null || denVal === null || denVal === 0) {
-        return { name: item.name, ratio: null };
+    let entries: RatioEntry[] = [];
+
+    if (grouping === 'items') {
+      entries = filteredItems.map((item) => {
+        const numVal = item[numerator] as number | null;
+        const denVal = item[denominator] as number | null;
+        if (numVal === null || denVal === null || denVal === 0) {
+          return { name: item.name, ratio: null };
+        }
+        return { name: item.name, ratio: numVal / denVal };
+      });
+    } else {
+      const grouped = new Map<string, { numeratorValues: number[]; denominatorValues: number[] }>();
+
+      for (const item of filteredItems) {
+        const groupName = grouping === 'categories' ? item.category : TYPE_LABELS[item.type];
+        const group = grouped.get(groupName) ?? { numeratorValues: [], denominatorValues: [] };
+        const numVal = item[numerator] as number | null;
+        const denVal = item[denominator] as number | null;
+        if (numVal !== null) {
+          group.numeratorValues.push(numVal);
+        }
+        if (denVal !== null) {
+          group.denominatorValues.push(denVal);
+        }
+        grouped.set(groupName, group);
       }
-      return { name: item.name, ratio: numVal / denVal };
-    });
+
+      entries = [...grouped.entries()].map(([name, values]) => {
+        if (values.numeratorValues.length === 0 || values.denominatorValues.length === 0) {
+          return { name, ratio: null };
+        }
+        const numeratorAverage =
+          values.numeratorValues.reduce((sum, value) => sum + value, 0) / values.numeratorValues.length;
+        const denominatorAverage =
+          values.denominatorValues.reduce((sum, value) => sum + value, 0) / values.denominatorValues.length;
+        if (denominatorAverage === 0) {
+          return { name, ratio: null };
+        }
+        return { name, ratio: numeratorAverage / denominatorAverage };
+      });
+    }
 
     return entries.sort((a, b) => {
       if (a.ratio === null && b.ratio === null) return 0;
@@ -132,7 +202,7 @@ export default function NutrientRatio({ standalone = false }: NutrientRatioProps
       if (b.ratio === null) return -1;
       return b.ratio - a.ratio;
     });
-  }, [filteredItems, numerator, denominator]);
+  }, [filteredItems, numerator, denominator, grouping]);
 
   const maxRatio = useMemo(() => {
     let max = 0;
@@ -141,6 +211,7 @@ export default function NutrientRatio({ standalone = false }: NutrientRatioProps
     }
     return max;
   }, [ranked]);
+  const countLabel = grouping === 'items' ? 'items' : grouping === 'categories' ? 'categories' : 'types';
 
   const toggleType = (type: ItemType) => {
     setExcludedTypes((prev) => {
@@ -172,6 +243,17 @@ export default function NutrientRatio({ standalone = false }: NutrientRatioProps
       <div className={styles.chartHeader}>
         <h3 className={styles.chartTitle}>Nutrient Ratio</h3>
         <div className={styles.ratioSelects}>
+          <select
+            className={styles.chartSelect}
+            value={grouping}
+            onChange={(e) => setGrouping(e.target.value as RatioGrouping)}
+          >
+            {GROUPING_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
           <select
             className={styles.chartSelect}
             value={numerator}
@@ -229,7 +311,7 @@ export default function NutrientRatio({ standalone = false }: NutrientRatioProps
             ))}
           </div>
         </div>
-        <span className={styles.ratioCount}>{ranked.length} items</span>
+        <span className={styles.ratioCount}>{ranked.length} {countLabel}</span>
       </div>
       <div className={styles.ratioList}>
         {ranked.map((entry, i) => (
