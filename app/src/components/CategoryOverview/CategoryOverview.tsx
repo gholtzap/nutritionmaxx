@@ -7,7 +7,6 @@ import { computeCategoryAverages } from '../../utils/aggregations';
 import TypeFilter from '../DataTable/TypeFilter';
 import CategoryCard from './CategoryCard';
 import CategoryChart from './CategoryChart';
-import NutrientRatio from './NutrientRatio';
 import styles from './CategoryOverview.module.css';
 
 export default function CategoryOverview() {
@@ -88,7 +87,6 @@ export default function CategoryOverview() {
       </div>
       <TypeFilter />
       <CategoryChart data={categoryData} />
-      <NutrientRatio />
       <div className={styles.grid}>
         {categoryData.map((d) => (
           <CategoryCard key={d.category} data={d} />

@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { NutrientKey, ItemType, ItemCategory } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
-import { NUTRIENT_META, NUTRIENT_MAP, CATEGORY_COLORS } from '../../utils/nutrition-meta';
+import { ALL_CATEGORIES, CATEGORY_COLORS, NUTRIENT_MAP, NUTRIENT_META } from '../../utils/nutrition-meta';
 import styles from './CategoryOverview.module.css';
 
 const TYPE_OPTIONS: { label: string; value: ItemType }[] = [
@@ -26,15 +26,77 @@ interface RatioEntry {
   ratio: number | null;
 }
 
-export default function NutrientRatio() {
+interface NutrientRatioProps {
+  standalone?: boolean;
+}
+
+const DEFAULT_NUMERATOR: NutrientKey = 'protein_g';
+const DEFAULT_DENOMINATOR: NutrientKey = 'calories_kcal';
+
+function isNutrientKey(value: string | null): value is NutrientKey {
+  return value !== null && NUTRIENT_MAP.has(value as NutrientKey);
+}
+
+function isItemType(value: string): value is ItemType {
+  return TYPE_OPTIONS.some((option) => option.value === value);
+}
+
+export default function NutrientRatio({ standalone = false }: NutrientRatioProps) {
   const fruits = useDietaryFruits();
-  const [numerator, setNumerator] = useState<NutrientKey>('protein_g');
-  const [denominator, setDenominator] = useState<NutrientKey>('calories_kcal');
+  const [numerator, setNumerator] = useState<NutrientKey>(DEFAULT_NUMERATOR);
+  const [denominator, setDenominator] = useState<NutrientKey>(DEFAULT_DENOMINATOR);
   const [excludedTypes, setExcludedTypes] = useState<Set<ItemType>>(new Set());
   const [excludedCategories, setExcludedCategories] = useState<Set<ItemCategory>>(new Set());
+  const urlInitialized = useRef(false);
 
   const numMeta = NUTRIENT_MAP.get(numerator)!;
   const denMeta = NUTRIENT_MAP.get(denominator)!;
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const numeratorParam = params.get('ratio_num');
+    const denominatorParam = params.get('ratio_den');
+    const excludedTypeParams = (params.get('ratio_types') ?? '')
+      .split(',')
+      .map((value) => value.trim())
+      .filter(isItemType);
+    const excludedCategoryParams = (params.get('ratio_cats') ?? '')
+      .split(',')
+      .map((value) => value.trim())
+      .filter((value): value is ItemCategory => ALL_CATEGORIES.includes(value as ItemCategory));
+
+    setNumerator(isNutrientKey(numeratorParam) ? numeratorParam : DEFAULT_NUMERATOR);
+    setDenominator(isNutrientKey(denominatorParam) ? denominatorParam : DEFAULT_DENOMINATOR);
+    setExcludedTypes(new Set(excludedTypeParams));
+    setExcludedCategories(new Set(excludedCategoryParams));
+    urlInitialized.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!urlInitialized.current) return;
+    const url = new URL(window.location.href);
+    if (numerator === DEFAULT_NUMERATOR) {
+      url.searchParams.delete('ratio_num');
+    } else {
+      url.searchParams.set('ratio_num', numerator);
+    }
+    if (denominator === DEFAULT_DENOMINATOR) {
+      url.searchParams.delete('ratio_den');
+    } else {
+      url.searchParams.set('ratio_den', denominator);
+    }
+    if (excludedTypes.size === 0) {
+      url.searchParams.delete('ratio_types');
+    } else {
+      url.searchParams.set('ratio_types', [...excludedTypes].join(','));
+    }
+    if (excludedCategories.size === 0) {
+      url.searchParams.delete('ratio_cats');
+    } else {
+      url.searchParams.set('ratio_cats', [...excludedCategories].join(','));
+    }
+    window.history.replaceState(null, '', url.toString());
+  }, [numerator, denominator, excludedTypes, excludedCategories]);
 
   const typeFiltered = useMemo(
     () => fruits.filter((f) => !excludedTypes.has(f.type)),
@@ -105,8 +167,7 @@ export default function NutrientRatio() {
   };
 
   const unitLabel = `${numMeta.unit}/${denMeta.unit}`;
-
-  return (
+  const content = (
     <div className={styles.chartSection}>
       <div className={styles.chartHeader}>
         <h3 className={styles.chartTitle}>Nutrient Ratio</h3>
@@ -196,6 +257,20 @@ export default function NutrientRatio() {
           </div>
         ))}
       </div>
+    </div>
+  );
+
+  if (!standalone) {
+    return content;
+  }
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Nutrient Ratio</h2>
+        <p className={styles.subtitle}>Rank foods by any nutrient-per-nutrient ratio and share the exact view</p>
+      </div>
+      {content}
     </div>
   );
 }

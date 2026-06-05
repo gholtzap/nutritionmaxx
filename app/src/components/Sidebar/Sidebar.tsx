@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo, Article, Hamburger, DotsThree, ClipboardText } from '@phosphor-icons/react';
+import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo, Article, Hamburger, DotsThree, ClipboardText, ChartBar } from '@phosphor-icons/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
@@ -24,6 +24,7 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
       { id: 'table', label: 'Explorer', icon: <Table size={18} weight="regular" /> },
       { id: 'comparison', label: 'Compare', icon: <GitDiff size={18} weight="regular" /> },
       { id: 'categories', label: 'Categories', icon: <SquaresFour size={18} weight="regular" /> },
+      { id: 'nutrientratio', label: 'Nutrient Ratio', icon: <ChartBar size={18} weight="regular" /> },
       { id: 'nutrients', label: 'Nutrients', icon: <Pill size={18} weight="regular" /> },
       { id: 'absorption', label: 'Absorption', icon: <ArrowsClockwise size={18} weight="regular" /> },
       { id: 'dietary', label: 'Diet', icon: <SlidersHorizontal size={18} weight="regular" /> },

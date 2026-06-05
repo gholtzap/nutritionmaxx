@@ -72,6 +72,7 @@ interface AppState {
   setActiveView: (view: ViewId) => void;
   setSearchQuery: (query: string) => void;
   setSelectedType: (type: ItemType | null) => void;
+  setSelectedCategories: (categories: ItemCategory[]) => void;
   toggleCategory: (category: ItemCategory) => void;
   setSort: (sort: SortConfig) => void;
   toggleColumn: (key: NutrientKey) => void;
@@ -395,6 +396,8 @@ export const useStore = create<AppState>((set, get) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
 
   setSelectedType: (type) => set({ selectedType: type, selectedCategories: new Set() }),
+
+  setSelectedCategories: (categories) => set({ selectedCategories: new Set(categories) }),
 
   toggleCategory: (category) =>
     set((state) => {
