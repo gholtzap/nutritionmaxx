@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo, Article, Hamburger, DotsThree, ClipboardText, ChartBar } from '@phosphor-icons/react';
+import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo, Article, Hamburger, DotsThree, ClipboardText, ChartBar, GameController } from '@phosphor-icons/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
 import type { ViewId } from '../../types';
@@ -10,6 +10,12 @@ import styles from './Sidebar.module.css';
 type NavItem = { id: ViewId; label: string; icon: React.ReactNode };
 
 const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
+  {
+    label: 'Play',
+    items: [
+      { id: 'higherlower', label: 'Higher or Lower', icon: <GameController size={18} weight="regular" /> },
+    ],
+  },
   {
     label: 'Create',
     items: [
@@ -40,7 +46,7 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   },
 ];
 
-const MOBILE_PRIMARY_IDS: ViewId[] = ['fixdiet', 'audit', 'table', 'fastfood'];
+const MOBILE_PRIMARY_IDS: ViewId[] = ['higherlower', 'fixdiet', 'audit', 'table'];
 const ALL_NAV_ITEMS = NAV_SECTIONS.flatMap(s => s.items);
 const MOBILE_PRIMARY = MOBILE_PRIMARY_IDS.map(id => ALL_NAV_ITEMS.find(item => item.id === id)!);
 const MOBILE_SECONDARY = ALL_NAV_ITEMS.filter(item => !MOBILE_PRIMARY_IDS.includes(item.id));

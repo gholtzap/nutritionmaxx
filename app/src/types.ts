@@ -150,7 +150,7 @@ export interface SortConfig {
   direction: SortDirection;
 }
 
-export type ViewId = 'home' | 'fixdiet' | 'audit' | 'table' | 'comparison' | 'categories' | 'nutrientratio' | 'nutrients' | 'absorption' | 'planner' | 'dietary' | 'research' | 'fastfood' | 'settings';
+export type ViewId = 'home' | 'fixdiet' | 'audit' | 'table' | 'comparison' | 'categories' | 'nutrientratio' | 'nutrients' | 'absorption' | 'planner' | 'dietary' | 'research' | 'fastfood' | 'higherlower' | 'settings';
 
 export type NutrientGroup = 'macro' | 'vitamin' | 'mineral';
 

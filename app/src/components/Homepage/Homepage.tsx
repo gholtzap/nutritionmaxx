@@ -5,6 +5,7 @@ import {
   Article,
   ArrowRight,
   ClipboardText,
+  GameController,
   GitDiff,
   Hamburger,
   Heartbeat,
@@ -66,6 +67,15 @@ const START_HERE: StartCard[] = [
     cta: 'Open comparison',
     accent: '96 165 250',
     Icon: GitDiff,
+  },
+  {
+    id: 'higherlower',
+    label: 'Higher or Lower',
+    eyebrow: 'Play',
+    desc: 'Test your intuition by guessing which food has the higher dashboard nutrition score.',
+    cta: 'Play game',
+    accent: '168 85 247',
+    Icon: GameController,
   },
 ];
 

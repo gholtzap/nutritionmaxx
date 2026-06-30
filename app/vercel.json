@@ -1,4 +1,7 @@
 {
+  "rewrites": [
+    { "source": "/play", "destination": "/" }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",

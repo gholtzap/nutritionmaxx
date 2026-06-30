@@ -20,6 +20,7 @@ import FixMyDiet from './components/FixMyDiet/FixMyDiet';
 import DailyValueSettings from './components/DailyValueSettings/DailyValueSettings';
 import Research from './components/Research/Research';
 import FastFoodMenus from './components/FastFoodMenus/FastFoodMenus';
+import HigherLower from './components/HigherLower/HigherLower';
 import Homepage from './components/Homepage/Homepage';
 import NutrientRatio from './components/CategoryOverview/NutrientRatio';
 import Spinner from './components/shared/Spinner';
@@ -39,6 +40,7 @@ const SHAREABLE_VIEWS: ViewId[] = [
   'dietary',
   'research',
   'fastfood',
+  'higherlower',
   'settings',
 ];
 
@@ -69,6 +71,10 @@ function isItemType(value: string | null): value is ItemType {
 
 function isSortDirection(value: string | null): value is SortDirection {
   return value === 'asc' || value === 'desc';
+}
+
+function getPathView(pathname: string): ViewId | null {
+  return pathname === '/play' ? 'higherlower' : null;
 }
 
 function App() {
@@ -110,7 +116,8 @@ function App() {
     if (fruits.length === 0) return;
     const params = new URLSearchParams(window.location.search);
     const viewParam = params.get('view');
-    const requestedView: ViewId | null = isViewId(viewParam) ? viewParam : null;
+    const pathView = getPathView(window.location.pathname);
+    const requestedView: ViewId | null = pathView ?? (isViewId(viewParam) ? viewParam : null);
 
     if (requestedView === 'table') {
       const typeParam = params.get('type');
@@ -204,7 +211,8 @@ function App() {
   useEffect(() => {
     if (!urlInitialized.current) return;
     const url = new URL(window.location.href);
-    if (activeView === 'home') {
+    url.pathname = activeView === 'higherlower' ? '/play' : '/';
+    if (activeView === 'home' || activeView === 'higherlower') {
       url.searchParams.delete('view');
     } else {
       url.searchParams.set('view', activeView);
@@ -357,6 +365,7 @@ function App() {
             {activeView === 'dietary' && <DietaryPreferences />}
             {activeView === 'research' && <Research />}
             {activeView === 'fastfood' && <FastFoodMenus />}
+            {activeView === 'higherlower' && <HigherLower />}
             {activeView === 'settings' && <DailyValueSettings />}
           </>
         )}
