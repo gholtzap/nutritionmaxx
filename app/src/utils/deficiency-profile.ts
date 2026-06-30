@@ -362,7 +362,8 @@ export function scoreFoodsForDeficiencies(
     for (const food of eligible) {
       if (usedFoods.has(food.name)) continue;
 
-      let { score, nutrients } = scoreFood(food, remainingWeights);
+      const { score: baseScore, nutrients } = scoreFood(food, remainingWeights);
+      let score = baseScore;
 
       if (usedTypes.has(food.type)) {
         score *= 0.6;

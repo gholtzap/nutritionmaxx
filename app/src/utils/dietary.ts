@@ -87,7 +87,7 @@ export function countExcludedByRule(
   return count;
 }
 
-export interface DietaryOption {
+interface DietaryOption {
   key: DietaryPreference;
   label: string;
   group: 'diet' | 'allergy';

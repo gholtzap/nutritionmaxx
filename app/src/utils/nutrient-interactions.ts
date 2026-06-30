@@ -1,13 +1,4 @@
 import type { NutrientKey, NutrientFruit } from '../types';
-import type { PlanNutrientRow } from './plan-calculator';
-
-export interface Insight {
-  id: string;
-  type: 'enhancer' | 'inhibitor' | 'requirement';
-  message: string;
-  nutrients: NutrientKey[];
-  suggestNutrient: NutrientKey | null;
-}
 
 interface Source {
   title: string;
@@ -16,7 +7,7 @@ interface Source {
 
 export interface InteractionRule {
   id: string;
-  type: Insight['type'];
+  type: 'enhancer' | 'inhibitor' | 'requirement';
   message: string;
   description: string;
   mechanism: string;
@@ -132,30 +123,6 @@ export const RULES: InteractionRule[] = [
     check: (pct) => pct('vitamin_d_mcg') >= 25 && pct('magnesium_mg') < 50,
   },
 ];
-
-export function analyzeInteractions(rows: PlanNutrientRow[]): Insight[] {
-  const rowMap = new Map(rows.map((r) => [r.key, r]));
-
-  const pct = (key: NutrientKey): number => {
-    const row = rowMap.get(key);
-    if (!row || row.dailyValue <= 0) return 0;
-    return (row.total / row.dailyValue) * 100;
-  };
-
-  const insights: Insight[] = [];
-  for (const rule of RULES) {
-    if (rule.check(pct)) {
-      insights.push({
-        id: rule.id,
-        type: rule.type,
-        message: rule.message,
-        nutrients: rule.nutrients,
-        suggestNutrient: rule.suggestNutrient,
-      });
-    }
-  }
-  return insights;
-}
 
 export function findSuggestedFoods(
   nutrientKey: NutrientKey,

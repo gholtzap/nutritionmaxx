@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { NutrientKey, ItemType, ItemCategory } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import { ALL_CATEGORIES, CATEGORY_COLORS, NUTRIENT_MAP, NUTRIENT_META } from '../../utils/nutrition-meta';
@@ -69,42 +69,42 @@ function isRatioGrouping(value: string | null): value is RatioGrouping {
   return value !== null && GROUPING_OPTIONS.some((option) => option.value === value);
 }
 
+function getInitialRatioState() {
+  const params = new URLSearchParams(window.location.search);
+  const numeratorParam = params.get('ratio_num');
+  const denominatorParam = params.get('ratio_den');
+  const groupingParam = params.get('ratio_group');
+  const excludedTypes = (params.get('ratio_types') ?? '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(isItemType);
+  const excludedCategories = (params.get('ratio_cats') ?? '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter((value): value is ItemCategory => ALL_CATEGORIES.includes(value as ItemCategory));
+
+  return {
+    numerator: isNutrientKey(numeratorParam) ? numeratorParam : DEFAULT_NUMERATOR,
+    denominator: isNutrientKey(denominatorParam) ? denominatorParam : DEFAULT_DENOMINATOR,
+    grouping: isRatioGrouping(groupingParam) ? groupingParam : DEFAULT_GROUPING,
+    excludedTypes: new Set(excludedTypes),
+    excludedCategories: new Set(excludedCategories),
+  };
+}
+
 export default function NutrientRatio({ standalone = false }: NutrientRatioProps) {
   const fruits = useDietaryFruits();
-  const [numerator, setNumerator] = useState<NutrientKey>(DEFAULT_NUMERATOR);
-  const [denominator, setDenominator] = useState<NutrientKey>(DEFAULT_DENOMINATOR);
-  const [grouping, setGrouping] = useState<RatioGrouping>(DEFAULT_GROUPING);
-  const [excludedTypes, setExcludedTypes] = useState<Set<ItemType>>(new Set());
-  const [excludedCategories, setExcludedCategories] = useState<Set<ItemCategory>>(new Set());
-  const urlInitialized = useRef(false);
+  const [initialRatio] = useState(getInitialRatioState);
+  const [numerator, setNumerator] = useState<NutrientKey>(initialRatio.numerator);
+  const [denominator, setDenominator] = useState<NutrientKey>(initialRatio.denominator);
+  const [grouping, setGrouping] = useState<RatioGrouping>(initialRatio.grouping);
+  const [excludedTypes, setExcludedTypes] = useState<Set<ItemType>>(initialRatio.excludedTypes);
+  const [excludedCategories, setExcludedCategories] = useState<Set<ItemCategory>>(initialRatio.excludedCategories);
 
   const numMeta = NUTRIENT_MAP.get(numerator)!;
   const denMeta = NUTRIENT_MAP.get(denominator)!;
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const numeratorParam = params.get('ratio_num');
-    const denominatorParam = params.get('ratio_den');
-    const groupingParam = params.get('ratio_group');
-    const excludedTypeParams = (params.get('ratio_types') ?? '')
-      .split(',')
-      .map((value) => value.trim())
-      .filter(isItemType);
-    const excludedCategoryParams = (params.get('ratio_cats') ?? '')
-      .split(',')
-      .map((value) => value.trim())
-      .filter((value): value is ItemCategory => ALL_CATEGORIES.includes(value as ItemCategory));
-
-    setNumerator(isNutrientKey(numeratorParam) ? numeratorParam : DEFAULT_NUMERATOR);
-    setDenominator(isNutrientKey(denominatorParam) ? denominatorParam : DEFAULT_DENOMINATOR);
-    setGrouping(isRatioGrouping(groupingParam) ? groupingParam : DEFAULT_GROUPING);
-    setExcludedTypes(new Set(excludedTypeParams));
-    setExcludedCategories(new Set(excludedCategoryParams));
-    urlInitialized.current = true;
-  }, []);
-
-  useEffect(() => {
-    if (!urlInitialized.current) return;
     const url = new URL(window.location.href);
     if (numerator === DEFAULT_NUMERATOR) {
       url.searchParams.delete('ratio_num');

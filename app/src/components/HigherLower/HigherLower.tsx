@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react';
-import { ArrowDown, ArrowRight, ArrowUp, Trophy } from '@phosphor-icons/react';
-import { useStore } from '../../store';
-import type { NutrientFruit } from '../../types';
+import { ArrowRight, Check, Trophy, X } from '@phosphor-icons/react';
+import type { NutrientFruit, NutrientKey } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
+import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import { useScoreFunction } from '../../utils/use-nutrient-density-score';
+import { getItemDisplayValue } from '../../utils/format';
+import { NUTRIENT_META } from '../../utils/nutrition-meta';
 import Badge from '../shared/Badge';
 import styles from './HigherLower.module.css';
 
@@ -17,7 +19,17 @@ type Round = {
   challenger: ScoredFood;
 };
 
-type Guess = 'higher' | 'lower';
+type Highlight = {
+  key: NutrientKey;
+  label: string;
+  percent: number;
+};
+
+const HIGHLIGHT_KEYS = new Set<NutrientKey>(
+  NUTRIENT_META
+    .filter((meta) => !['calories_kcal', 'fat_g', 'carbs_g', 'sugars_g', 'water_g', 'sodium_mg'].includes(meta.key))
+    .map((meta) => meta.key)
+);
 
 function randomIndex(length: number): number {
   return Math.floor(Math.random() * length);
@@ -40,19 +52,59 @@ function isGameCandidate(item: NutrientFruit): boolean {
   return item.cost_index !== null && item.cost_index <= 5;
 }
 
+function getHighlights(
+  item: NutrientFruit,
+  dvMap: Map<NutrientKey, number | null>
+): Highlight[] {
+  return NUTRIENT_META
+    .filter((meta) => HIGHLIGHT_KEYS.has(meta.key))
+    .map((meta) => {
+      const value = getItemDisplayValue(item, meta.key, false);
+      const dv = dvMap.get(meta.key);
+      if (value === null || dv === null || dv === undefined || dv === 0) return null;
+      return {
+        key: meta.key,
+        label: meta.label,
+        percent: (value / dv) * 100,
+      };
+    })
+    .filter((item): item is Highlight => item !== null)
+    .sort((a, b) => b.percent - a.percent)
+    .slice(0, 6);
+}
+
 function FoodCard({
   item,
   score,
   revealed,
-  onSelect,
+  outcome,
+  highlights,
+  disabled,
+  onPick,
 }: {
   item: NutrientFruit;
   score: number;
   revealed: boolean;
-  onSelect: () => void;
+  outcome: 'correct' | 'wrong' | null;
+  highlights?: Highlight[];
+  disabled: boolean;
+  onPick: () => void;
 }) {
+  const className = [
+    styles.card,
+    outcome === 'correct' ? styles.cardCorrect : '',
+    outcome === 'wrong' ? styles.cardWrong : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <button type="button" className={styles.card} onClick={onSelect}>
+    <button type="button" className={className} onClick={onPick} disabled={disabled}>
+      {outcome && (
+        <span className={styles.feedbackMark} aria-hidden="true">
+          {outcome === 'correct' ? <Check size={30} weight="bold" /> : <X size={30} weight="bold" />}
+        </span>
+      )}
       <span className={styles.cardType}>{item.type.replace('_', ' ')}</span>
       <span className={styles.cardName}>{item.name}</span>
       <span className={styles.cardCategory}>
@@ -62,6 +114,19 @@ function FoodCard({
       <span className={revealed ? styles.scoreValue : styles.scoreHidden}>
         {revealed ? score.toFixed(1) : '?'}
       </span>
+      {revealed && highlights && highlights.length > 0 && (
+        <div className={styles.highlights}>
+          <span className={styles.highlightsTitle}>High in</span>
+          <div className={styles.highlightList}>
+            {highlights.map((highlight) => (
+              <span key={highlight.key} className={styles.highlightPill}>
+                <span>{highlight.label}</span>
+                <span>{Math.round(highlight.percent)}%</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </button>
   );
 }
@@ -69,9 +134,9 @@ function FoodCard({
 export default function HigherLower() {
   const foods = useDietaryFruits();
   const scoreFood = useScoreFunction();
-  const setSelectedFruit = useStore((s) => s.setSelectedFruit);
+  const dvMap = useEffectiveDailyValues();
   const [savedRound, setSavedRound] = useState<Round | null>(null);
-  const [selectedGuess, setSelectedGuess] = useState<Guess | null>(null);
+  const [selectedFoodName, setSelectedFoodName] = useState<string | null>(null);
   const [streak, setStreak] = useState(0);
   const [best, setBest] = useState(() => {
     const stored = localStorage.getItem('higherLowerBest');
@@ -101,22 +166,29 @@ export default function HigherLower() {
     return { anchor, challenger };
   }, [scoredFoods, savedRound]);
 
-  const answered = selectedGuess !== null;
-  const isCorrect = round && selectedGuess
-    ? selectedGuess === 'higher'
-      ? round.challenger.score > round.anchor.score
-      : round.challenger.score < round.anchor.score
+  const answered = selectedFoodName !== null;
+  const selectedFood = round && selectedFoodName
+    ? [round.anchor, round.challenger].find((item) => item.food.name === selectedFoodName) ?? null
     : null;
+  const correctFood = round
+    ? round.anchor.score > round.challenger.score
+      ? round.anchor
+      : round.challenger
+    : null;
+  const isCorrect = selectedFood && correctFood
+    ? selectedFood.food.name === correctFood.food.name
+    : null;
+  const challengerHighlights = useMemo(
+    () => (round ? getHighlights(round.challenger.food, dvMap) : []),
+    [round, dvMap]
+  );
 
-  function answer(guess: Guess) {
-    if (!round || answered) return;
-
-    const correct = guess === 'higher'
-      ? round.challenger.score > round.anchor.score
-      : round.challenger.score < round.anchor.score;
+  function pickHigherFood(picked: ScoredFood) {
+    if (!correctFood || answered) return;
+    const correct = picked.food.name === correctFood.food.name;
     const nextStreak = correct ? streak + 1 : 0;
 
-    setSelectedGuess(guess);
+    setSelectedFoodName(picked.food.name);
     setStreak(nextStreak);
 
     if (nextStreak > best) {
@@ -128,13 +200,13 @@ export default function HigherLower() {
   function nextRound() {
     if (!round) {
       setSavedRound(pickRound(scoredFoods));
-      setSelectedGuess(null);
+      setSelectedFoodName(null);
       return;
     }
 
     const updatedAnchor = scoredFoods.find((item) => item.food.name === round.challenger.food.name);
     setSavedRound(pickRound(scoredFoods, updatedAnchor));
-    setSelectedGuess(null);
+    setSelectedFoodName(null);
   }
 
   if (scoredFoods.length < 2 || !round) {
@@ -172,7 +244,15 @@ export default function HigherLower() {
           item={round.anchor.food}
           score={round.anchor.score}
           revealed
-          onSelect={() => setSelectedFruit(round.anchor.food)}
+          outcome={
+            !answered
+              ? null
+              : selectedFoodName === round.anchor.food.name
+                ? isCorrect ? 'correct' : 'wrong'
+                : isCorrect === false ? 'correct' : null
+          }
+          disabled={answered}
+          onPick={() => pickHigherFood(round.anchor)}
         />
 
         <div className={styles.versus}>
@@ -183,28 +263,26 @@ export default function HigherLower() {
           item={round.challenger.food}
           score={round.challenger.score}
           revealed={answered}
-          onSelect={() => setSelectedFruit(round.challenger.food)}
+          outcome={
+            !answered
+              ? null
+              : selectedFoodName === round.challenger.food.name
+                ? isCorrect ? 'correct' : 'wrong'
+                : isCorrect === false ? 'correct' : null
+          }
+          highlights={challengerHighlights}
+          disabled={answered}
+          onPick={() => pickHigherFood(round.challenger)}
         />
       </div>
 
       <div className={styles.controls}>
-        {!answered ? (
-          <>
-            <button type="button" className={styles.choiceButton} onClick={() => answer('higher')}>
-              <ArrowUp size={16} weight="bold" />
-              Higher
-            </button>
-            <button type="button" className={styles.choiceButton} onClick={() => answer('lower')}>
-              <ArrowDown size={16} weight="bold" />
-              Lower
-            </button>
-          </>
-        ) : (
+        {answered && (
           <>
             <div className={`${styles.result} ${isCorrect ? styles.resultCorrect : styles.resultWrong}`}>
               {isCorrect ? <Trophy size={16} weight="bold" /> : null}
               <span>
-                {isCorrect ? 'Correct' : 'Missed'}: {round.challenger.food.name} scores {round.challenger.score.toFixed(1)}.
+                {isCorrect ? 'Correct' : 'Missed'}: {correctFood?.food.name} scores {correctFood?.score.toFixed(1)}.
               </span>
             </div>
             <button type="button" className={styles.nextButton} onClick={nextRound}>

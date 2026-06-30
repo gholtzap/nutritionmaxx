@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useStore } from '../../store';
 import type { ItemCategory } from '../../types';
 import { FRUIT_CATEGORIES, VEGETABLE_CATEGORIES, SPICE_CATEGORIES, NUT_SEED_CATEGORIES, LEGUME_CATEGORIES, GRAIN_CATEGORIES, FISH_SEAFOOD_CATEGORIES, POULTRY_CATEGORIES, BEEF_CATEGORIES, PORK_CATEGORIES, FAT_OIL_CATEGORIES, DAIRY_CATEGORIES, EGG_CATEGORIES, LAMB_CATEGORIES, ALL_CATEGORIES, CATEGORY_COLORS } from '../../utils/nutrition-meta';
@@ -10,11 +10,7 @@ export default function CategoryFilter() {
   const selectedType = useStore((s) => s.selectedType);
   const selectedCategories = useStore((s) => s.selectedCategories);
   const toggleCategory = useStore((s) => s.toggleCategory);
-  const [expanded, setExpanded] = useState(false);
-
-  useEffect(() => {
-    setExpanded(false);
-  }, [selectedType]);
+  const [expandedType, setExpandedType] = useState<string | null>(null);
 
   const categories = useMemo(() => {
     if (selectedType === 'fruit') return FRUIT_CATEGORIES as readonly ItemCategory[];
@@ -34,6 +30,7 @@ export default function CategoryFilter() {
     return ALL_CATEGORIES;
   }, [selectedType]);
 
+  const expanded = expandedType === selectedType;
   const canCollapse = categories.length > COLLAPSED_LIMIT;
   const visible = canCollapse && !expanded
     ? categories.slice(0, COLLAPSED_LIMIT)
@@ -65,7 +62,7 @@ export default function CategoryFilter() {
         <button
           type="button"
           className={styles.categoryExpandToggle}
-          onClick={() => setExpanded((v) => !v)}
+          onClick={() => setExpandedType(expanded ? null : selectedType)}
         >
           {expanded ? 'Show less' : `+${hiddenCount} more`}
         </button>

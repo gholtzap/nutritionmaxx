@@ -4,7 +4,7 @@ import type { PlanNutrientRow } from './plan-calculator';
 import type { EffectiveDailyValues } from './daily-values';
 import { getHistamineWarning } from './dietary';
 
-export interface AuditNutrientFinding {
+interface AuditNutrientFinding {
   key: NutrientKey;
   label: string;
   unit: string;
@@ -15,7 +15,7 @@ export interface AuditNutrientFinding {
   note?: string;
 }
 
-export interface AuditMissingData {
+interface AuditMissingData {
   key: NutrientKey;
   label: string;
   nullCount: number;
@@ -24,7 +24,7 @@ export interface AuditMissingData {
   note?: string;
 }
 
-export interface AuditFix {
+interface AuditFix {
   id: string;
   type: 'add' | 'swap';
   title: string;
@@ -34,7 +34,7 @@ export interface AuditFix {
   score: number;
 }
 
-export interface DietAuditAnalysis {
+interface DietAuditAnalysis {
   rows: PlanNutrientRow[];
   gaps: AuditNutrientFinding[];
   excesses: AuditNutrientFinding[];

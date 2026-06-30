@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { ArrowCounterClockwise } from '@phosphor-icons/react';
 import { useStore } from '../../store';
-import { NUTRIENT_META, MACRO_KEYS, VITAMIN_KEYS, MINERAL_KEYS, NUTRIENT_MAP } from '../../utils/nutrition-meta';
+import { MACRO_KEYS, VITAMIN_KEYS, MINERAL_KEYS, NUTRIENT_MAP } from '../../utils/nutrition-meta';
 import { DEFAULT_DEFICIENCY_WEIGHTS, DEFAULT_SCORE_CONFIG } from '../../utils/score-defaults';
 import type { NutrientKey, HealthGoal, ActivityLevel, LifeStage, DietaryPattern } from '../../types';
 import type { UserProfile } from '../../utils/daily-values';
@@ -9,8 +9,6 @@ import { computeProfileDailyValues } from '../../utils/daily-values';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import { computePersonalizedConfig, hasPersonalization, getTopWeights } from '../../utils/personalized-score';
 import styles from './DailyValueSettings.module.css';
-
-const NUTRIENT_MAP_LOCAL = new Map(NUTRIENT_META.map((m) => [m.key, m]));
 
 interface ProfileFormState {
   sex: 'male' | 'female';
@@ -56,7 +54,7 @@ function getBaseDV(
 ): number | null {
   const profileVal = profileValues[key];
   if (profileVal !== undefined) return profileVal;
-  return NUTRIENT_MAP_LOCAL.get(key)?.dailyValue ?? null;
+  return NUTRIENT_MAP.get(key)?.dailyValue ?? null;
 }
 
 function toPercent(absolute: number, base: number): number {
@@ -65,7 +63,7 @@ function toPercent(absolute: number, base: number): number {
 
 function DvGroup({ title, keys, profileValues, overrides, dvMap, onOverride, inputMode }: DvGroupProps) {
   const filtered = keys.filter((k) => {
-    const meta = NUTRIENT_MAP_LOCAL.get(k);
+    const meta = NUTRIENT_MAP.get(k);
     return meta && meta.dailyValue !== null;
   });
 
@@ -77,7 +75,7 @@ function DvGroup({ title, keys, profileValues, overrides, dvMap, onOverride, inp
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>{title}</h3>
       {filtered.map((key) => {
-        const meta = NUTRIENT_MAP_LOCAL.get(key)!;
+        const meta = NUTRIENT_MAP.get(key)!;
         const baseDV = getBaseDV(key, profileValues);
         const effective = dvMap.get(key);
         const hasOverride = overrides[key] !== undefined;

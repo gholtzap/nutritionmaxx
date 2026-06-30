@@ -49,7 +49,7 @@ export function toDailyValuePercent(
   return (value / dv) * 100;
 }
 
-export function formatDailyValue(
+function formatDailyValue(
   value: number | null | undefined,
   key: NutrientKey,
   dvMap?: EffectiveDailyValues
@@ -71,18 +71,7 @@ export function formatNutrientDisplay(
   return formatDailyValue(value, key, dvMap);
 }
 
-export function formatNutrientWithUnitDisplay(
-  value: number | null | undefined,
-  key: NutrientKey,
-  asDailyValue: boolean,
-  dvMap?: EffectiveDailyValues
-): string {
-  const hasDV = dvMap ? dvMap.get(key) !== null : hasDailyValue(key);
-  if (!asDailyValue || !hasDV) return formatNutrientWithUnit(value, key);
-  return formatDailyValue(value, key, dvMap);
-}
-
-export function getDisplayValue(
+function getDisplayValue(
   valuePer100g: number | null | undefined,
   servingSizeG: number | null | undefined,
   perServing: boolean

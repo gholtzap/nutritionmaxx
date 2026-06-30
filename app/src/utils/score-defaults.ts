@@ -16,7 +16,7 @@ const EXCLUDED: Set<NutrientKey> = new Set([
   'sugars_g',
 ]);
 
-export const DEFAULT_PENALTY_NUTRIENTS: Set<NutrientKey> = new Set([
+const DEFAULT_PENALTY_NUTRIENTS: Set<NutrientKey> = new Set([
   'sodium_mg',
 ]);
 
@@ -28,9 +28,9 @@ export const DEFAULT_DEFICIENCY_WEIGHTS: Map<NutrientKey, number> = new Map([
   ['iron_mg', 1.5],
 ]);
 
-export const MIN_NUTRIENT_COUNT = 10;
+const MIN_NUTRIENT_COUNT = 10;
 
-export const PENALTY_SCALE = 200;
+const PENALTY_SCALE = 200;
 
 export const DEFAULT_SCORE_NUTRIENTS: Set<NutrientKey> = new Set(
   NUTRIENT_META

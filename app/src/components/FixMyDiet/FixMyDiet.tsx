@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { ArrowLeft, ArrowRight, Info } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
@@ -79,6 +79,11 @@ function getSteps(sex: BiologicalSex | null, ageRange: AgeRange | null): StepId[
   return steps;
 }
 
+function toggleSelection<T extends string>(items: T[], value: string): T[] {
+  const selected = value as T;
+  return items.includes(selected) ? items.filter((item) => item !== selected) : [...items, selected];
+}
+
 export default function FixMyDiet() {
   const fruits = useDietaryFruits();
   const addPlanEntry = useStore((s) => s.addPlanEntry);
@@ -96,20 +101,10 @@ export default function FixMyDiet() {
   const [showResults, setShowResults] = useState(false);
 
   const steps = useMemo(() => getSteps(sex, ageRange), [sex, ageRange]);
-  const currentStepId = steps[step];
+  const safeStep = Math.min(step, steps.length - 1);
+  const currentStepId = steps[safeStep];
   const totalSteps = steps.length;
-
-  useEffect(() => {
-    if (step >= steps.length) {
-      setStep(steps.length - 1);
-    }
-  }, [steps.length, step]);
-
-  useEffect(() => {
-    if (!steps.includes('pregnancy')) {
-      setPregnancyStatus(null);
-    }
-  }, [steps]);
+  const effectivePregnancyStatus = steps.includes('pregnancy') ? pregnancyStatus : null;
 
   const canAdvance =
     currentStepId === 'sex' ? sex !== null :
@@ -118,38 +113,20 @@ export default function FixMyDiet() {
     true;
 
   const handleNext = useCallback(() => {
-    if (step < totalSteps - 1) {
-      setStep(step + 1);
+    if (safeStep < totalSteps - 1) {
+      setStep(safeStep + 1);
     } else {
       setShowResults(true);
     }
-  }, [step, totalSteps]);
+  }, [safeStep, totalSteps]);
 
   const handleBack = useCallback(() => {
     if (showResults) {
       setShowResults(false);
-    } else if (step > 0) {
-      setStep(step - 1);
+    } else if (safeStep > 0) {
+      setStep(safeStep - 1);
     }
-  }, [step, showResults]);
-
-  const handleMultiSelect = useCallback(
-    <T extends string>(setter: React.Dispatch<React.SetStateAction<T[]>>) =>
-      (value: string) => {
-        setter((prev) => {
-          if (prev.includes(value as T)) {
-            return prev.filter((v) => v !== value);
-          }
-          return [...prev, value as T];
-        });
-      },
-    []
-  );
-
-  const handleHealthFocusSelect = useMemo(() => handleMultiSelect(setHealthFocus), [handleMultiSelect]);
-  const handleLifestyleSelect = useMemo(() => handleMultiSelect(setLifestyleFactors), [handleMultiSelect]);
-  const handleSymptomSelect = useMemo(() => handleMultiSelect(setSymptoms), [handleMultiSelect]);
-  const handleFamilySelect = useMemo(() => handleMultiSelect(setFamilyHistory), [handleMultiSelect]);
+  }, [safeStep, showResults]);
 
   const handleAddToPlan = useCallback((name: string) => {
     addPlanEntry(name);
@@ -175,7 +152,7 @@ export default function FixMyDiet() {
       ageRange,
       dietPattern,
       healthFocus,
-      pregnancyStatus,
+      pregnancyStatus: effectivePregnancyStatus,
       lifestyleFactors,
       symptoms,
       familyHistory,
@@ -200,9 +177,9 @@ export default function FixMyDiet() {
       </div>
 
       <div className={styles.progressBar}>
-        <div className={styles.progressFill} style={{ width: `${((step + 1) / totalSteps) * 100}%` }} />
+        <div className={styles.progressFill} style={{ width: `${((safeStep + 1) / totalSteps) * 100}%` }} />
       </div>
-      <div className={styles.stepIndicator}>Step {step + 1} of {totalSteps}</div>
+      <div className={styles.stepIndicator}>Step {safeStep + 1} of {totalSteps}</div>
 
       {currentStepId === 'sex' && (
         <WizardStep
@@ -229,10 +206,10 @@ export default function FixMyDiet() {
           title="Pregnancy / Lactation"
           subtitle="Significantly changes nutrient priorities"
           options={PREGNANCY_OPTIONS}
-          selected={pregnancyStatus ?? ''}
+          selected={effectivePregnancyStatus ?? ''}
           optional
           onSelect={(v) => setPregnancyStatus(
-            pregnancyStatus === (v as PregnancyStatus) ? null : v as PregnancyStatus
+            effectivePregnancyStatus === (v as PregnancyStatus) ? null : v as PregnancyStatus
           )}
         />
       )}
@@ -255,7 +232,7 @@ export default function FixMyDiet() {
           selected={lifestyleFactors}
           multiSelect
           optional
-          onSelect={handleLifestyleSelect}
+          onSelect={(value) => setLifestyleFactors((items) => toggleSelection(items, value))}
         />
       )}
 
@@ -268,7 +245,7 @@ export default function FixMyDiet() {
           multiSelect
           maxSelections={2}
           optional
-          onSelect={handleHealthFocusSelect}
+          onSelect={(value) => setHealthFocus((items) => toggleSelection(items, value))}
         />
       )}
 
@@ -281,7 +258,7 @@ export default function FixMyDiet() {
           multiSelect
           maxSelections={3}
           optional
-          onSelect={handleSymptomSelect}
+          onSelect={(value) => setSymptoms((items) => toggleSelection(items, value))}
         />
       )}
 
@@ -293,7 +270,7 @@ export default function FixMyDiet() {
           selected={familyHistory}
           multiSelect
           optional
-          onSelect={handleFamilySelect}
+          onSelect={(value) => setFamilyHistory((items) => toggleSelection(items, value))}
         />
       )}
 
@@ -302,7 +279,7 @@ export default function FixMyDiet() {
           type="button"
           className={styles.navButton}
           onClick={handleBack}
-          disabled={step === 0}
+          disabled={safeStep === 0}
         >
           <ArrowLeft size={14} weight="bold" />
           <span>Back</span>
@@ -313,7 +290,7 @@ export default function FixMyDiet() {
           onClick={handleNext}
           disabled={!canAdvance}
         >
-          <span>{step === totalSteps - 1 ? 'See Results' : 'Next'}</span>
+          <span>{safeStep === totalSteps - 1 ? 'See Results' : 'Next'}</span>
           <ArrowRight size={14} weight="bold" />
         </button>
       </div>

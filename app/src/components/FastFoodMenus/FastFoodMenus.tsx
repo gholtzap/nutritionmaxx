@@ -406,14 +406,16 @@ export default function FastFoodMenus() {
     const rIdx = restaurants.findIndex((r) => r.name.toLowerCase() === rName.toLowerCase());
     if (rIdx === -1) return;
 
-    setActiveRestaurant(rIdx);
     const r = restaurants[rIdx];
-    if (isBuilder(r)) {
-      setInitialBuilderItems(itemNames);
-    } else if (itemNames.length > 0) {
-      const match = r.items.find((it) => it.name.toLowerCase() === itemNames[0].toLowerCase());
-      if (match) setExpandedItem(`${r.name}:${match.name}`);
-    }
+    queueMicrotask(() => {
+      setActiveRestaurant(rIdx);
+      if (isBuilder(r)) {
+        setInitialBuilderItems(itemNames);
+      } else if (itemNames.length > 0) {
+        const match = r.items.find((it) => it.name.toLowerCase() === itemNames[0].toLowerCase());
+        if (match) setExpandedItem(`${r.name}:${match.name}`);
+      }
+    });
   }, [restaurants]);
 
   const handleShareItem = (rName: string, itemName: string) => {

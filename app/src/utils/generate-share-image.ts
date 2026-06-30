@@ -24,7 +24,7 @@ export interface ShareFood {
   type: ItemType;
 }
 
-export interface ShareImageInput {
+interface ShareImageInput {
   foods: ShareFood[];
   nutrientRows: PlanNutrientRow[];
 }

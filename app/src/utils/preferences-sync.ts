@@ -4,7 +4,7 @@ import type { UserProfile } from './daily-values';
 import { DEFAULT_SCORE_NUTRIENTS } from './score-defaults';
 import { DEFAULT_PERSONALIZATION } from './personalized-score';
 
-export interface SyncedPreferences {
+interface SyncedPreferences {
   dietaryPreferences: DietaryPreferences;
   blockedFoods: string[];
   userProfile: UserProfile | null;
@@ -36,7 +36,7 @@ export interface StorePreferenceFields {
   savedDietAudits: SavedDietAudit[];
 }
 
-export function serializePreferences(state: StorePreferenceFields): SyncedPreferences {
+function serializePreferences(state: StorePreferenceFields): SyncedPreferences {
   return {
     dietaryPreferences: state.dietaryPreferences,
     blockedFoods: [...state.blockedFoods],

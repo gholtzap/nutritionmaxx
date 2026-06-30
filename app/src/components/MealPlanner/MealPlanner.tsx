@@ -1,12 +1,12 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Trash, Lightning, CircleNotch, Plus, Copy, Check } from '@phosphor-icons/react';
+import { Trash, Lightning, Plus, Copy, Check } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ItemType } from '../../types';
 import { useDietaryFruits } from '../../utils/use-dietary-fruits';
 import { computePlanDailyTotals, findFoodReplacements, generateAutoFillPlan, generateAddOne } from '../../utils/plan-calculator';
 import type { FoodReplacement } from '../../utils/plan-calculator';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
-import { useRateLimit } from '../../utils/use-rate-limit.ts';
+import { useRateLimit } from '../../utils/use-rate-limit';
 import { generateShareImage } from '../../utils/generate-share-image';
 import type { ShareFood } from '../../utils/generate-share-image';
 import { servingsLabel } from '../../utils/servings';
@@ -64,8 +64,6 @@ export default function MealPlanner() {
   const autoFillLimit = useRateLimit({ action: 'autofill', windowMs: 60_000, maxRequests: 10 });
   const shareLimit = useRateLimit({ action: 'share', windowMs: 60_000, maxRequests: 20 });
 
-  const [isAutoFilling, setIsAutoFilling] = useState(false);
-  const [isAddingOne, setIsAddingOne] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [copiedLLM, setCopiedLLM] = useState(false);
   const [shareModal, setShareModal] = useState<{ blob: Blob; url: string; exportText: string } | null>(null);
@@ -148,7 +146,7 @@ export default function MealPlanner() {
 
   const handleShare = useCallback(async () => {
     if (planEntries.length === 0) return;
-    const allowed = await shareLimit.checkLimit();
+    const allowed = shareLimit.checkLimit();
     if (!allowed) return;
 
     setIsGeneratingImage(true);
@@ -178,16 +176,11 @@ export default function MealPlanner() {
     }
   }, [planEntries, fruitMap, nutrientRows, shareLimit, buildPlanText]);
 
-  const handleAddOne = useCallback(async () => {
-    setIsAddingOne(true);
-    try {
-      const allowed = await autoFillLimit.checkLimit();
-      if (!allowed) return;
-      const entry = generateAddOne(fruits, planEntries, dvMap, budgetTolerance, lockedNutrients, histamineSensitivity);
-      if (entry) setPlanEntries([...planEntries, entry]);
-    } finally {
-      setIsAddingOne(false);
-    }
+  const handleAddOne = useCallback(() => {
+    const allowed = autoFillLimit.checkLimit();
+    if (!allowed) return;
+    const entry = generateAddOne(fruits, planEntries, dvMap, budgetTolerance, lockedNutrients, histamineSensitivity);
+    if (entry) setPlanEntries([...planEntries, entry]);
   }, [fruits, planEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance, lockedNutrients, histamineSensitivity]);
 
   const handleReplaceEntry = useCallback((fromName: string, toName: string) => {
@@ -203,17 +196,12 @@ export default function MealPlanner() {
     }
   }, [planEntries, setPlanEntries, lockedPlanEntries, togglePlanEntryLock]);
 
-  const handleAutoFill = useCallback(async () => {
-    setIsAutoFilling(true);
-    try {
-      const allowed = await autoFillLimit.checkLimit();
-      if (!allowed) return;
-      const locked = planEntries.filter((e) => lockedPlanEntries.has(e.name));
-      const plan = generateAutoFillPlan(fruits, locked, 10, dvMap, budgetTolerance, lockedNutrients, histamineSensitivity);
-      setPlanEntries(plan);
-    } finally {
-      setIsAutoFilling(false);
-    }
+  const handleAutoFill = useCallback(() => {
+    const allowed = autoFillLimit.checkLimit();
+    if (!allowed) return;
+    const locked = planEntries.filter((e) => lockedPlanEntries.has(e.name));
+    const plan = generateAutoFillPlan(fruits, locked, 10, dvMap, budgetTolerance, lockedNutrients, histamineSensitivity);
+    setPlanEntries(plan);
   }, [fruits, planEntries, lockedPlanEntries, setPlanEntries, dvMap, autoFillLimit, budgetTolerance, lockedNutrients, histamineSensitivity]);
 
   return (
@@ -251,23 +239,19 @@ export default function MealPlanner() {
             type="button"
             className={styles.addOneButton}
             onClick={handleAddOne}
-            disabled={autoFillLimit.isLimited || isAddingOne}
+            disabled={autoFillLimit.isLimited}
           >
-            {isAddingOne
-              ? <CircleNotch size={14} className={styles.spinner} />
-              : <Plus size={14} weight="bold" />}
-            <span>{isAddingOne ? 'Adding...' : 'Add 1'}</span>
+            <Plus size={14} weight="bold" />
+            <span>Add 1</span>
           </button>
           <button
             type="button"
             className={styles.autoFillButton}
             onClick={handleAutoFill}
-            disabled={autoFillLimit.isLimited || isAutoFilling}
+            disabled={autoFillLimit.isLimited}
           >
-            {isAutoFilling
-              ? <CircleNotch size={14} className={styles.spinner} />
-              : <Lightning size={14} weight="fill" />}
-            <span>{isAutoFilling ? 'Generating...' : 'Auto-fill'}</span>
+            <Lightning size={14} weight="fill" />
+            <span>Auto-fill</span>
           </button>
           {autoFillLimit.isLimited && (
             <RateLimitNotice retryAfterMs={autoFillLimit.retryAfterMs} />

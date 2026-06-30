@@ -1,6 +1,8 @@
 import type { NutrientFruit, NutrientKey } from '../types';
 import type { ScoreConfig } from './score-defaults';
 
+const CALORIE_DENSITY_EXPONENT = 0.9;
+
 export interface NutrientBreakdownEntry {
   key: NutrientKey;
   percentDV: number;
@@ -10,12 +12,12 @@ export interface NutrientBreakdownEntry {
   sharePercent: number;
 }
 
-export interface PenaltyEntry {
+interface PenaltyEntry {
   key: NutrientKey;
   percentDV: number;
 }
 
-export interface ScoreBreakdownData {
+interface ScoreBreakdownData {
   finalScore: number;
   beneficialAvg: number;
   penaltyMultiplier: number;
@@ -78,7 +80,7 @@ export function computeScoreBreakdown(
   const beneficialAvg = beneficialWeightedSum / beneficialWeightSum;
   const penaltyAvg = penaltyCount > 0 ? penaltySum / penaltyCount : 0;
   const penaltyMultiplier = Math.max(0, 1 - penaltyAvg / config.penaltyScale);
-  const caloriesFactor = 100 / calories;
+  const caloriesFactor = Math.pow(100 / calories, CALORIE_DENSITY_EXPONENT);
   const finalScore = beneficialAvg * penaltyMultiplier * caloriesFactor;
 
   if (beneficialWeightedSum > 0) {
@@ -147,5 +149,5 @@ export function computeNutrientDensityScore(
   const penaltyAvg = penaltyCount > 0 ? penaltySum / penaltyCount : 0;
   const penaltyMultiplier = Math.max(0, 1 - penaltyAvg / config.penaltyScale);
 
-  return beneficialAvg * penaltyMultiplier * (100 / calories);
+  return beneficialAvg * penaltyMultiplier * Math.pow(100 / calories, CALORIE_DENSITY_EXPONENT);
 }

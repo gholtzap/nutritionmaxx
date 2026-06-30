@@ -2,11 +2,7 @@ import type { NutrientKey } from '../types';
 
 export type BodySystem = 'Brain' | 'Heart' | 'Bones' | 'Eyes' | 'Skin' | 'Immune' | 'Blood' | 'Energy';
 
-export const BODY_SYSTEMS: BodySystem[] = [
-  'Brain', 'Heart', 'Bones', 'Eyes', 'Skin', 'Immune', 'Blood', 'Energy',
-];
-
-export interface NutrientSource {
+interface NutrientSource {
   title: string;
   url: string;
 }
@@ -264,7 +260,3 @@ export const NUTRIENT_PROFILES: NutrientProfile[] = [
     ],
   },
 ];
-
-export const NUTRIENT_PROFILE_MAP = new Map(
-  NUTRIENT_PROFILES.map((p) => [p.key, p])
-);

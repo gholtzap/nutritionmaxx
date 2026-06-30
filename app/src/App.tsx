@@ -296,9 +296,10 @@ function App() {
     window.history.replaceState(null, '', url.toString());
   }, [selectedFruit, comparisonFruits, activeView, planEntries, searchQuery, selectedType, selectedCategories, sort]);
 
+  const showFruitDetail = activeView !== 'higherlower' && selectedFruit;
   const contentClass = [
     styles.content,
-    selectedFruit ? styles.contentWithDetail : '',
+    showFruitDetail ? styles.contentWithDetail : '',
     sidebarCollapsed && !isMobile ? styles.contentCollapsed : '',
   ]
     .filter(Boolean)
@@ -370,7 +371,7 @@ function App() {
           </>
         )}
       </main>
-      <FruitDetail />
+      {showFruitDetail && <FruitDetail />}
     </div>
   );
 }

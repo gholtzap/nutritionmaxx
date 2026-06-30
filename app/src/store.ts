@@ -149,7 +149,9 @@ export const useStore = create<AppState>((set, get) => ({
         const val = parseInt(stored, 10);
         if (val >= 1 && val <= 10) return val;
       }
-    } catch {}
+    } catch {
+      return 10;
+    }
     return 10;
   })(),
 
@@ -162,7 +164,9 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       const stored = localStorage.getItem('lockedNutrients');
       if (stored) return new Set<NutrientKey>(JSON.parse(stored));
-    } catch {}
+    } catch {
+      return new Set<NutrientKey>();
+    }
     return new Set<NutrientKey>();
   })(),
 
@@ -187,7 +191,9 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       const stored = localStorage.getItem('scoreNutrients');
       if (stored) return new Set<NutrientKey>(JSON.parse(stored));
-    } catch {}
+    } catch {
+      return new Set<NutrientKey>(DEFAULT_SCORE_NUTRIENTS);
+    }
     return new Set<NutrientKey>(DEFAULT_SCORE_NUTRIENTS);
   })(),
 
@@ -226,7 +232,9 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       const stored = localStorage.getItem('dietaryPreferences');
       if (stored) return { ...DEFAULT_PREFERENCES, ...JSON.parse(stored) };
-    } catch {}
+    } catch {
+      return { ...DEFAULT_PREFERENCES };
+    }
     return { ...DEFAULT_PREFERENCES };
   })(),
 
@@ -246,7 +254,9 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       const stored = localStorage.getItem('histamineSensitivity');
       if (stored && ['off', 'mild', 'moderate', 'strict'].includes(stored)) return stored as HistamineSensitivity;
-    } catch {}
+    } catch {
+      return 'off' as HistamineSensitivity;
+    }
     return 'off' as HistamineSensitivity;
   })(),
 
@@ -259,7 +269,9 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       const stored = localStorage.getItem('blockedFoods');
       if (stored) return new Set<string>(JSON.parse(stored));
-    } catch {}
+    } catch {
+      return new Set<string>();
+    }
     return new Set<string>();
   })(),
 
@@ -288,7 +300,9 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       const stored = localStorage.getItem('userProfile');
       if (stored) return JSON.parse(stored) as UserProfile;
-    } catch {}
+    } catch {
+      return null;
+    }
     return null;
   })(),
 
@@ -296,7 +310,9 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       const stored = localStorage.getItem('customDailyValues');
       if (stored) return JSON.parse(stored) as Partial<Record<NutrientKey, number>>;
-    } catch {}
+    } catch {
+      return {};
+    }
     return {};
   })(),
 
@@ -335,7 +351,9 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       const stored = localStorage.getItem('personalization');
       if (stored) return { ...DEFAULT_PERSONALIZATION, ...JSON.parse(stored) };
-    } catch {}
+    } catch {
+      return { ...DEFAULT_PERSONALIZATION };
+    }
     return { ...DEFAULT_PERSONALIZATION };
   })(),
 
