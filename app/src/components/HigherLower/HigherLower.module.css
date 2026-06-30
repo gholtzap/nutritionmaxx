@@ -188,17 +188,17 @@
 
 .highlightList {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 6px;
 }
 
 .highlightPill {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-  padding: 7px 9px;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px 8px;
   font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
@@ -407,7 +407,6 @@
   }
 
   .highlightPill {
-    padding: 6px 8px;
     font-size: 11px;
   }
 }

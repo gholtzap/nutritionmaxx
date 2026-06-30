@@ -178,6 +178,10 @@ export default function HigherLower() {
   const isCorrect = selectedFood && correctFood
     ? selectedFood.food.name === correctFood.food.name
     : null;
+  const anchorHighlights = useMemo(
+    () => (round ? getHighlights(round.anchor.food, dvMap) : []),
+    [round, dvMap]
+  );
   const challengerHighlights = useMemo(
     () => (round ? getHighlights(round.challenger.food, dvMap) : []),
     [round, dvMap]
@@ -251,6 +255,7 @@ export default function HigherLower() {
                 ? isCorrect ? 'correct' : 'wrong'
                 : isCorrect === false ? 'correct' : null
           }
+          highlights={answered ? anchorHighlights : undefined}
           disabled={answered}
           onPick={() => pickHigherFood(round.anchor)}
         />
