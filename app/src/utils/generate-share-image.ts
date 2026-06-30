@@ -1,22 +1,6 @@
 import type { ItemType } from '../types';
 import type { PlanNutrientRow } from './plan-calculator';
-
-const TYPE_LABELS: Record<ItemType, string> = {
-  fruit: 'FRUITS',
-  vegetable: 'VEGETABLES',
-  grain: 'GRAINS',
-  legume: 'LEGUMES',
-  nut_seed: 'NUTS & SEEDS',
-  fish_seafood: 'FISH & SEAFOOD',
-  poultry: 'POULTRY',
-  beef: 'BEEF',
-  pork: 'PORK',
-  fat_oil: 'FATS & OILS',
-  dairy: 'DAIRY',
-  egg: 'EGGS',
-  lamb: 'LAMB',
-  spice: 'SPICES',
-};
+import { ITEM_TYPE_GROUP_LABELS } from './nutrition-meta';
 
 export interface ShareFood {
   name: string;
@@ -65,7 +49,7 @@ export async function generateShareImage(input: ShareImageInput): Promise<Blob> 
 
   const groups = new Map<string, ShareFood[]>();
   for (const food of foods) {
-    const label = TYPE_LABELS[food.type] ?? food.type.toUpperCase();
+    const label = ITEM_TYPE_GROUP_LABELS[food.type] ?? food.type.toUpperCase();
     if (!groups.has(label)) groups.set(label, []);
     groups.get(label)!.push(food);
   }

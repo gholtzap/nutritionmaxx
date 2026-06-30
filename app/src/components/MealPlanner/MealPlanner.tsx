@@ -7,6 +7,7 @@ import { computePlanDailyTotals, findFoodReplacements, generateAutoFillPlan, gen
 import type { FoodReplacement } from '../../utils/plan-calculator';
 import { useEffectiveDailyValues } from '../../utils/use-effective-daily-values';
 import { useRateLimit } from '../../utils/use-rate-limit';
+import { ITEM_TYPE_GROUP_LABELS } from '../../utils/nutrition-meta';
 import { generateShareImage } from '../../utils/generate-share-image';
 import type { ShareFood } from '../../utils/generate-share-image';
 import { servingsLabel } from '../../utils/servings';
@@ -17,23 +18,6 @@ import NutrientCoverage from './NutrientCoverage';
 import HistamineSummary from './HistamineSummary';
 import RateLimitNotice from '../shared/RateLimitNotice';
 import styles from './MealPlanner.module.css';
-
-const TYPE_GROUP_LABELS: Record<ItemType, string> = {
-  fruit: 'FRUITS',
-  vegetable: 'VEGETABLES',
-  grain: 'GRAINS',
-  legume: 'LEGUMES',
-  nut_seed: 'NUTS & SEEDS',
-  fish_seafood: 'FISH & SEAFOOD',
-  poultry: 'POULTRY',
-  beef: 'BEEF',
-  pork: 'PORK',
-  fat_oil: 'FATS & OILS',
-  dairy: 'DAIRY',
-  egg: 'EGGS',
-  lamb: 'LAMB',
-  spice: 'SPICES',
-};
 
 const BUDGET_LABELS: Record<number, string> = {
   1: '$',
@@ -102,7 +86,7 @@ export default function MealPlanner() {
     for (const entry of planEntries) {
       const fruit = fruitMap.get(entry.name);
       const type = fruit?.type ?? 'other';
-      const label = TYPE_GROUP_LABELS[type as ItemType] ?? type.toUpperCase();
+      const label = ITEM_TYPE_GROUP_LABELS[type as ItemType] ?? type.toUpperCase();
       if (!groups.has(label)) groups.set(label, []);
       const serving = fruit?.serving_label ?? '100g';
       groups.get(label)!.push(`  ${entry.name} - ${servingsLabel(entry.servingsPerWeek)} (${serving})`);
