@@ -1,6 +1,10 @@
+html {
+  background: var(--bg-primary);
+}
+
 body {
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.5;
   color: var(--text-primary);
   background: var(--bg-primary);

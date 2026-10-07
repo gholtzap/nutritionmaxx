@@ -325,7 +325,7 @@ function App() {
             className={styles.mobileTitle}
             onClick={() => setActiveView('home')}
           >
-            Nutrition
+            Nutritionmaxx
           </button>
           <div className={styles.mobileHeaderRight}>
             <label className={styles.mobileDvToggle}>

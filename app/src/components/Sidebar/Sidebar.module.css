@@ -26,10 +26,8 @@
 
 .logoText {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--text-primary);
   cursor: pointer;
   transition: color 0.15s;
 }
@@ -87,10 +85,12 @@
 
 .nav {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 .navSection {
@@ -99,17 +99,20 @@
   gap: 2px;
 }
 
-.navSection:last-child {
-  margin-top: auto;
+.moreDetails {
+  border-top: 1px solid var(--border-primary);
+  padding-top: 8px;
 }
 
-.navSectionLabel {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 0 12px 4px;
+.moreDetails summary {
+  padding: 8px 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.moreDetails .navSection {
+  margin-top: 4px;
 }
 
 .navItem {
@@ -132,8 +135,8 @@
 
 .navItemActive {
   background: var(--bg-elevated);
-  color: var(--accent);
-  border-left-color: var(--accent);
+  color: var(--text-primary);
+  border-left-color: var(--text-primary);
 }
 
 .navIcon {
@@ -169,8 +172,6 @@
 .footerText {
   font-size: 11px;
   color: var(--text-tertiary);
-  font-family: var(--font-data);
-  font-feature-settings: 'tnum';
 }
 
 .mobileNav {
@@ -180,8 +181,14 @@
 .moreOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
   z-index: 29;
+}
+
+.moreBackdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .moreSheet {
@@ -193,17 +200,20 @@
   border-top: 1px solid var(--border-primary);
   padding: 16px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 4px;
+  max-height: 60vh;
+  overflow-y: auto;
   z-index: 29;
 }
 
 .moreSheetItem {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 6px;
-  padding: 14px 8px;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   transition: background 0.15s, color 0.15s;
@@ -229,10 +239,9 @@
 }
 
 .moreSheetLabel {
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1;
-  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: left;
 }
 
 @media (max-width: 767px) {
@@ -278,16 +287,19 @@
     display: flex;
     flex: 1;
     align-items: stretch;
+    gap: 8px;
+    padding: 0 8px;
   }
 
   .mobileNavItem {
     flex: 1 1 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    padding: 6px 4px;
+    padding: 6px 2px;
     color: var(--text-tertiary);
     transition: color 0.15s;
   }
@@ -297,7 +309,7 @@
   }
 
   .mobileNavItemActive {
-    color: var(--accent);
+    color: var(--text-primary);
   }
 
   .mobileNavIcon {
@@ -311,9 +323,9 @@
   }
 
   .mobileNavLabel {
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 500;
-    line-height: 1;
+    line-height: 1.2;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

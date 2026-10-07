@@ -1,17 +1,17 @@
 :root {
-  --bg-primary: #0f1117;
-  --bg-secondary: #161922;
-  --bg-tertiary: #1c1f2b;
-  --bg-elevated: #222636;
+  --bg-primary: #111412;
+  --bg-secondary: #1a1e1b;
+  --bg-tertiary: #242a26;
+  --bg-elevated: #2b322d;
 
   --border-primary: rgba(255, 255, 255, 0.08);
   --border-subtle: rgba(255, 255, 255, 0.04);
   --border-accent: rgba(99, 179, 237, 0.4);
 
-  --text-primary: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-tertiary: #64748b;
-  --text-data: #cbd5e1;
+  --text-primary: #edf1ed;
+  --text-secondary: #a9b4aa;
+  --text-tertiary: #819085;
+  --text-data: #d5ddd6;
 
   --accent: #63b3ed;
   --accent-hover: #7cc4f5;
@@ -98,6 +98,6 @@
   --detail-width: 400px;
   --bottom-bar-height: 56px;
 
-  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', sans-serif;
   --font-data: 'Geist Mono', 'SF Mono', 'Fira Code', monospace;
 }

@@ -14,6 +14,7 @@ export default function NavItem({ icon, label, active, onClick }: NavItemProps) 
       className={`${styles.navItem} ${active ? styles.navItemActive : ''}`}
       onClick={onClick}
       type="button"
+      aria-current={active ? 'page' : undefined}
     >
       <span className={styles.navIcon}>{icon}</span>
       <span className={styles.navLabel}>{label}</span>

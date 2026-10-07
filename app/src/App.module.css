@@ -57,10 +57,8 @@
 
 .mobileTitle {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--text-primary);
   cursor: pointer;
   transition: color 0.15s;
 }
