@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "lint:ui": "npm exec --yes --package=lintapple@0.1.15 -- lintapple http://localhost:5173"
   },
   "dependencies": {
     "@clerk/backend": "^2.31.0",
