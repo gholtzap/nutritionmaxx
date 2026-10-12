@@ -4,7 +4,7 @@ html {
 
 body {
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--text-primary);
   background: var(--bg-primary);

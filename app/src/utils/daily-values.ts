@@ -1,5 +1,5 @@
-import type { NutrientKey } from '../types';
-import { NUTRIENT_META } from './nutrition-meta';
+import type { NutrientKey } from '../types.js';
+import { NUTRIENT_META } from './nutrition-meta.js';
 
 export interface UserProfile {
   sex: 'male' | 'female';

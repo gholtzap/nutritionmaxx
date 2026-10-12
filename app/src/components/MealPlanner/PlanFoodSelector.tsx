@@ -49,6 +49,7 @@ export default function PlanFoodSelector() {
         <input
           type="text"
           className={styles.selectorInput}
+          aria-label="Add a food to your plan"
           placeholder="Add a food to your plan..."
           value={query}
           onChange={(e) => {
@@ -58,6 +59,7 @@ export default function PlanFoodSelector() {
           onFocus={() => setOpen(true)}
         />
       </div>
+      {open && query.trim().length > 0 && suggestions.length === 0 && <p className={styles.noMatches} role="status">No matching foods.</p>}
       {open && suggestions.length > 0 && (
         <ul className={styles.suggestions}>
           {suggestions.map((fruit) => (

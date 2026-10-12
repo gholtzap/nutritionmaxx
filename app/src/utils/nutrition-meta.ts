@@ -1,4 +1,4 @@
-import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, GrainCategory, FishSeafoodCategory, PoultryCategory, BeefCategory, PorkCategory, FatOilCategory, DairyCategory, EggCategory, LambCategory, ItemCategory, ItemType } from '../types';
+import type { NutrientKey, NutrientGroup, FruitCategory, VegetableCategory, SpiceCategory, NutSeedCategory, LegumeCategory, GrainCategory, FishSeafoodCategory, PoultryCategory, BeefCategory, PorkCategory, FatOilCategory, DairyCategory, EggCategory, LambCategory, ItemCategory, ItemType } from '../types.js';
 
 export interface NutrientMeta {
   key: NutrientKey;
@@ -194,20 +194,20 @@ export const ALL_CATEGORIES: ItemCategory[] = [
 ];
 
 export const ITEM_TYPE_GROUP_LABELS: Record<ItemType, string> = {
-  fruit: 'FRUITS',
-  vegetable: 'VEGETABLES',
-  grain: 'GRAINS',
-  legume: 'LEGUMES',
-  nut_seed: 'NUTS & SEEDS',
-  fish_seafood: 'FISH & SEAFOOD',
-  poultry: 'POULTRY',
-  beef: 'BEEF',
-  pork: 'PORK',
-  fat_oil: 'FATS & OILS',
-  dairy: 'DAIRY',
-  egg: 'EGGS',
-  lamb: 'LAMB',
-  spice: 'SPICES',
+  fruit: 'Fruits',
+  vegetable: 'Vegetables',
+  grain: 'Grains',
+  legume: 'Legumes',
+  nut_seed: 'Nuts & seeds',
+  fish_seafood: 'Fish & seafood',
+  poultry: 'Poultry',
+  beef: 'Beef',
+  pork: 'Pork',
+  fat_oil: 'Fats & oils',
+  dairy: 'Dairy',
+  egg: 'Eggs',
+  lamb: 'Lamb',
+  spice: 'Spices',
 };
 
 export function hasDailyValue(key: NutrientKey): boolean {

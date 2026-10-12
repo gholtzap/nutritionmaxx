@@ -1,107 +1,101 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { copyText } from '../../utils/clipboard';
+import type { RefObject } from 'react';
+import IconButton from '../shared/IconButton';
+import { useState, useCallback, useRef, useEffect, useId } from 'react';
 import { X, DownloadSimple, Check, LinkSimple, CircleNotch, TextAlignLeft } from '@phosphor-icons/react';
 import styles from './ShareModal.module.css';
-
-function fallbackCopy(text: string) {
-  const textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.style.position = 'fixed';
-  textarea.style.opacity = '0';
-  document.body.appendChild(textarea);
-  textarea.focus();
-  textarea.select();
-  document.execCommand('copy');
-  document.body.removeChild(textarea);
-}
 
 interface ShareModalProps {
   imageBlob: Blob;
   shareUrl: string;
   exportText: string;
   onClose: () => void;
+  returnFocus: RefObject<HTMLButtonElement | null>;
 }
 
-export default function ShareModal({ imageBlob, shareUrl, exportText, onClose }: ShareModalProps) {
-  const [imageUrl] = useState(() => URL.createObjectURL(imageBlob));
+export default function ShareModal({ imageBlob, shareUrl, exportText, onClose, returnFocus }: ShareModalProps) {
+  const imageRef = useRef<HTMLImageElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  const [copyError, setCopyError] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedText, setCopiedText] = useState(false);
   const copiedLinkTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const copiedTextTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
+    const imageUrl = URL.createObjectURL(imageBlob);
+    if (imageRef.current) imageRef.current.src = imageUrl;
     return () => {
       URL.revokeObjectURL(imageUrl);
       if (copiedLinkTimer.current) clearTimeout(copiedLinkTimer.current);
       if (copiedTextTimer.current) clearTimeout(copiedTextTimer.current);
     };
-  }, [imageUrl]);
+  }, [imageBlob]);
 
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+    const dialog = dialogRef.current;
+    const opener = returnFocus.current;
+    dialog?.showModal();
+    return () => {
+      dialog?.close();
+      opener?.focus();
     };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [onClose]);
+  }, [returnFocus]);
 
   const handleDownload = useCallback(() => {
     const a = document.createElement('a');
-    a.href = imageUrl;
+    if (!imageRef.current?.src) return;
+    a.href = imageRef.current.src;
     a.download = 'meal-plan.png';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  }, [imageUrl]);
-
-  const copyToClipboard = useCallback((text: string) => {
-    if (navigator.clipboard?.writeText) {
-      return navigator.clipboard.writeText(text).catch(() => {
-        fallbackCopy(text);
-      });
-    }
-    fallbackCopy(text);
   }, []);
 
-  const handleCopyLink = useCallback(() => {
-    copyToClipboard(shareUrl);
+  const handleCopyLink = useCallback(async () => {
+    try { await copyText(shareUrl); } catch { setCopyError(true); return; }
+    setCopyError(false);
     setCopiedLink(true);
     if (copiedLinkTimer.current) clearTimeout(copiedLinkTimer.current);
     copiedLinkTimer.current = setTimeout(() => setCopiedLink(false), 1500);
-  }, [shareUrl, copyToClipboard]);
+  }, [shareUrl]);
 
-  const handleCopyText = useCallback(() => {
-    copyToClipboard(exportText);
+  const handleCopyText = useCallback(async () => {
+    try { await copyText(exportText); } catch { setCopyError(true); return; }
+    setCopyError(false);
     setCopiedText(true);
     if (copiedTextTimer.current) clearTimeout(copiedTextTimer.current);
     copiedTextTimer.current = setTimeout(() => setCopiedText(false), 1500);
-  }, [exportText, copyToClipboard]);
+  }, [exportText]);
 
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();
   }, [onClose]);
 
   return (
-    <div className={styles.backdrop} onClick={handleBackdropClick}>
+    <dialog ref={dialogRef} className={styles.backdrop} aria-labelledby={titleId} onCancel={onClose} onClick={handleBackdropClick}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <span className={styles.title}>Share Meal Plan</span>
-          <button type="button" className={styles.closeBtn} onClick={onClose}>
+          <span id={titleId} className={styles.title}>Share weekly plan</span>
+          <IconButton type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close share dialog">
             <X size={16} />
-          </button>
+          </IconButton>
         </div>
         <div className={styles.body}>
           <div className={styles.imageWrapper}>
-            <img src={imageUrl} alt="Meal plan" className={styles.image} />
+            <img ref={imageRef} alt="Weekly plan" className={styles.image} />
           </div>
           <button type="button" className={styles.downloadBtn} onClick={handleDownload}>
             <DownloadSimple size={14} weight="bold" />
-            <span>Download Image</span>
+            <span>Download image</span>
           </button>
           <div className={styles.divider} />
           <div className={styles.linkSection}>
             <input
               type="text"
               className={styles.linkInput}
+              aria-label="Plan link"
               value={shareUrl}
               readOnly
               onFocus={(e) => e.target.select()}
@@ -112,12 +106,13 @@ export default function ShareModal({ imageBlob, shareUrl, exportText, onClose }:
               onClick={handleCopyLink}
             >
               {copiedLink ? <Check size={14} /> : <LinkSimple size={14} />}
-              <span>{copiedLink ? 'Copied' : 'Copy Link'}</span>
+              <span>{copiedLink ? 'Copied' : 'Copy link'}</span>
             </button>
           </div>
           <div className={styles.linkSection}>
             <textarea
               className={`${styles.linkInput} ${styles.textArea}`}
+              aria-label="Plan text"
               value={exportText}
               readOnly
               rows={3}
@@ -129,25 +124,28 @@ export default function ShareModal({ imageBlob, shareUrl, exportText, onClose }:
               onClick={handleCopyText}
             >
               {copiedText ? <Check size={14} /> : <TextAlignLeft size={14} />}
-              <span>{copiedText ? 'Copied' : 'Copy Text'}</span>
+              <span>{copiedText ? 'Copied' : 'Copy text'}</span>
             </button>
           </div>
+          {copyError && <p role="alert">Copy failed. Select the text and copy it manually.</p>}
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
 
 interface ShareButtonProps {
   onClick: () => void;
   isLoading: boolean;
+  buttonRef: RefObject<HTMLButtonElement | null>;
 }
 
-export function ShareButton({ onClick, isLoading }: ShareButtonProps) {
+export function ShareButton({ onClick, isLoading, buttonRef }: ShareButtonProps) {
   return (
     <button
       type="button"
       className={styles.shareButton}
+      ref={buttonRef}
       onClick={onClick}
       disabled={isLoading}
     >

@@ -25,7 +25,7 @@
 }
 
 .logoText {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
   cursor: pointer;
@@ -39,7 +39,7 @@
 .logoActions {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
 }
 
 .collapseButton {
@@ -96,7 +96,7 @@
 .navSection {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
 }
 
 .moreDetails {
@@ -108,7 +108,7 @@
   padding: 8px 12px;
   color: var(--text-secondary);
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .moreDetails .navSection {
@@ -122,7 +122,7 @@
   width: 100%;
   padding: 8px 12px;
   border-radius: var(--radius-md);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
   transition: background 0.15s, color 0.15s;
   border-left: 2px solid transparent;
@@ -170,7 +170,7 @@
 }
 
 .footerText {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-tertiary);
 }
 
@@ -239,7 +239,7 @@
 }
 
 .moreSheetLabel {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.2;
   text-align: left;
 }

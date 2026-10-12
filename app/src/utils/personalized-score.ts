@@ -1,7 +1,7 @@
-import type { NutrientKey, PersonalizationSettings, HealthGoal, ActivityLevel, LifeStage, DietaryPattern } from '../types';
-import type { ScoreConfig } from './score-defaults';
-import type { UserProfile } from './daily-values';
-import type { DietaryPreferences } from './dietary';
+import type { NutrientKey, PersonalizationSettings, HealthGoal, ActivityLevel, LifeStage, DietaryPattern } from '../types.js';
+import type { ScoreConfig } from './score-defaults.js';
+import type { UserProfile } from './daily-values.js';
+import type { DietaryPreferences } from './dietary.js';
 
 const WEIGHT_CAP = 3.0;
 
