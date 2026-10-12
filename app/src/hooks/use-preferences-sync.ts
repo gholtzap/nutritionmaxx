@@ -49,6 +49,7 @@ export function usePreferencesSync() {
 
     async function load() {
       await Promise.resolve();
+      status('Loading saved data…', false, false);
       try {
         if (!localStorage.getItem('nutritionmaxx:owner') && !localStorage.getItem('nutritionmaxx:guest')) {
           localStorage.setItem('nutritionmaxx:guest', JSON.stringify(serializePreferences(useStore.getState())));
