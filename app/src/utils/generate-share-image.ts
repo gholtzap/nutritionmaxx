@@ -49,7 +49,7 @@ export async function generateShareImage(input: ShareImageInput): Promise<Blob> 
 
   const groups = new Map<string, ShareFood[]>();
   for (const food of foods) {
-    const label = ITEM_TYPE_GROUP_LABELS[food.type] ?? food.type.toUpperCase();
+    const label = ITEM_TYPE_GROUP_LABELS[food.type] ?? food.type;
     if (!groups.has(label)) groups.set(label, []);
     groups.get(label)!.push(food);
   }

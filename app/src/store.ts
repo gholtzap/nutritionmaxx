@@ -8,6 +8,7 @@ import { DEFAULT_PREFERENCES } from './utils/dietary';
 import type { UserProfile } from './utils/daily-values';
 import type { StorePreferenceFields } from './utils/preferences-sync';
 import { DEFAULT_PERSONALIZATION } from './utils/personalized-score';
+import { validPlanEntries } from './utils/preferences';
 
 interface AppState {
   fruits: NutrientFruit[];
@@ -121,7 +122,14 @@ export const useStore = create<AppState>((set, get) => ({
   showPerServing: true,
   sidebarCollapsed: false,
 
-  planEntries: [],
+  planEntries: (() => {
+    try {
+      const entries = JSON.parse(localStorage.getItem('planEntries') ?? '[]');
+      return validPlanEntries(entries) ? entries : [];
+    } catch {
+      return [];
+    }
+  })(),
   lockedPlanEntries: new Set(),
   currentDietAuditEntries: (() => {
     try {
@@ -606,6 +614,8 @@ export const useStore = create<AppState>((set, get) => ({
     localStorage.setItem('personalization', JSON.stringify(prefs.personalization));
     localStorage.setItem('currentDietAuditEntries', JSON.stringify(prefs.currentDietAuditEntries));
     localStorage.setItem('savedDietAudits', JSON.stringify(prefs.savedDietAudits));
+    localStorage.setItem('planEntries', JSON.stringify(prefs.planEntries));
+    localStorage.setItem('histamineSensitivity', prefs.histamineSensitivity);
 
     set({
       dietaryPreferences: prefs.dietaryPreferences,
@@ -621,6 +631,11 @@ export const useStore = create<AppState>((set, get) => ({
       personalization: prefs.personalization,
       currentDietAuditEntries: prefs.currentDietAuditEntries,
       savedDietAudits: prefs.savedDietAudits,
+      planEntries: prefs.planEntries,
+      lockedPlanEntries: prefs.lockedPlanEntries,
+      histamineSensitivity: prefs.histamineSensitivity,
+      selectedFruit: null,
+      comparisonFruits: [],
     });
   },
 }));

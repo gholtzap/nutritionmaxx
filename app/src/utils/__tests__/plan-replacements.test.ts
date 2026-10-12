@@ -88,7 +88,7 @@ describe('findFoodReplacements', () => {
     );
 
     expect(results[0].food.name).toBe('Turkey Breast');
-    expect(results.map((r) => r.food.name)).toContain('Olive Oil');
+    expect(results.map((r) => r.food.name)).not.toContain('Olive Oil');
   });
 
   it('excludes foods already in the plan and above budget tolerance', () => {

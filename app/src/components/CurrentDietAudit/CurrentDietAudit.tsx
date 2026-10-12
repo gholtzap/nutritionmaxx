@@ -1,6 +1,7 @@
+import IconButton from '../shared/IconButton';
 import { useMemo, useRef, useState, useEffect } from 'react';
-import { ArrowClockwise, ArrowRight, Check, FloppyDisk, MagnifyingGlass, Minus, Plus, Trash, X } from '@phosphor-icons/react';
-import { SignedIn, SignedOut, SignInButton } from '@clerk/clerk-react';
+import { ArrowRight, Check, FloppyDisk, MagnifyingGlass, Minus, Plus, Trash, X } from '@phosphor-icons/react';
+import { SignedOut, SignInButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
 import type { NutrientFruit, PlanEntry } from '../../types';
 import { analyzeDietAudit } from '../../utils/diet-audit';
@@ -61,9 +62,9 @@ function EntryRow({ entry, fruit }: { entry: PlanEntry; fruit: NutrientFruit | u
         <span className={styles.entryServing}>{fruit?.serving_label ?? '100g'}</span>
       </div>
       <div className={styles.entryControls}>
-        <button type="button" className={styles.iconButton} onClick={() => adjust(-1)} aria-label="Decrease servings">
+        <IconButton type="button" className={styles.iconButton} onClick={() => adjust(-1)} aria-label="Decrease servings">
           <Minus size={12} />
-        </button>
+        </IconButton>
         <input
           type="number"
           className={styles.servingInput}
@@ -75,17 +76,18 @@ function EntryRow({ entry, fruit }: { entry: PlanEntry; fruit: NutrientFruit | u
           onChange={(e) => setDraft(e.target.value)}
           onBlur={commitDraft}
           onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+          aria-label={`Weekly servings for ${entry.name}`}
           min={0.5}
           max={1000}
           step={0.5}
         />
-        <button type="button" className={styles.iconButton} onClick={() => adjust(1)} aria-label="Increase servings">
+        <IconButton type="button" className={styles.iconButton} onClick={() => adjust(1)} aria-label="Increase servings">
           <Plus size={12} />
-        </button>
+        </IconButton>
         <span className={styles.entryFreq}>{servingsLabel(entry.servingsPerWeek)}</span>
-        <button type="button" className={styles.removeButton} onClick={() => removeEntry(entry.name)} aria-label={`Remove ${entry.name}`}>
+        <IconButton type="button" className={styles.removeButton} onClick={() => removeEntry(entry.name)} aria-label={`Remove ${entry.name}`}>
           <X size={14} />
-        </button>
+        </IconButton>
       </div>
     </div>
   );
@@ -129,6 +131,7 @@ function FoodSelector() {
         <input
           type="text"
           className={styles.searchInput}
+          aria-label="Add a food to your review"
           placeholder="Add what you ate this week..."
           value={query}
           onChange={(e) => {
@@ -138,13 +141,14 @@ function FoodSelector() {
           onFocus={() => setOpen(true)}
         />
       </div>
+      {open && query.trim().length > 0 && suggestions.length === 0 && <p className={styles.noMatches} role="status">No matching foods.</p>}
       {open && suggestions.length > 0 && (
         <div className={styles.suggestions}>
           {suggestions.map((food) => (
-            <button key={food.name} type="button" className={styles.suggestion} onClick={() => selectFood(food)}>
+            <IconButton key={food.name} type="button" className={styles.suggestion} onClick={() => selectFood(food)}>
               <span>{food.name}</span>
               <span className={styles.suggestionMeta}>{food.category}</span>
-            </button>
+            </IconButton>
           ))}
         </div>
       )}
@@ -176,11 +180,13 @@ export default function CurrentDietAudit() {
   );
   const completeCount = analysis.rows.filter((row) => !row.insufficientData && row.dailyValue > 0 && row.total >= row.dailyValue).length;
   const trackedCount = analysis.rows.filter((row) => !row.insufficientData && row.dailyValue > 0).length;
+  const firstFix = analysis.fixes[0];
+  const topGap = analysis.gaps[0];
 
   function handleSave() {
     if (entries.length === 0) return;
     saveAudit({
-      name: `${entries.length} food audit`,
+      name: `${entries.length} food review`,
       baselineEntries: entries,
       fixedEntries: analysis.fixedEntries,
       gapKeys: analysis.gaps.map((gap) => gap.key),
@@ -199,29 +205,25 @@ export default function CurrentDietAudit() {
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Current Diet Audit</h1>
-          <p className={styles.subtitle}>Enter a normal week, then compare gaps, excesses, weak data, and the smallest useful fixes.</p>
+          <h1 className={styles.title}>Review my week</h1>
+          <p className={styles.subtitle}>Add foods and servings from a usual week. Results update as you add foods.</p>
         </div>
         <div className={styles.headerActions}>
-          <button type="button" className={styles.actionButton} onClick={handleSave} disabled={entries.length === 0}>
+          <IconButton type="button" className={styles.actionButton} onClick={handleSave} disabled={entries.length === 0}>
             {saved ? <Check size={14} /> : <FloppyDisk size={14} />}
-            <span>{saved ? 'Saved' : 'Save audit'}</span>
-          </button>
-          <button type="button" className={styles.actionButton} onClick={clearEntries} disabled={entries.length === 0}>
+            <span>{saved ? 'Saved' : 'Save review'}</span>
+          </IconButton>
+          <IconButton type="button" className={styles.actionButton} onClick={clearEntries} disabled={entries.length === 0}>
             <Trash size={14} />
             <span>Clear</span>
-          </button>
+          </IconButton>
         </div>
       </div>
 
       <div className={styles.syncLine}>
-        <SignedIn>
-          <span>Signed in: audits sync with your saved preferences.</span>
-        </SignedIn>
         <SignedOut>
-          <span>Local draft only.</span>
           <SignInButton>
-            <button type="button" className={styles.inlineButton}>Sign in to sync</button>
+            <IconButton type="button" className={styles.inlineButton}>Sign in to sync</IconButton>
           </SignInButton>
         </SignedOut>
       </div>
@@ -233,6 +235,7 @@ export default function CurrentDietAudit() {
           <input
             type="range"
             className={styles.budgetSlider}
+            aria-label="Review budget"
             min={1}
             max={10}
             step={1}
@@ -250,33 +253,73 @@ export default function CurrentDietAudit() {
           ))}
         </div>
       ) : (
-        <div className={styles.empty}>Add foods from a normal week to start the audit.</div>
+        <div className={styles.empty}>Add the first food you eat in a usual week.</div>
       )}
 
       {entries.length > 0 && (
         <>
-          <section className={styles.summaryGrid}>
-            <div className={styles.metric}>
-              <span className={styles.metricLabel}>Coverage</span>
-              <strong className={styles.metricValue}>{completeCount}/{trackedCount}</strong>
-              <span className={styles.metricNote}>daily targets met</span>
+          <section className={styles.resultOverview} aria-label="Review summary">
+            <div>
+              <span className={styles.overviewLabel}>Largest estimated gap</span>
+              <strong>{topGap ? `${topGap.label}: ${topGap.percent}% of daily target` : 'No large gap in tracked nutrients'}</strong>
+              <span>Based on {entries.length} {entries.length === 1 ? 'food' : 'foods'} entered for the week</span>
             </div>
-            <div className={styles.metric}>
-              <span className={styles.metricLabel}>Confidence</span>
-              <strong className={styles.metricValue}>{analysis.confidence}%</strong>
-              <span className={styles.metricNote}>based on known nutrient data</span>
-            </div>
-            <div className={styles.metric}>
-              <span className={styles.metricLabel}>Fixes</span>
-              <strong className={styles.metricValue}>{analysis.fixes.length}</strong>
-              <span className={styles.metricNote}>ranked changes found</span>
+            <div className={styles.overviewFacts}>
+              <span>{completeCount} of {trackedCount} tracked targets met</span>
+              <span>{analysis.confidence}% data confidence</span>
+              {analysis.missingData.length > 0 && <span>Some source data is missing</span>}
             </div>
           </section>
 
+          <section className={styles.fixPanel}>
+            <div className={styles.panelHeader}>
+              <h2 className={styles.panelTitle}>Try one change</h2>
+            </div>
+            {firstFix ? (
+              <div className={styles.firstFix}>
+                <div className={styles.fixBody}>
+                  <h3 className={styles.fixTitle}>{firstFix.title}</h3>
+                  <p className={styles.fixDetail}>{firstFix.detail}</p>
+                  <div className={styles.improveList}>
+                    {firstFix.improves.map((item) => (
+                      <span key={item.key}>{item.label}: {item.before}% to {item.after}%</span>
+                    ))}
+                  </div>
+                </div>
+                <div className={styles.fixActions}>
+                  <IconButton type="button" className={styles.applyButton} onClick={() => setEntries(firstFix.entries)}>Apply to review</IconButton>
+                  <IconButton type="button" className={styles.primaryButton} onClick={() => sendFixToPlanner(firstFix.entries)}>
+                    View changed plan <ArrowRight size={14} />
+                  </IconButton>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.panelEmpty}>No useful change was found for these foods and filters.</div>
+            )}
+            {analysis.fixes.length > 1 && (
+              <details className={styles.otherFixes}>
+                <summary>Other suggested changes</summary>
+                <div className={styles.fixList}>
+                  {analysis.fixes.slice(1).map((fix) => (
+                    <div key={fix.id} className={styles.fixItem}>
+                      <div className={styles.fixBody}>
+                        <h3 className={styles.fixTitle}>{fix.title}</h3>
+                        <p className={styles.fixDetail}>{fix.detail}</p>
+                      </div>
+                      <IconButton type="button" className={styles.applyButton} onClick={() => setEntries(fix.entries)}>Apply to review</IconButton>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            )}
+          </section>
+
+          <details className={styles.reportDetails}>
+            <summary>See all nutrient results</summary>
           <section className={styles.reportGrid}>
             <div className={styles.panel}>
               <div className={styles.panelHeader}>
-                <h2 className={styles.panelTitle}>Top Gaps</h2>
+                <h2 className={styles.panelTitle}>Estimated gaps</h2>
                 <span className={styles.panelMeta}>under 90% target</span>
               </div>
               {analysis.gaps.length > 0 ? (
@@ -301,7 +344,7 @@ export default function CurrentDietAudit() {
 
             <div className={styles.panel}>
               <div className={styles.panelHeader}>
-                <h2 className={styles.panelTitle}>Excessive</h2>
+                <h2 className={styles.panelTitle}>High amounts</h2>
                 <span className={styles.panelMeta}>screening thresholds</span>
               </div>
               {analysis.excesses.length > 0 ? (
@@ -323,7 +366,7 @@ export default function CurrentDietAudit() {
 
             <div className={styles.panel}>
               <div className={styles.panelHeader}>
-                <h2 className={styles.panelTitle}>Weak Data</h2>
+                <h2 className={styles.panelTitle}>Missing source data</h2>
                 <span className={styles.panelMeta}>confidence drivers</span>
               </div>
               {analysis.missingData.length > 0 ? (
@@ -341,58 +384,26 @@ export default function CurrentDietAudit() {
             </div>
           </section>
 
-          <section className={styles.fixPanel}>
-            <div className={styles.panelHeader}>
-              <h2 className={styles.panelTitle}>Inline Fix Plan</h2>
-              <button type="button" className={styles.primaryButton} onClick={() => sendFixToPlanner(analysis.fixedEntries)} disabled={analysis.fixes.length === 0}>
-                <span>Send best fix to planner</span>
-                <ArrowRight size={14} />
-              </button>
-            </div>
-            {analysis.fixes.length > 0 ? (
-              <div className={styles.fixList}>
-                {analysis.fixes.map((fix) => (
-                  <div key={fix.id} className={styles.fixItem}>
-                    <div className={styles.fixBody}>
-                      <span className={styles.fixType}>{fix.type === 'add' ? 'Addition' : 'Swap'}</span>
-                      <h3 className={styles.fixTitle}>{fix.title}</h3>
-                      <p className={styles.fixDetail}>{fix.detail}</p>
-                      <div className={styles.improveList}>
-                        {fix.improves.map((item) => (
-                          <span key={item.key}>{item.label}: {item.before}% to {item.after}%</span>
-                        ))}
-                      </div>
-                    </div>
-                    <button type="button" className={styles.applyButton} onClick={() => setEntries(fix.entries)}>
-                      <ArrowClockwise size={14} />
-                      <span>Apply</span>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className={styles.panelEmpty}>No high-confidence fixes found within the current filters.</div>
-            )}
-          </section>
+          </details>
         </>
       )}
 
       {savedAudits.length > 0 && (
         <section className={styles.savedPanel}>
           <div className={styles.panelHeader}>
-            <h2 className={styles.panelTitle}>Saved Audits</h2>
+            <h2 className={styles.panelTitle}>Saved reviews</h2>
             <span className={styles.panelMeta}>{savedAudits.length} stored</span>
           </div>
           <div className={styles.savedList}>
             {savedAudits.map((audit) => (
               <div key={audit.id} className={styles.savedItem}>
-                <button type="button" className={styles.savedMain} onClick={() => loadSavedDietAudit(audit.id)}>
+                <IconButton type="button" className={styles.savedMain} onClick={() => loadSavedDietAudit(audit.id)}>
                   <span className={styles.savedTitle}>{audit.name}</span>
                   <span className={styles.savedMeta}>{formatDate(audit.createdAt)} · {audit.baselineEntries.length} foods · {audit.confidence}% confidence</span>
-                </button>
-                <button type="button" className={styles.removeButton} onClick={() => deleteSavedDietAudit(audit.id)} aria-label={`Delete ${audit.name}`}>
+                </IconButton>
+                <IconButton type="button" className={styles.removeButton} onClick={() => deleteSavedDietAudit(audit.id)} aria-label={`Delete ${audit.name}`}>
                   <X size={14} />
-                </button>
+                </IconButton>
               </div>
             ))}
           </div>

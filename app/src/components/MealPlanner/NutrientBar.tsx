@@ -1,3 +1,4 @@
+import IconButton from '../shared/IconButton';
 import { LockSimple, LockSimpleOpen } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { PlanNutrientRow } from '../../utils/plan-calculator';
@@ -8,7 +9,7 @@ function barColor(pct: number): string {
   if (pct >= 75) return 'hsl(120, 45%, 42%)';
   if (pct >= 50) return 'hsl(50, 80%, 50%)';
   if (pct >= 25) return 'hsl(30, 85%, 50%)';
-  return 'hsl(0, 70%, 50%)';
+  return 'hsl(0, 70%, 65%)';
 }
 
 interface NutrientBarProps {
@@ -66,14 +67,14 @@ export default function NutrientBar({ row, entryCount, locked }: NutrientBarProp
       <span className={styles.barPct} style={{ color }}>
         {pct.toFixed(0)}%
       </span>
-      <button
+      <IconButton
         type="button"
         className={`${styles.nutrientLockBtn} ${locked ? styles.nutrientLockBtnActive : ''}`}
         onClick={() => toggleLockedNutrient(row.key)}
         aria-label={locked ? `Unlock ${row.label}` : `Lock ${row.label}`}
       >
         {locked ? <LockSimple size={12} weight="fill" /> : <LockSimpleOpen size={12} />}
-      </button>
+      </IconButton>
     </div>
   );
 }

@@ -44,8 +44,7 @@ export default function NutrientCoverage({ rows, entryCount, lockedNutrients }: 
         );
       })}
       <p className={styles.disclaimer}>
-        Based on produce-only data. A complete diet includes grains, proteins,
-        dairy, and fats not tracked here.
+        Estimates use the bundled food data. Some foods have no USDA reference. Missing values are unknown.
       </p>
     </div>
   );

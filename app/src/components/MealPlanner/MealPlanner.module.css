@@ -5,28 +5,29 @@
 
 .header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+  align-items: stretch;
+  flex-direction: column;
+  gap: 16px;
   margin-bottom: 20px;
 }
 
 .title {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
 }
 
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  flex-wrap: wrap;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -51,7 +52,7 @@
 }
 
 .actionButton:disabled {
-  opacity: 0.4;
+  opacity: 1;
   cursor: not-allowed;
 }
 
@@ -80,7 +81,7 @@
 }
 
 .addOneButton:disabled {
-  opacity: 0.4;
+  opacity: 1;
   cursor: not-allowed;
 }
 
@@ -104,7 +105,7 @@
 }
 
 .autoFillButton:disabled {
-  opacity: 0.4;
+  opacity: 1;
   cursor: not-allowed;
 }
 
@@ -192,7 +193,7 @@
 
 .selectorInput {
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-primary);
 }
 
@@ -219,7 +220,7 @@
   justify-content: space-between;
   width: 100%;
   padding: 6px 10px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-primary);
   text-align: left;
 }
@@ -229,21 +230,21 @@
 }
 
 .suggestionCategory {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-tertiary);
 }
 
 .entries {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   margin-bottom: 24px;
 }
 
 .entryWrap {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .entryRow {
@@ -270,14 +271,14 @@
 }
 
 .entryName {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
   white-space: nowrap;
 }
 
 .entryServing {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-tertiary);
   white-space: nowrap;
 }
@@ -285,7 +286,7 @@
 .entryControls {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -331,7 +332,7 @@
 }
 
 .entryFreq {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-tertiary);
   min-width: 80px;
   text-align: center;
@@ -431,7 +432,7 @@
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 6px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-tertiary);
 }
@@ -439,7 +440,7 @@
 .replacementList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .replacementItem {
@@ -465,7 +466,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
 }
 
 .replacementName {
@@ -478,7 +479,7 @@
 }
 
 .replacementMeta {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-tertiary);
   white-space: nowrap;
   overflow: hidden;
@@ -488,13 +489,13 @@
 .replacementSide {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .replacementMatch {
   min-width: 38px;
-  font-size: 11px;
+  font-size: 12px;
   font-family: var(--font-data);
   font-weight: 600;
   color: var(--accent);
@@ -503,10 +504,57 @@
 
 .empty {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 12px;
   padding: 64px 24px;
   color: var(--text-tertiary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.empty button {
+  padding: 8px 12px;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  color: var(--text-primary);
+}
+
+.empty button:hover {
+  background: var(--bg-tertiary);
+}
+
+.planSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.planSummary strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.planSummary span {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.coverageDetails {
+  border-top: 1px solid var(--border-primary);
+}
+
+.coverageDetails summary {
+  padding: 16px 0;
+  color: var(--text-secondary);
+  cursor: pointer;
   font-size: 14px;
 }
 
@@ -516,7 +564,7 @@
 }
 
 .coverageSummary {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
   margin-bottom: 16px;
@@ -527,7 +575,7 @@
 }
 
 .coverageGroupLabel {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-tertiary);
   text-transform: uppercase;
@@ -544,7 +592,7 @@
 
 .barRowInsufficient {
   position: relative;
-  opacity: 0.4;
+  opacity: 1;
   cursor: help;
 }
 
@@ -587,7 +635,7 @@
 }
 
 .barValue {
-  font-size: 10px;
+  font-size: 12px;
   font-family: var(--font-data);
   font-feature-settings: 'tnum';
   color: var(--text-tertiary);
@@ -617,7 +665,7 @@
   width: 44px;
   flex-shrink: 0;
   text-align: right;
-  font-size: 11px;
+  font-size: 12px;
   font-family: var(--font-data);
   font-feature-settings: 'tnum';
   font-weight: 600;
@@ -662,7 +710,7 @@
 }
 
 .disclaimer {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-tertiary);
   margin-top: 16px;
   line-height: 1.5;
@@ -670,7 +718,7 @@
 
 .histamineHigh {
   display: inline-block;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   padding: 1px 5px;
   border-radius: var(--radius-xs);
@@ -680,7 +728,7 @@
 
 .histamineModerate {
   display: inline-block;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   padding: 1px 5px;
   border-radius: var(--radius-xs);
@@ -702,13 +750,13 @@
 }
 
 .histamineSummaryTitle {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
 }
 
 .histamineRatingBadge {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   padding: 2px 8px;
   border-radius: var(--radius-sm);
@@ -738,7 +786,7 @@
 .histamineFlaggedList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .histamineFlaggedItem {
@@ -757,7 +805,7 @@
 }
 
 .histamineFlaggedType {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-tertiary);
 }
 
@@ -776,6 +824,12 @@
     flex-wrap: wrap;
   }
 
+  .planSummary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
   .selectorInput {
     font-size: 16px;
   }
@@ -788,7 +842,7 @@
   .entryRow {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
+    gap: 8px;
   }
 
   .entryControls {
@@ -806,7 +860,7 @@
   .replacementsHeader {
     flex-direction: column;
     align-items: flex-start;
-    gap: 2px;
+    gap: 8px;
   }
 
   .replacementItem {
@@ -937,3 +991,20 @@
     color: #777;
   }
 }
+
+.container h1 { font-size: 24px; }
+.container h2 { font-size: 20px; }
+.container h3 { font-size: 18px; }
+.container button { font-size: 14px; }
+
+.container button span { font-size: inherit; }
+.suggestions {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  margin-top: 8px;
+}
+
+.noMatches { margin-top: 8px; color: var(--text-secondary); font-size: 14px; }

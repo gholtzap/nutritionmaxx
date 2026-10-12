@@ -10,7 +10,7 @@
 
   --text-primary: #edf1ed;
   --text-secondary: #a9b4aa;
-  --text-tertiary: #819085;
+  --text-tertiary: #9ba89f;
   --text-data: #d5ddd6;
 
   --accent: #63b3ed;
@@ -99,5 +99,5 @@
   --bottom-bar-height: 56px;
 
   --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', sans-serif;
-  --font-data: 'Geist Mono', 'SF Mono', 'Fira Code', monospace;
+  --font-data: var(--font-ui);
 }

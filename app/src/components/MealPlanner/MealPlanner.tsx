@@ -1,4 +1,5 @@
-import { useState, useMemo, useCallback } from 'react';
+import { copyText } from '../../utils/clipboard';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import { Trash, Lightning, Plus, Copy, Check } from '@phosphor-icons/react';
 import { useStore } from '../../store';
 import type { ItemType } from '../../types';
@@ -38,6 +39,7 @@ export default function MealPlanner() {
   const lockedPlanEntries = useStore((s) => s.lockedPlanEntries);
   const clearPlan = useStore((s) => s.clearPlan);
   const setPlanEntries = useStore((s) => s.setPlanEntries);
+  const setActiveView = useStore((s) => s.setActiveView);
   const togglePlanEntryLock = useStore((s) => s.togglePlanEntryLock);
   const budgetTolerance = useStore((s) => s.budgetTolerance);
   const setBudgetTolerance = useStore((s) => s.setBudgetTolerance);
@@ -48,8 +50,10 @@ export default function MealPlanner() {
   const autoFillLimit = useRateLimit({ action: 'autofill', windowMs: 60_000, maxRequests: 10 });
   const shareLimit = useRateLimit({ action: 'share', windowMs: 60_000, maxRequests: 20 });
 
+  const shareButtonRef = useRef<HTMLButtonElement>(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [copiedLLM, setCopiedLLM] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const [shareModal, setShareModal] = useState<{ blob: Blob; url: string; exportText: string } | null>(null);
 
   const fruitMap = useMemo(
@@ -61,6 +65,8 @@ export default function MealPlanner() {
     () => computePlanDailyTotals(planEntries, fruits, dvMap),
     [planEntries, fruits, dvMap]
   );
+  const trackedRows = nutrientRows.filter((row) => !row.insufficientData && row.dailyValue > 0);
+  const metCount = trackedRows.filter((row) => row.total >= row.dailyValue).length;
 
   const replacementsByFood = useMemo(() => {
     const map = new Map<string, FoodReplacement[]>();
@@ -86,12 +92,12 @@ export default function MealPlanner() {
     for (const entry of planEntries) {
       const fruit = fruitMap.get(entry.name);
       const type = fruit?.type ?? 'other';
-      const label = ITEM_TYPE_GROUP_LABELS[type as ItemType] ?? type.toUpperCase();
+      const label = ITEM_TYPE_GROUP_LABELS[type as ItemType] ?? type;
       if (!groups.has(label)) groups.set(label, []);
       const serving = fruit?.serving_label ?? '100g';
       groups.get(label)!.push(`  ${entry.name} - ${servingsLabel(entry.servingsPerWeek)} (${serving})`);
     }
-    const lines: string[] = ['WEEKLY MEAL PLAN', ''];
+    const lines: string[] = ['Weekly meal plan', ''];
     for (const [label, items] of groups) {
       lines.push(label);
       lines.push(...items);
@@ -99,7 +105,7 @@ export default function MealPlanner() {
     }
     const tracked = nutrientRows.filter((r) => !r.insufficientData);
     const metCount = tracked.filter((r) => r.dailyValue > 0 && r.total >= r.dailyValue).length;
-    lines.push(`NUTRIENT COVERAGE (${metCount} of ${tracked.length} at or above 100% DV)`);
+    lines.push(`Nutrient coverage (${metCount} of ${tracked.length} at or above 100% DV)`);
     for (const row of tracked) {
       const pct = row.dailyValue > 0 ? Math.round((row.total / row.dailyValue) * 100) : 0;
       const total = row.total < 10 ? row.total.toFixed(1) : Math.round(row.total).toLocaleString();
@@ -108,22 +114,10 @@ export default function MealPlanner() {
     return lines.join('\n');
   }, [planEntries, fruitMap, nutrientRows]);
 
-  const handleCopyForLLM = useCallback(() => {
+  const handleCopyForLLM = useCallback(async () => {
     if (planEntries.length === 0) return;
-    const text = buildPlanText();
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(text).catch(() => {});
-    } else {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.focus();
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-    }
+    try { await copyText(buildPlanText()); } catch { setCopyError(true); return; }
+    setCopyError(false);
     setCopiedLLM(true);
     setTimeout(() => setCopiedLLM(false), 1500);
   }, [planEntries, buildPlanText]);
@@ -192,15 +186,15 @@ export default function MealPlanner() {
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
-          <h2 className={styles.title}>Meal Planner</h2>
+          <h1 className={styles.title}>Weekly plan</h1>
           <p className={styles.subtitle}>
-            Plan your weekly produce intake and see nutrient coverage vs daily values
+            Choose foods for a week and check estimated nutrient targets.
           </p>
         </div>
         <div className={styles.headerActions}>
           {planEntries.length > 0 && (
             <>
-              <ShareButton onClick={handleShare} isLoading={isGeneratingImage} />
+              <ShareButton onClick={handleShare} isLoading={isGeneratingImage} buttonRef={shareButtonRef} />
               <button
                 type="button"
                 className={`${styles.actionButton} ${copiedLLM ? styles.actionButtonCopied : ''}`}
@@ -226,7 +220,7 @@ export default function MealPlanner() {
             disabled={autoFillLimit.isLimited}
           >
             <Plus size={14} weight="bold" />
-            <span>Add 1</span>
+            <span>Suggest one food</span>
           </button>
           <button
             type="button"
@@ -235,7 +229,7 @@ export default function MealPlanner() {
             disabled={autoFillLimit.isLimited}
           >
             <Lightning size={14} weight="fill" />
-            <span>Auto-fill</span>
+            <span>{planEntries.length > 0 ? 'Rebuild plan' : 'Build plan'}</span>
           </button>
           {autoFillLimit.isLimited && (
             <RateLimitNotice retryAfterMs={autoFillLimit.retryAfterMs} />
@@ -246,11 +240,13 @@ export default function MealPlanner() {
         </div>
       </div>
 
+      {copyError && <p role="alert">Copy failed. Use Share to copy the plan text manually.</p>}
       <div className={styles.budgetRow}>
         <span className={styles.budgetLabel}>Budget</span>
         <input
           type="range"
           className={styles.budgetSlider}
+          aria-label="Plan budget"
           min={1}
           max={10}
           step={1}
@@ -261,6 +257,13 @@ export default function MealPlanner() {
       </div>
 
       <PlanFoodSelector />
+
+      {planEntries.length > 0 && (
+        <section className={styles.planSummary} aria-label="Plan summary">
+          <strong>{metCount} of {trackedRows.length} tracked nutrient targets met</strong>
+          <span>{planEntries.length} {planEntries.length === 1 ? 'food' : 'foods'} in this weekly plan</span>
+        </section>
+      )}
 
       {planEntries.length > 0 && (
         <div className={styles.entries}>
@@ -279,7 +282,8 @@ export default function MealPlanner() {
 
       {planEntries.length === 0 && (
         <div className={styles.empty}>
-          Add foods above or use Auto-fill to generate a plan.
+          <p>Add a food above, build a plan, or start from a review.</p>
+          <button type="button" onClick={() => setActiveView('audit')}>Review my week</button>
         </div>
       )}
 
@@ -288,7 +292,10 @@ export default function MealPlanner() {
       )}
 
       {planEntries.length > 0 && (
-        <NutrientCoverage rows={nutrientRows} entryCount={planEntries.length} lockedNutrients={lockedNutrients} />
+        <details className={styles.coverageDetails}>
+          <summary>See all nutrient targets</summary>
+          <NutrientCoverage rows={nutrientRows} entryCount={planEntries.length} lockedNutrients={lockedNutrients} />
+        </details>
       )}
 
       {shareModal && (
@@ -296,6 +303,7 @@ export default function MealPlanner() {
           imageBlob={shareModal.blob}
           shareUrl={shareModal.url}
           exportText={shareModal.exportText}
+          returnFocus={shareButtonRef}
           onClose={() => setShareModal(null)}
         />
       )}
