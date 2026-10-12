@@ -181,15 +181,17 @@
 .moreOverlay {
   position: fixed;
   inset: 0;
-  z-index: 29;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
-.moreBackdrop {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.6);
-}
+.moreOverlay::backdrop { background: rgba(0, 0, 0, 0.6); }
 
 .moreSheet {
   position: fixed;
@@ -201,7 +203,7 @@
   padding: 16px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px;
+  gap: 8px;
   max-height: 60vh;
   overflow-y: auto;
   z-index: 29;

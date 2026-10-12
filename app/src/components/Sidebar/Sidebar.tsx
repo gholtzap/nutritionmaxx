@@ -1,5 +1,5 @@
 import IconButton from '../shared/IconButton';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Table, GitDiff, SquaresFour, Pill, ArrowsClockwise, Scales, SlidersHorizontal, GearSix, SidebarSimple, Heartbeat, GithubLogo, Article, Hamburger, DotsThree, ClipboardText, ChartBar, GameController, House } from '@phosphor-icons/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
@@ -47,6 +47,19 @@ export default function Sidebar() {
   const dietaryPreferences = useStore((s) => s.dietaryPreferences);
   const excluded = countExcluded(fruits, dietaryPreferences);
   const [moreOpen, setMoreOpen] = useState(false);
+  const moreDialogRef = useRef<HTMLDialogElement>(null);
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!moreOpen) return;
+    const dialog = moreDialogRef.current;
+    const opener = moreButtonRef.current;
+    dialog?.showModal();
+    return () => {
+      dialog?.close();
+      opener?.focus();
+    };
+  }, [moreOpen]);
   const isSecondaryActive = MOBILE_SECONDARY.some((item) => item.id === activeView);
 
   return (
@@ -100,15 +113,14 @@ export default function Sidebar() {
               <span className={styles.mobileNavLabel}>{item.id === 'audit' ? 'Review' : item.id === 'planner' ? 'Plan' : item.id === 'table' ? 'Foods' : item.label}</span>
             </IconButton>
           ))}
-          <IconButton className={`${styles.mobileNavItem} ${moreOpen || isSecondaryActive ? styles.mobileNavItemActive : ''}`} onClick={() => setMoreOpen(!moreOpen)} type="button" aria-expanded={moreOpen} aria-controls="mobile-more-tools">
+          <button ref={moreButtonRef} className={`${styles.mobileNavItem} ${moreOpen || isSecondaryActive ? styles.mobileNavItemActive : ''}`} onClick={() => setMoreOpen(!moreOpen)} type="button" aria-expanded={moreOpen} aria-controls="mobile-more-tools">
             <span className={styles.mobileNavIcon}><DotsThree size={18} weight="regular" /></span>
             <span className={styles.mobileNavLabel}>More</span>
-          </IconButton>
+          </button>
         </nav>
       </aside>
       {moreOpen && (
-        <div className={styles.moreOverlay}>
-          <IconButton type="button" className={styles.moreBackdrop} onClick={() => setMoreOpen(false)} aria-label="Close more tools" />
+        <dialog ref={moreDialogRef} className={styles.moreOverlay} aria-label="More tools" onCancel={() => setMoreOpen(false)} onClick={(e) => { if (e.target === e.currentTarget) setMoreOpen(false); }}>
           <nav className={styles.moreSheet} id="mobile-more-tools" aria-label="More tools">
             {MOBILE_SECONDARY.map((item) => (
               <IconButton key={item.id} className={`${styles.moreSheetItem} ${activeView === item.id ? styles.moreSheetItemActive : ''}`} onClick={() => { setActiveView(item.id); setMoreOpen(false); }} type="button" aria-current={activeView === item.id ? 'page' : undefined}>
@@ -117,7 +129,7 @@ export default function Sidebar() {
               </IconButton>
             ))}
           </nav>
-        </div>
+        </dialog>
       )}
     </>
   );
