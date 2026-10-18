@@ -5,7 +5,7 @@
 .primaryButton { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; margin-top: 24px; padding: 0 16px; border-radius: 6px; background: var(--text-primary); color: var(--bg-primary); font-size: 14px; font-weight: 500; }
 .primaryButton:hover { background: #fff; }
 .currentWork { padding: 16px; border-radius: 8px; background: var(--bg-tertiary); }
-.currentWork h2 { font-size: 18px; font-weight: 500; }
+.currentWork h2 { font-size: 20px; font-weight: 500; }
 .currentWork button { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; color: var(--text-primary); font-size: 14px; }
 .nextTasks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 24px; }
 .task { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 16px; border: 1px solid var(--border-primary); border-radius: 8px; background: var(--bg-secondary); text-align: left; }
