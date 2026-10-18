@@ -13,6 +13,7 @@ export function usePreferencesSync() {
   const [sync, setSync] = useState({ owner: '', ready: false, status: 'Loading saved data…', error: false });
 
   useEffect(() => {
+    if (!isLoaded) return;
     const controller = new AbortController();
     let disposed = false;
     let unsubscribe: (() => void) | undefined;

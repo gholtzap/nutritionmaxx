@@ -3,7 +3,7 @@ import { defaultPreferences } from '../preferences';
 import { deserializePreferences } from '../preferences-sync';
 
 const harness = vi.hoisted(() => ({
-  userId: 'user-a', getToken: vi.fn(async () => 'token'),
+  isLoaded: true, userId: 'user-a' as string | undefined, getToken: vi.fn(async () => 'token'),
   state: {} as Record<string, unknown>, cleanup: undefined as (() => void) | undefined,
   sync: {} as { ready?: boolean; status?: string; owner?: string },
   listeners: new Set<(state: Record<string, unknown>, previous: Record<string, unknown>) => void>(),
@@ -12,7 +12,7 @@ vi.mock('react', () => ({
   useState: (initial: unknown) => [initial, (next: typeof harness.sync) => { harness.sync = next; }],
   useEffect: (effect: () => (() => void)) => { harness.cleanup = effect(); },
 }));
-vi.mock('@clerk/clerk-react', () => ({ useAuth: () => ({ isLoaded: true, userId: harness.userId, getToken: harness.getToken }) }));
+vi.mock('@clerk/clerk-react', () => ({ useAuth: () => ({ isLoaded: harness.isLoaded, userId: harness.userId, getToken: harness.getToken }) }));
 vi.mock('../../store', () => ({ useStore: {
   getState: () => harness.state,
   subscribe: (listener: (state: Record<string, unknown>, previous: Record<string, unknown>) => void) => {
@@ -29,6 +29,7 @@ beforeEach(() => {
     setItem: (key: string, value: string) => data.set(key, value), removeItem: (key: string) => data.delete(key) });
   localStorage.setItem('nutritionmaxx:guestImported', 'earlier-account');
   harness.userId = 'user-a';
+  harness.isLoaded = true;
   harness.sync = {};
   harness.listeners.clear();
   harness.state = { ...deserializePreferences(defaultPreferences()), _loadPreferences: (prefs: Record<string, unknown>) => { harness.state = { ...harness.state, ...prefs }; } };
@@ -46,6 +47,25 @@ function editPlan(name: string) {
 }
 
 describe('account sync lifecycle', () => {
+  it('waits for sign-in state before loading data or allowing shared-plan initialization', async () => {
+    const guest = defaultPreferences(); guest.planEntries = [{ name: 'Rice', servingsPerWeek: 7 }];
+    const account = defaultPreferences(); account.planEntries = [{ name: 'Turkey Breast', servingsPerWeek: 3.5 }];
+    localStorage.setItem('nutritionmaxx:guest', JSON.stringify(guest));
+    const fetch = vi.fn().mockResolvedValue(Response.json({ preferences: account }));
+    vi.stubGlobal('fetch', fetch);
+    harness.isLoaded = false; harness.userId = undefined;
+    usePreferencesSync(); await settle();
+    expect(harness.sync.ready).not.toBe(true);
+    expect(harness.state.planEntries).toEqual([]);
+    expect(localStorage.getItem('nutritionmaxx:owner')).toBeNull();
+    expect(harness.listeners.size).toBe(0);
+    expect(fetch).not.toHaveBeenCalled();
+    harness.cleanup?.(); harness.isLoaded = true; harness.userId = 'user-a';
+    usePreferencesSync(); await settle();
+    expect(harness.sync.ready).toBe(true);
+    expect(harness.state.planEntries).toEqual(account.planEntries);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
   it('imports a guest review only into the first empty account', async () => {
     localStorage.removeItem('nutritionmaxx:guestImported');
     const guest = defaultPreferences();
