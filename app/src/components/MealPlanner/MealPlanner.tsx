@@ -187,9 +187,6 @@ export default function MealPlanner() {
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>Weekly plan</h1>
-          <p className={styles.subtitle}>
-            Choose foods for a week and check estimated nutrient targets.
-          </p>
         </div>
         <div className={styles.headerActions}>
           {planEntries.length > 0 && (
@@ -201,7 +198,7 @@ export default function MealPlanner() {
                 onClick={handleCopyForLLM}
               >
                 {copiedLLM ? <Check size={14} /> : <Copy size={14} />}
-                <span>{copiedLLM ? 'Copied' : 'Copy for LLM'}</span>
+                <span>{copiedLLM ? 'Copied' : 'Copy plan'}</span>
               </button>
               <button
                 type="button"
@@ -261,7 +258,7 @@ export default function MealPlanner() {
       {planEntries.length > 0 && (
         <section className={styles.planSummary} aria-label="Plan summary">
           <strong>{metCount} of {trackedRows.length} tracked nutrient targets met</strong>
-          <span>{planEntries.length} {planEntries.length === 1 ? 'food' : 'foods'} in this weekly plan</span>
+          <span>{planEntries.length} {planEntries.length === 1 ? 'food' : 'foods'}</span>
         </section>
       )}
 
@@ -282,7 +279,6 @@ export default function MealPlanner() {
 
       {planEntries.length === 0 && (
         <div className={styles.empty}>
-          <p>Add a food above, build a plan, or start from a review.</p>
           <button type="button" onClick={() => setActiveView('audit')}>Review my week</button>
         </div>
       )}
@@ -293,7 +289,7 @@ export default function MealPlanner() {
 
       {planEntries.length > 0 && (
         <details className={styles.coverageDetails}>
-          <summary>See all nutrient targets</summary>
+          <summary>Nutrient targets</summary>
           <NutrientCoverage rows={nutrientRows} entryCount={planEntries.length} lockedNutrients={lockedNutrients} />
         </details>
       )}

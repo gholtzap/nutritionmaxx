@@ -1,7 +1,6 @@
 import IconButton from '../shared/IconButton';
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { ArrowRight, Check, FloppyDisk, MagnifyingGlass, Minus, Plus, Trash, X } from '@phosphor-icons/react';
-import { SignedOut, SignInButton } from '@clerk/clerk-react';
 import { useStore } from '../../store';
 import type { NutrientFruit, PlanEntry } from '../../types';
 import { analyzeDietAudit } from '../../utils/diet-audit';
@@ -206,7 +205,7 @@ export default function CurrentDietAudit() {
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>Review my week</h1>
-          <p className={styles.subtitle}>Add foods and servings from a usual week. Results update as you add foods.</p>
+          <p className={styles.subtitle}>Enter servings per week.</p>
         </div>
         <div className={styles.headerActions}>
           <IconButton type="button" className={styles.actionButton} onClick={handleSave} disabled={entries.length === 0}>
@@ -218,14 +217,6 @@ export default function CurrentDietAudit() {
             <span>Clear</span>
           </IconButton>
         </div>
-      </div>
-
-      <div className={styles.syncLine}>
-        <SignedOut>
-          <SignInButton>
-            <IconButton type="button" className={styles.inlineButton}>Sign in to sync</IconButton>
-          </SignInButton>
-        </SignedOut>
       </div>
 
       <div className={styles.controls}>
@@ -246,14 +237,12 @@ export default function CurrentDietAudit() {
         </div>
       </div>
 
-      {entries.length > 0 ? (
+      {entries.length > 0 && (
         <div className={styles.entries}>
           {entries.map((entry) => (
             <EntryRow key={entry.name} entry={entry} fruit={fruitMap.get(entry.name)} />
           ))}
         </div>
-      ) : (
-        <div className={styles.empty}>Add the first food you eat in a usual week.</div>
       )}
 
       {entries.length > 0 && (
@@ -262,7 +251,6 @@ export default function CurrentDietAudit() {
             <div>
               <span className={styles.overviewLabel}>Largest estimated gap</span>
               <strong>{topGap ? `${topGap.label}: ${topGap.percent}% of daily target` : 'No large gap in tracked nutrients'}</strong>
-              <span>Based on {entries.length} {entries.length === 1 ? 'food' : 'foods'} entered for the week</span>
             </div>
             <div className={styles.overviewFacts}>
               <span>{completeCount} of {trackedCount} tracked targets met</span>
@@ -294,11 +282,11 @@ export default function CurrentDietAudit() {
                 </div>
               </div>
             ) : (
-              <div className={styles.panelEmpty}>No useful change was found for these foods and filters.</div>
+              <div className={styles.panelEmpty}>No suggested changes with these filters.</div>
             )}
             {analysis.fixes.length > 1 && (
               <details className={styles.otherFixes}>
-                <summary>Other suggested changes</summary>
+                <summary>More changes</summary>
                 <div className={styles.fixList}>
                   {analysis.fixes.slice(1).map((fix) => (
                     <div key={fix.id} className={styles.fixItem}>
@@ -315,7 +303,7 @@ export default function CurrentDietAudit() {
           </section>
 
           <details className={styles.reportDetails}>
-            <summary>See all nutrient results</summary>
+            <summary>Nutrient results</summary>
           <section className={styles.reportGrid}>
             <div className={styles.panel}>
               <div className={styles.panelHeader}>
@@ -360,14 +348,13 @@ export default function CurrentDietAudit() {
                   ))}
                 </div>
               ) : (
-                <div className={styles.panelEmpty}>No obvious excesses from the current entries.</div>
+                <div className={styles.panelEmpty}>No amounts flagged.</div>
               )}
             </div>
 
             <div className={styles.panel}>
               <div className={styles.panelHeader}>
                 <h2 className={styles.panelTitle}>Missing source data</h2>
-                <span className={styles.panelMeta}>confidence drivers</span>
               </div>
               {analysis.missingData.length > 0 ? (
                 <div className={styles.missingList}>
@@ -379,7 +366,7 @@ export default function CurrentDietAudit() {
                   ))}
                 </div>
               ) : (
-                <div className={styles.panelEmpty}>No missing-data warnings for this baseline.</div>
+                <div className={styles.panelEmpty}>No missing values found.</div>
               )}
             </div>
           </section>
@@ -392,14 +379,13 @@ export default function CurrentDietAudit() {
         <section className={styles.savedPanel}>
           <div className={styles.panelHeader}>
             <h2 className={styles.panelTitle}>Saved reviews</h2>
-            <span className={styles.panelMeta}>{savedAudits.length} stored</span>
           </div>
           <div className={styles.savedList}>
             {savedAudits.map((audit) => (
               <div key={audit.id} className={styles.savedItem}>
                 <IconButton type="button" className={styles.savedMain} onClick={() => loadSavedDietAudit(audit.id)}>
                   <span className={styles.savedTitle}>{audit.name}</span>
-                  <span className={styles.savedMeta}>{formatDate(audit.createdAt)} · {audit.baselineEntries.length} foods · {audit.confidence}% confidence</span>
+                  <span className={styles.savedMeta}>{formatDate(audit.createdAt)} · {audit.confidence}% confidence</span>
                 </IconButton>
                 <IconButton type="button" className={styles.removeButton} onClick={() => deleteSavedDietAudit(audit.id)} aria-label={`Delete ${audit.name}`}>
                   <X size={14} />
