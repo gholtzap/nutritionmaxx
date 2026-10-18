@@ -6,6 +6,8 @@ import type { ItemType, SortDirection, ViewId } from './types';
 import { ALL_CATEGORIES } from './utils/nutrition-meta';
 import { useIsMobile } from './utils/use-is-mobile';
 import { usePreferencesSync } from './hooks/use-preferences-sync';
+import { validPlanEntries } from './utils/preferences';
+import IconButton from './components/shared/IconButton';
 import Sidebar from './components/Sidebar/Sidebar';
 import DataTable from './components/DataTable/DataTable';
 import FruitDetail from './components/FruitDetail/FruitDetail';
@@ -88,7 +90,7 @@ function App() {
   const sidebarCollapsed = useStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useStore((s) => s.toggleSidebar);
   const isMobile = useIsMobile();
-  usePreferencesSync();
+  const sync = usePreferencesSync();
 
   const fruits = useStore((s) => s.fruits);
   const setSelectedFruit = useStore((s) => s.setSelectedFruit);
@@ -113,7 +115,7 @@ function App() {
   const urlInitialized = useRef(false);
 
   useEffect(() => {
-    if (fruits.length === 0) return;
+    if (fruits.length === 0 || !sync.ready || urlInitialized.current) return;
     const params = new URLSearchParams(window.location.search);
     const viewParam = params.get('view');
     const pathView = getPathView(window.location.pathname);
@@ -164,15 +166,19 @@ function App() {
           const idx = seg.lastIndexOf(':');
           if (idx === -1) return null;
           const name = seg.slice(0, idx).trim();
-          const spw = parseFloat(seg.slice(idx + 1));
-          if (!name || isNaN(spw) || spw <= 0) return null;
+          const spw = Number(seg.slice(idx + 1));
+          if (!name || !Number.isFinite(spw) || spw < 0.5 || spw > 1000) return null;
           const match = fruits.find((f) => f.name.toLowerCase() === name.toLowerCase());
           if (!match) return null;
           return { name: match.name, servingsPerWeek: spw };
         })
         .filter((e): e is { name: string; servingsPerWeek: number } => e != null);
-      if (entries.length > 0) {
-        setPlanEntries(entries);
+      if (entries.length > 0 && validPlanEntries(entries)) {
+        const savedPlan = useStore.getState().planEntries;
+        if (savedPlan.length === 0 || JSON.stringify(savedPlan) === JSON.stringify(entries)
+          || window.confirm('Replace the saved weekly plan with this shared plan?')) {
+          setPlanEntries(entries);
+        }
         setActiveView('planner');
       } else if (requestedView) {
         setActiveView(requestedView);
@@ -206,7 +212,7 @@ function App() {
     }
 
     urlInitialized.current = true;
-  }, [fruits, setSelectedFruit, setComparisonFruits, setActiveView, setPlanEntries, setSearchQuery, setSelectedType, setSelectedCategories, setSort]);
+  }, [fruits, sync.ready, setSelectedFruit, setComparisonFruits, setActiveView, setPlanEntries, setSearchQuery, setSelectedType, setSelectedCategories, setSort]);
 
   useEffect(() => {
     if (!urlInitialized.current) return;
@@ -266,10 +272,7 @@ function App() {
       url.searchParams.delete('ratio_cats');
     }
     if (activeView === 'planner' && planEntries.length > 0) {
-      url.searchParams.set(
-        'plan',
-        planEntries.map((e) => `${e.name}:${e.servingsPerWeek}`).join(',')
-      );
+      url.searchParams.delete('plan');
       url.searchParams.delete('food');
       url.searchParams.delete('compare');
     } else if (activeView === 'comparison' && comparisonFruits.length > 0) {
@@ -296,7 +299,7 @@ function App() {
     window.history.replaceState(null, '', url.toString());
   }, [selectedFruit, comparisonFruits, activeView, planEntries, searchQuery, selectedType, selectedCategories, sort]);
 
-  const showFruitDetail = activeView !== 'higherlower' && selectedFruit;
+  const showFruitDetail = sync.ready && activeView !== 'higherlower' && selectedFruit;
   const contentClass = [
     styles.content,
     showFruitDetail ? styles.contentWithDetail : '',
@@ -309,14 +312,14 @@ function App() {
     <div className={styles.layout}>
       <Sidebar />
       {!isMobile && sidebarCollapsed && (
-        <button
+        <IconButton
           type="button"
           className={styles.expandButton}
           onClick={toggleSidebar}
           aria-label="Expand sidebar"
         >
           <List size={18} weight="regular" />
-        </button>
+        </IconButton>
       )}
       {isMobile && (
         <header className={styles.mobileHeader}>
@@ -349,9 +352,13 @@ function App() {
         </header>
       )}
       <main className={contentClass}>
-        {loading && <Spinner />}
+        <div className={styles.syncStatus} role={sync.error ? 'alert' : 'status'}>
+          <span>{sync.status}</span>
+          {sync.error && <button type="button" onClick={sync.retry}>Retry</button>}
+        </div>
+        {(loading || !sync.ready) && !sync.error && <Spinner />}
         {error && <div className={styles.status}>{error}</div>}
-        {!loading && !error && (
+        {!loading && !error && sync.ready && (
           <>
             {activeView === 'home' && <Homepage />}
             {activeView === 'fixdiet' && <FixMyDiet />}

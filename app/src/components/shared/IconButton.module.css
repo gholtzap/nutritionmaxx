@@ -1,0 +1,22 @@
+.button { position: relative; }
+.tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  z-index: 50;
+  width: max-content;
+  max-width: 180px;
+  padding: 8px;
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: left;
+  pointer-events: none;
+}
+.button:hover .tooltip, .button:focus-visible .tooltip { display: block; }
+
+.button[aria-expanded="true"] .tooltip { display: none; }

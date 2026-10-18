@@ -12,14 +12,14 @@
 }
 
 .title {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.45;
   color: var(--text-secondary);
   max-width: 640px;
@@ -28,7 +28,7 @@
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -39,7 +39,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   border-radius: var(--radius-sm);
   white-space: nowrap;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
@@ -61,7 +61,7 @@
 
 .actionButton:disabled,
 .primaryButton:disabled {
-  opacity: 0.4;
+  opacity: 1;
   cursor: not-allowed;
 }
 
@@ -80,7 +80,7 @@
   color: var(--accent);
   border: 1px solid var(--border-accent);
   background: transparent;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .controls {
@@ -120,7 +120,7 @@
   flex: 1;
   min-width: 0;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .searchInput::placeholder {
@@ -150,7 +150,7 @@
   width: 100%;
   padding: 7px 10px;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   text-align: left;
 }
 
@@ -160,7 +160,7 @@
 
 .suggestionMeta {
   color: var(--text-tertiary);
-  font-size: 11px;
+  font-size: 12px;
   flex-shrink: 0;
 }
 
@@ -220,7 +220,7 @@
 .entries {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   margin-bottom: 18px;
 }
 
@@ -244,7 +244,7 @@
 
 .entryName {
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -253,14 +253,14 @@
 
 .entryServing {
   color: var(--text-tertiary);
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
 .entryControls {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -313,7 +313,7 @@
 .entryFreq {
   min-width: 80px;
   color: var(--text-tertiary);
-  font-size: 11px;
+  font-size: 12px;
   text-align: center;
 }
 
@@ -323,7 +323,7 @@
   align-items: center;
   justify-content: center;
   color: var(--text-tertiary);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .empty {
@@ -361,7 +361,7 @@
 .fixType,
 .savedMeta {
   color: var(--text-tertiary);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .metricValue {
@@ -369,6 +369,96 @@
   font-family: var(--font-data);
   font-size: 24px;
   line-height: 1.1;
+}
+
+.resultOverview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 20px;
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.resultOverview > div:first-child,
+.overviewFacts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resultOverview strong {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.resultOverview span {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.resultOverview .overviewLabel {
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.overviewFacts {
+  min-width: 180px;
+  padding-left: 24px;
+  border-left: 1px solid var(--border-primary);
+}
+
+.firstFix {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 8px 0;
+}
+
+.fixActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.fixActions .primaryButton {
+  color: var(--bg-primary);
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.fixActions .primaryButton:hover {
+  background: #fff;
+}
+
+.otherFixes,
+.reportDetails {
+  border-top: 1px solid var(--border-primary);
+}
+
+.otherFixes {
+  margin-top: 16px;
+}
+
+.otherFixes summary,
+.reportDetails summary {
+  padding: 16px 0;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.reportDetails {
+  margin-bottom: 24px;
+}
+
+.reportDetails .reportGrid {
+  margin-bottom: 16px;
 }
 
 .metricNote {
@@ -399,7 +489,7 @@
 
 .panelTitle {
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -450,7 +540,7 @@
 .findingMeta {
   color: var(--text-tertiary);
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .missingItem {
@@ -502,7 +592,7 @@
 .fixTitle {
   margin-bottom: 3px;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -515,7 +605,7 @@
 .improveList {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   margin-top: 7px;
 }
 
@@ -525,7 +615,7 @@
   color: var(--accent);
   background: rgba(99, 179, 237, 0.1);
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .applyButton {
@@ -563,7 +653,7 @@
 
 .savedTitle {
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -596,4 +686,38 @@
     flex: 1;
     width: auto;
   }
+
+  .resultOverview {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .overviewFacts {
+    min-width: 0;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--border-primary);
+    border-left: 0;
+  }
+
+  .firstFix {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
+
+.container h1 { font-size: 24px; }
+.container h2 { font-size: 20px; }
+.container h3 { font-size: 18px; }
+.container button { font-size: 14px; }
+
+.container button span { font-size: inherit; }
+.suggestions {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  margin-top: 8px;
+}
+
+.noMatches { margin-top: 8px; color: var(--text-secondary); font-size: 14px; }

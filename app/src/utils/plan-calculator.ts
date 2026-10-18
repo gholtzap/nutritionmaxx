@@ -40,9 +40,9 @@ const EXCESS_PENALTY = 0.3;
 const FORCE_INSUFFICIENT: Set<NutrientKey> = new Set(['vitamin_d_mcg', 'sodium_mg']);
 
 const INSUFFICIENT_NOTES: Partial<Record<NutrientKey, string>> = {
-  sodium_mg: 'Nearly every modern diet includes enough sodium; add salt to your cooking if you are deficient',
-  vitamin_k_mcg: 'USDA does not supply this data',
-  vitamin_d_mcg: 'Very few foods contain vitamin D, if you are deficient, get 20 minutes of sun on your arms and legs per day, eat salmon, or take supplements',
+  sodium_mg: 'This estimate does not include salt added during cooking' ,
+  vitamin_k_mcg: 'Most foods in this dataset have no vitamin K value',
+  vitamin_d_mcg: 'Food intake alone cannot establish vitamin D status',
 };
 
 function getInsufficientNutrients(fruits: NutrientFruit[]): Set<NutrientKey> {
@@ -112,7 +112,7 @@ export function computePlanDailyTotals(
     dailyValue: resolveDV(meta, dvMap) ?? meta.dailyValue!,
     total: totals.get(meta.key)!,
     nullCount: nullCounts.get(meta.key)!,
-    insufficientData: insufficient.has(meta.key),
+    insufficientData: insufficient.has(meta.key) || (entries.length > 0 && nullCounts.get(meta.key)! === entries.length),
     note: INSUFFICIENT_NOTES[meta.key],
   }));
 }
@@ -423,6 +423,12 @@ export function findFoodReplacements(
   for (const food of foods) {
     if (food.name === target.name || used.has(food.name) || food.type === 'spice') continue;
     if (food.cost_index !== null && (food.cost_index as number) > budgetTolerance) continue;
+    const targetCalories = calsPerServing(target);
+    const candidateCalories = calsPerServing(food);
+    if (targetCalories <= 0 || candidateCalories < targetCalories * 0.5 || candidateCalories > targetCalories * 1.5) continue;
+    const targetProtein = (target.protein_g ?? 0) * ((target.serving_size_g ?? 100) / 100);
+    const candidateProtein = (food.protein_g ?? 0) * ((food.serving_size_g ?? 100) / 100);
+    if (targetProtein >= 5 && (candidateProtein < targetProtein * 0.5 || candidateProtein > targetProtein * 1.5)) continue;
 
     let weightedDiff = 0;
     let totalWeight = 0;

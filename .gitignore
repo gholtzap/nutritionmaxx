@@ -11,3 +11,7 @@ app/dist/
 CLAUDE.md
 .claude/
 ios/
+.vercel
+
+.env.*
+app/.env.*

@@ -1,3 +1,4 @@
+import IconButton from '../shared/IconButton';
 import { ArrowsLeftRight, LockSimple, LockSimpleOpen, Minus, Plus, Prohibit, X } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { useStore } from '../../store';
@@ -61,14 +62,14 @@ export default function PlanEntryRow({ entry, fruit, locked, replacements, onRep
           <span className={styles.entryServing}>{servingLabel}</span>
         </div>
         <div className={styles.entryControls}>
-          <button
+          <IconButton
             type="button"
             className={styles.stepperBtn}
             onClick={() => adjust(-1)}
             aria-label="Decrease servings"
           >
             <Minus size={12} />
-          </button>
+          </IconButton>
           <input
             type="number"
             className={styles.stepperInput}
@@ -80,20 +81,21 @@ export default function PlanEntryRow({ entry, fruit, locked, replacements, onRep
             onChange={(e) => setDraft(e.target.value)}
             onBlur={commitDraft}
             onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+            aria-label={`Weekly servings for ${entry.name}`}
             min={0.5}
             max={1000}
             step={0.5}
           />
-          <button
+          <IconButton
             type="button"
             className={styles.stepperBtn}
             onClick={() => adjust(1)}
             aria-label="Increase servings"
           >
             <Plus size={12} />
-          </button>
+          </IconButton>
           <span className={styles.entryFreq}>{servingsLabel(entry.servingsPerWeek)}</span>
-          <button
+          <IconButton
             type="button"
             className={`${styles.swapBtn} ${showReplacements ? styles.swapBtnActive : ''}`}
             onClick={() => setShowReplacements((open) => !open)}
@@ -102,16 +104,16 @@ export default function PlanEntryRow({ entry, fruit, locked, replacements, onRep
             disabled={replacements.length === 0}
           >
             <ArrowsLeftRight size={14} />
-          </button>
-          <button
+          </IconButton>
+          <IconButton
             type="button"
             className={`${styles.lockBtn} ${locked ? styles.lockBtnActive : ''}`}
             onClick={() => togglePlanEntryLock(entry.name)}
             aria-label={locked ? `Unlock ${entry.name}` : `Lock ${entry.name}`}
           >
             {locked ? <LockSimple size={14} /> : <LockSimpleOpen size={14} />}
-          </button>
-          <button
+          </IconButton>
+          <IconButton
             type="button"
             className={styles.blockBtn}
             onClick={() => { blockFood(entry.name); removePlanEntry(entry.name); }}
@@ -119,15 +121,15 @@ export default function PlanEntryRow({ entry, fruit, locked, replacements, onRep
             title="Block from recommendations"
           >
             <Prohibit size={14} />
-          </button>
-          <button
+          </IconButton>
+          <IconButton
             type="button"
             className={styles.removeBtn}
             onClick={() => removePlanEntry(entry.name)}
             aria-label={`Remove ${entry.name}`}
           >
             <X size={14} />
-          </button>
+          </IconButton>
         </div>
       </div>
       {showReplacements && (
@@ -140,7 +142,7 @@ export default function PlanEntryRow({ entry, fruit, locked, replacements, onRep
             {replacements.map((replacement) => {
               const warning = getHistamineWarning(replacement.food, histamineSensitivity);
               return (
-                <button
+                <IconButton
                   key={replacement.food.name}
                   type="button"
                   className={styles.replacementItem}
@@ -164,7 +166,7 @@ export default function PlanEntryRow({ entry, fruit, locked, replacements, onRep
                     )}
                     <span className={styles.replacementMatch}>{replacement.matchPct}%</span>
                   </span>
-                </button>
+                </IconButton>
               );
             })}
           </div>

@@ -56,7 +56,7 @@
 }
 
 .mobileTitle {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
   cursor: pointer;
@@ -94,7 +94,7 @@
 }
 
 .mobileSignIn {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
   padding: 4px 10px;
@@ -149,4 +149,19 @@
   .mobileHeader {
     display: none !important;
   }
+}
+
+.syncStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.syncStatus button {
+  padding: 4px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
 }

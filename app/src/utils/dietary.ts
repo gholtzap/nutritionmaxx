@@ -1,4 +1,4 @@
-import type { NutrientFruit, HistamineSensitivity, HistamineLevel, HistamineType } from '../types';
+import type { NutrientFruit, HistamineSensitivity, HistamineLevel, HistamineType } from '../types.js';
 
 export type DietaryPreference =
   | 'vegetarian'
