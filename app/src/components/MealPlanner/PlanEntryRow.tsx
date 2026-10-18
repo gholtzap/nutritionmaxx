@@ -136,7 +136,6 @@ export default function PlanEntryRow({ entry, fruit, locked, replacements, onRep
         <div className={styles.replacements}>
           <div className={styles.replacementsHeader}>
             <span>Similar swaps</span>
-            <span>Preserves {servingsLabel(entry.servingsPerWeek)}</span>
           </div>
           <div className={styles.replacementList}>
             {replacements.map((replacement) => {

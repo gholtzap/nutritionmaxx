@@ -34,8 +34,7 @@
 
 .actionButton,
 .primaryButton,
-.applyButton,
-.inlineButton {
+.applyButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -63,24 +62,6 @@
 .primaryButton:disabled {
   opacity: 1;
   cursor: not-allowed;
-}
-
-.syncLine {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 24px;
-  margin-bottom: 16px;
-  font-size: 12px;
-  color: var(--text-tertiary);
-}
-
-.inlineButton {
-  padding: 3px 8px;
-  color: var(--accent);
-  border: 1px solid var(--border-accent);
-  background: transparent;
-  font-size: 12px;
 }
 
 .controls {
@@ -317,20 +298,12 @@
   text-align: center;
 }
 
-.empty,
 .panelEmpty {
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-tertiary);
   font-size: 14px;
-}
-
-.empty {
-  min-height: 180px;
-  border: 1px dashed var(--border-primary);
-  border-radius: var(--radius-md);
-  background: var(--bg-secondary);
 }
 
 .summaryGrid {
