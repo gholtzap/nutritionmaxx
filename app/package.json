@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint:ui": "npm exec --yes --package=lintapple@0.1.15 -- lintapple http://localhost:5173"
+    "lint:ui": "npm exec --yes --package=lintapple@0.1.15 -- lintapple http://localhost:5173",
+    "typecheck:ci": "bun check --no-script -b",
+    "build:ci": "vite build"
   },
   "dependencies": {
     "@clerk/backend": "^2.31.0",
@@ -42,5 +44,6 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
     "vitest": "^4.0.18"
-  }
+  },
+  "packageManager": "bun@1.4.5"
 }
